@@ -61,7 +61,7 @@ class GoCodeSynthesisPipeline:
         tools = {
             "go": "Go compiler",
             "errcheck": "github.com/kisielk/errcheck@latest",
-            "errorlint": "github.com/polyfloyd/go-errorlint@latest",
+            "go-errorlint": "github.com/polyfloyd/go-errorlint@latest",
             "staticcheck": "honnef.co/go/tools/cmd/staticcheck@latest"
         }
 
@@ -92,7 +92,7 @@ class GoCodeSynthesisPipeline:
         if self.workspace and os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
     
-    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> str:
+    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> Tuple[str, str]:
         """Generate Go code using LLM."""
         try:
             import anthropic
@@ -109,6 +109,9 @@ class GoCodeSynthesisPipeline:
 
                         TASK:
                         {prompt}
+
+                        PREVIOUS CODE:
+                        {self._last_code if hasattr(self, '_last_code') else '(no previous code)'}
 
                         ANALYSIS ERRORS:
                         {feedback}
@@ -136,13 +139,13 @@ class GoCodeSynthesisPipeline:
         elif "```" in code:
             code = code.split("```")[1].split("```")[0]
         
-        return code.strip()
+        return code.strip(), message
     
-    def write_code(self, code: str) -> str:
+    def write_to_workspace(self, filename: str, content: str) -> str:
         """Write code to workspace."""
-        filepath = os.path.join(self.workspace, "main.go")
+        filepath = os.path.join(self.workspace, filename)
         with open(filepath, 'w') as f:
-            f.write(code)
+            f.write(content)
         return filepath
     
     def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
@@ -200,7 +203,7 @@ class GoCodeSynthesisPipeline:
         # go-errorlint
         print("    → go-errorlint")
         results.append(self.run_tool(
-            ["errorlint", filepath],
+            ["go-errorlint", filepath],
             "go-errorlint"
         ))
 
@@ -218,9 +221,9 @@ class GoCodeSynthesisPipeline:
 
         return {
             "concurrency": self.analyze_concurrency(filepath),
-            "memory": self.analyze_memory(filepath),
-            "error_handling": self.analyze_error_handling(filepath),
-            "performance": self.analyze_performance(filepath),
+            #"memory": self.analyze_memory(filepath),
+            #"error_handling": self.analyze_error_handling(filepath),
+            #"performance": self.analyze_performance(filepath),
         }
     
     def format_feedback(self, analyses: Dict[str, List[AnalysisResult]]) -> Optional[str]:
@@ -284,12 +287,17 @@ class GoCodeSynthesisPipeline:
 
             # Generate
             print(f"\n  ✨ Generating Go code...")
-            code = self.generate_code(task, feedback)
+            code, full_prompt = self.generate_code(task, feedback)
+            self._last_code = code
             final_code = code
 
             # Write
-            filepath = self.write_code(code)
+            filepath = self.write_to_workspace("main.go", code)
             print("  ✅ Code written")
+
+            # Log
+            self.write_to_workspace(f"iter_{iteration}.go", code)
+            self.write_to_workspace(f"iter_{iteration}.txt", full_prompt)
 
             # Analyze
             analyses = self.run_all_analyses(filepath)
