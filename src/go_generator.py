@@ -199,7 +199,7 @@ class GoCodeSynthesisPipeline:
         # gosec
         print("    → gosec")
         results.append(self.run_tool(
-            ["gosec", "./..."],
+            ["gosec", filepath],
             "gosec"
         ))
         
@@ -273,6 +273,10 @@ class GoCodeSynthesisPipeline:
             for result in results:
                 status = "✅" if result.passed else "❌"
                 print(f"    {status} {result.tool_name}")
+                if not result.passed:
+                    print(f"      {result.output}")
+                    if result.errors:
+                        print(f"      Errors: {result.errors}")
     
     def run(self, task: str) -> Tuple[str, bool, List[Dict]]:
         """
