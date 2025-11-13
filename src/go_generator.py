@@ -14,6 +14,7 @@ Example:
     python pipeline.py "Create a concurrent web scraper with rate limiting"
 """
 
+import json
 import os
 import sys
 import subprocess
@@ -53,7 +54,7 @@ class GoCodeSynthesisPipeline:
             try:
                 subprocess.run([tool, "version"], capture_output=True, timeout=2)
                 return True
-            except:
+            except Exception:
                 return False
     
     def check_prerequisites(self) -> bool:
@@ -182,7 +183,13 @@ class GoCodeSynthesisPipeline:
             ["go", "vet", filepath],
             "go vet"
         ))
-
+        # gosec
+        print("    → gosec")
+        results.append(self.run_tool(
+            ["gosec", "./..."],
+            "gosec"
+        ))
+        
         return results
     
     def analyze_memory(self, filepath: str) -> List[AnalysisResult]:
@@ -330,11 +337,15 @@ def main():
         print("\nUsage:")
         print('  python pipeline.py "Create a concurrent HTTP server with rate limiting"')
         sys.exit(1)
+    with open('tasks/tasks.txt', 'r') as f:
+        tasks = f.readlines()
 
-    task = " ".join(sys.argv[1:])
+    for task in tasks:
+        if task := task.strip():
+            print(f"\n\n=== Starting task: {task} ===\n")
 
     try:
-        _extracted_from_main_14(task)
+        _extracted_from_main_14(tasks[0])
     except KeyboardInterrupt:
         print("\n\n⚠️  Interrupted by user")
         sys.exit(130)
@@ -348,7 +359,8 @@ def main():
 # TODO Rename this here and in `main`
 def _extracted_from_main_14(task):
     # Run pipeline
-    pipeline = GoCodeSynthesisPipeline(max_iterations=5)
+    key = json.load(open('config.json')).get('API_KEY')
+    pipeline = GoCodeSynthesisPipeline(max_iterations=5, api_key=key)
     final_code, success, history = pipeline.run(task)
 
     # Save output
