@@ -11,7 +11,9 @@ Environment:
 
 Example:
     export ANTHROPIC_API_KEY='your-key'
-    python pipeline.py "Create a concurrent web scraper with rate limiting"
+    # python pipeline.py "Create a concurrent web scraper with rate limiting"
+    python pipeline.py -f taskfilename
+    
 """
 
 import json
