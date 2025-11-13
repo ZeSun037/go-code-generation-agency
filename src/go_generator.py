@@ -35,7 +35,7 @@ class AnalysisResult:
 class GoCodeSynthesisPipeline:
     """Complete pipeline for Go code generation and analysis."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-sonnet-4-20250514", max_iterations: int = 5):
+    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-haiku-20240307", max_iterations: int = 5):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY required. Set via env var or constructor.")
@@ -148,6 +148,16 @@ class GoCodeSynthesisPipeline:
             f.write(content)
         return filepath
     
+    def run_go_mod_tidy(self):
+        print("\n  🔧 Running go mod tidy...")
+        result = self.run_tool(
+            ["go", "mod", "tidy"],
+            "go mod tidy"
+        )
+        if not result.passed:
+            print("  ⚠️ go mod tidy failed")
+        return result.passed
+
     def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
         """Execute analysis tool and capture results."""
         try:
@@ -217,13 +227,14 @@ class GoCodeSynthesisPipeline:
     
     def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
         """Execute all analysis categories."""
+        self.run_go_mod_tidy()
         print("\n  🔍 Running Analysis Tools...")
 
         return {
             "concurrency": self.analyze_concurrency(filepath),
-            #"memory": self.analyze_memory(filepath),
-            #"error_handling": self.analyze_error_handling(filepath),
-            #"performance": self.analyze_performance(filepath),
+            "memory": self.analyze_memory(filepath),
+            "error_handling": self.analyze_error_handling(filepath),
+            "performance": self.analyze_performance(filepath),
         }
     
     def format_feedback(self, analyses: Dict[str, List[AnalysisResult]]) -> Optional[str]:
