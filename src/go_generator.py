@@ -14,6 +14,7 @@ Example:
     python pipeline.py "Create a concurrent web scraper with rate limiting"
 """
 
+import json
 import os
 import sys
 import subprocess
@@ -39,7 +40,7 @@ class GoCodeSynthesisPipeline:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "claude-sonnet-4-20250514",
+        model: str = "claude-3-haiku-20240307",
         max_iterations: int = 5,
     ):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
@@ -61,7 +62,7 @@ class GoCodeSynthesisPipeline:
             try:
                 subprocess.run([tool, "version"], capture_output=True, timeout=2)
                 return True
-            except:
+            except Exception:
                 return False
 
     def check_prerequisites(self) -> bool:
@@ -160,6 +161,13 @@ class GoCodeSynthesisPipeline:
             f.write(content)
         return filepath
 
+    def run_go_mod_tidy(self):
+        print("\n  🔧 Running go mod tidy...")
+        result = self.run_tool(["go", "mod", "tidy"], "go mod tidy")
+        if not result.passed:
+            print("  ⚠️ go mod tidy failed")
+        return result.passed
+
     def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
         """Execute analysis tool and capture results."""
         try:
@@ -196,6 +204,9 @@ class GoCodeSynthesisPipeline:
         # go vet
         print("    → go vet")
         results.append(self.run_tool(["go", "vet", filepath], "go vet"))
+        # gosec
+        print("    → gosec")
+        results.append(self.run_tool(["gosec", filepath], "gosec"))
 
         return results
 
@@ -225,6 +236,7 @@ class GoCodeSynthesisPipeline:
 
     def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
         """Execute all analysis categories."""
+        self.run_go_mod_tidy()
         print("\n  🔍 Running Analysis Tools...")
 
         return {
@@ -264,6 +276,10 @@ class GoCodeSynthesisPipeline:
             for result in results:
                 status = "✅" if result.passed else "❌"
                 print(f"    {status} {result.tool_name}")
+                if not result.passed:
+                    print(f"      {result.output}")
+                    if result.errors:
+                        print(f"      Errors: {result.errors}")
 
     def run(self, task: str) -> Tuple[str, bool, List[Dict]]:
         """
@@ -353,6 +369,8 @@ def main():
             '  python pipeline.py "Create a concurrent HTTP server with rate limiting"'
         )
         sys.exit(1)
+    with open("tasks/tasks.txt", "r") as f:
+        tasks = f.readlines()
 
     # task = " ".join(sys.argv[1:])
     if sys.argv[1] == "-f":
@@ -363,7 +381,7 @@ def main():
         task = " ".join(sys.argv[1:])
 
     try:
-        _extracted_from_main_14(task)
+        _extracted_from_main_14(tasks[0])
     except KeyboardInterrupt:
         print("\n\n⚠️  Interrupted by user")
         sys.exit(130)
@@ -378,9 +396,8 @@ def main():
 # TODO Rename this here and in `main`
 def _extracted_from_main_14(task):
     # Run pipeline
-    pipeline = GoCodeSynthesisPipeline(
-        max_iterations=5, model="claude-haiku-4-5-20251001"
-    )
+    key = json.load(open("config.json")).get("API_KEY")
+    pipeline = GoCodeSynthesisPipeline(max_iterations=5, api_key=key)
     final_code, success, history = pipeline.run(task)
 
     # Save output
