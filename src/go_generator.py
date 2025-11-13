@@ -36,7 +36,7 @@ class AnalysisResult:
 class GoCodeSynthesisPipeline:
     """Complete pipeline for Go code generation and analysis."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-sonnet-4-20250514", max_iterations: int = 5):
+    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-haiku-20240307", max_iterations: int = 5):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY required. Set via env var or constructor.")
@@ -62,7 +62,7 @@ class GoCodeSynthesisPipeline:
         tools = {
             "go": "Go compiler",
             "errcheck": "github.com/kisielk/errcheck@latest",
-            "errorlint": "github.com/polyfloyd/go-errorlint@latest",
+            "go-errorlint": "github.com/polyfloyd/go-errorlint@latest",
             "staticcheck": "honnef.co/go/tools/cmd/staticcheck@latest"
         }
 
@@ -93,7 +93,7 @@ class GoCodeSynthesisPipeline:
         if self.workspace and os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
     
-    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> str:
+    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> Tuple[str, str]:
         """Generate Go code using LLM."""
         try:
             import anthropic
@@ -110,6 +110,9 @@ class GoCodeSynthesisPipeline:
 
                         TASK:
                         {prompt}
+
+                        PREVIOUS CODE:
+                        {self._last_code if hasattr(self, '_last_code') else '(no previous code)'}
 
                         ANALYSIS ERRORS:
                         {feedback}
@@ -137,15 +140,25 @@ class GoCodeSynthesisPipeline:
         elif "```" in code:
             code = code.split("```")[1].split("```")[0]
         
-        return code.strip()
+        return code.strip(), message
     
-    def write_code(self, code: str) -> str:
+    def write_to_workspace(self, filename: str, content: str) -> str:
         """Write code to workspace."""
-        filepath = os.path.join(self.workspace, "main.go")
+        filepath = os.path.join(self.workspace, filename)
         with open(filepath, 'w') as f:
-            f.write(code)
+            f.write(content)
         return filepath
     
+    def run_go_mod_tidy(self):
+        print("\n  🔧 Running go mod tidy...")
+        result = self.run_tool(
+            ["go", "mod", "tidy"],
+            "go mod tidy"
+        )
+        if not result.passed:
+            print("  ⚠️ go mod tidy failed")
+        return result.passed
+
     def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
         """Execute analysis tool and capture results."""
         try:
@@ -207,7 +220,7 @@ class GoCodeSynthesisPipeline:
         # go-errorlint
         print("    → go-errorlint")
         results.append(self.run_tool(
-            ["errorlint", filepath],
+            ["go-errorlint", filepath],
             "go-errorlint"
         ))
 
@@ -221,6 +234,7 @@ class GoCodeSynthesisPipeline:
     
     def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
         """Execute all analysis categories."""
+        self.run_go_mod_tidy()
         print("\n  🔍 Running Analysis Tools...")
 
         return {
@@ -291,12 +305,17 @@ class GoCodeSynthesisPipeline:
 
             # Generate
             print(f"\n  ✨ Generating Go code...")
-            code = self.generate_code(task, feedback)
+            code, full_prompt = self.generate_code(task, feedback)
+            self._last_code = code
             final_code = code
 
             # Write
-            filepath = self.write_code(code)
+            filepath = self.write_to_workspace("main.go", code)
             print("  ✅ Code written")
+
+            # Log
+            self.write_to_workspace(f"iter_{iteration}.go", code)
+            self.write_to_workspace(f"iter_{iteration}.txt", full_prompt)
 
             # Analyze
             analyses = self.run_all_analyses(filepath)
