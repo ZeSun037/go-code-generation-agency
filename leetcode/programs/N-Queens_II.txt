@@ -1,0 +1,71 @@
+package main
+
+import (
+	"fmt"
+)
+
+func solveNQueens(n int) int {
+	var count int
+	columns := make([]bool, n)
+	diag1 := make([]bool, 2*n-1)
+	diag2 := make([]bool, 2*n-1)
+	
+	backtrack(&count, 0, n, columns, diag1, diag2)
+	return count
+}
+
+func backtrack(count *int, row int, n int, columns, diag1, diag2 []bool) {
+	if row == n {
+		*count++
+		return
+	}
+	
+	for col := 0; col < n; col++ {
+		// Check if column is safe
+		if columns[col] {
+			continue
+		}
+		
+		// Check if diagonals are safe
+		d1Idx := row - col + n - 1
+		d2Idx := row + col
+		
+		if diag1[d1Idx] || diag2[d2Idx] {
+			continue
+		}
+		
+		// Place queen
+		columns[col] = true
+		diag1[d1Idx] = true
+		diag2[d2Idx] = true
+		
+		// Recurse to next row
+		backtrack(count, row+1, n, columns, diag1, diag2)
+		
+		// Remove queen (backtrack)
+		columns[col] = false
+		diag1[d1Idx] = false
+		diag2[d2Idx] = false
+	}
+}
+
+func main() {
+	testCases := []struct {
+		n        int
+		expected int
+	}{
+		{1, 1},
+		{4, 2},
+		{8, 92},
+		{9, 352},
+	}
+	
+	for _, tc := range testCases {
+		result := solveNQueens(tc.n)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s n=%d: got %d, expected %d\n", status, tc.n, result, tc.expected)
+	}
+}

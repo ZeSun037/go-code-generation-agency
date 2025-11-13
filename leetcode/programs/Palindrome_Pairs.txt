@@ -1,0 +1,135 @@
+package main
+
+import (
+	"fmt"
+)
+
+func palindromePairs(words []string) [][]int {
+	result := [][]int{}
+	wordMap := make(map[string]int)
+	
+	// Create a map of word to index for O(1) lookup
+	for i, word := range words {
+		wordMap[word] = i
+	}
+	
+	for i, word := range words {
+		// Check all possible splits of the current word
+		for j := 0; j <= len(word); j++ {
+			left := word[:j]
+			right := word[j:]
+			
+			// Case 1: left is palindrome, find reverse of right in map
+			if isPalindrome(left) {
+				reversedRight := reverse(right)
+				if idx, exists := wordMap[reversedRight]; exists && idx != i {
+					result = append(result, []int{idx, i})
+				}
+			}
+			
+			// Case 2: right is palindrome, find reverse of left in map
+			if isPalindrome(right) {
+				reversedLeft := reverse(left)
+				if idx, exists := wordMap[reversedLeft]; exists && idx != i && j != len(word) {
+					// j != len(word) to avoid duplicate when both left and right are empty
+					result = append(result, []int{i, idx})
+				}
+			}
+		}
+	}
+	
+	return result
+}
+
+func isPalindrome(s string) bool {
+	left := 0
+	right := len(s) - 1
+	for left < right {
+		if s[left] != s[right] {
+			return false
+		}
+		left++
+		right--
+	}
+	return true
+}
+
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+func main() {
+	testCases := []struct {
+		name     string
+		words    []string
+		expected [][]int
+	}{
+		{
+			name:     "Example 1",
+			words:    []string{"abcd", "dcba", "lls", "s", "sssll"},
+			expected: [][]int{{0, 1}, {1, 0}, {3, 2}, {2, 4}},
+		},
+		{
+			name:     "Example 2",
+			words:    []string{"bat", "tab", "cat"},
+			expected: [][]int{{0, 1}, {1, 0}},
+		},
+		{
+			name:     "Example 3",
+			words:    []string{"a", ""},
+			expected: [][]int{{0, 1}, {1, 0}},
+		},
+		{
+			name:     "Single word",
+			words:    []string{"a"},
+			expected: [][]int{},
+		},
+		{
+			name:     "Palindrome word with empty",
+			words:    []string{"aba", ""},
+			expected: [][]int{{0, 1}, {1, 0}},
+		},
+	}
+
+	for _, tc := range testCases {
+		result := palindromePairs(tc.words)
+		fmt.Printf("Test: %s\n", tc.name)
+		fmt.Printf("Input: %v\n", tc.words)
+		fmt.Printf("Output: %v\n", result)
+		if isEqual(result, tc.expected) {
+			fmt.Printf("✓ PASSED\n\n")
+		} else {
+			fmt.Printf("✗ FAILED - Expected: %v\n\n", tc.expected)
+		}
+	}
+}
+
+func isEqual(a, b [][]int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	
+	// Create a set of pairs from both slices for comparison
+	aSet := make(map[string]bool)
+	bSet := make(map[string]bool)
+	
+	for _, pair := range a {
+		aSet[fmt.Sprintf("%d,%d", pair[0], pair[1])] = true
+	}
+	
+	for _, pair := range b {
+		bSet[fmt.Sprintf("%d,%d", pair[0], pair[1])] = true
+	}
+	
+	for key := range aSet {
+		if !bSet[key] {
+			return false
+		}
+	}
+	
+	return true
+}

@@ -1,0 +1,120 @@
+package main
+
+import (
+	"fmt"
+)
+
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	// Ensure nums1 is the smaller array
+	if len(nums1) > len(nums2) {
+		return findMedianSortedArrays(nums2, nums1)
+	}
+
+	m := len(nums1)
+	n := len(nums2)
+	low := 0
+	high := m
+
+	for low <= high {
+		partition1 := (low + high) / 2
+		partition2 := (m + n + 1) / 2 - partition1
+
+		// Handle edge cases
+		leftMax1 := minInt
+		if partition1 > 0 {
+			leftMax1 = nums1[partition1-1]
+		}
+
+		rightMin1 := maxInt
+		if partition1 < m {
+			rightMin1 = nums1[partition1]
+		}
+
+		leftMax2 := minInt
+		if partition2 > 0 {
+			leftMax2 = nums2[partition2-1]
+		}
+
+		rightMin2 := maxInt
+		if partition2 < n {
+			rightMin2 = nums2[partition2]
+		}
+
+		// Check if we found the correct partition
+		if leftMax1 <= rightMin2 && leftMax2 <= rightMin1 {
+			// If total length is even
+			if (m + n) % 2 == 0 {
+				return float64(max(leftMax1, leftMax2)+min(rightMin1, rightMin2)) / 2.0
+			}
+			// If total length is odd
+			return float64(max(leftMax1, leftMax2))
+		} else if leftMax1 > rightMin2 {
+			high = partition1 - 1
+		} else {
+			low = partition1 + 1
+		}
+	}
+
+	return 0.0
+}
+
+const (
+	minInt = -1<<31 - 1
+	maxInt = 1<<31 - 1
+)
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	// Test case 1
+	nums1 := []int{1, 3}
+	nums2 := []int{2}
+	result1 := findMedianSortedArrays(nums1, nums2)
+	fmt.Printf("Test 1: nums1 = %v, nums2 = %v\n", nums1, nums2)
+	fmt.Printf("Output: %.5f\n", result1)
+	fmt.Printf("Expected: 2.00000\n\n")
+
+	// Test case 2
+	nums1 = []int{1, 2}
+	nums2 = []int{3, 4}
+	result2 := findMedianSortedArrays(nums1, nums2)
+	fmt.Printf("Test 2: nums1 = %v, nums2 = %v\n", nums1, nums2)
+	fmt.Printf("Output: %.5f\n", result2)
+	fmt.Printf("Expected: 2.50000\n\n")
+
+	// Test case 3: Empty first array
+	nums1 = []int{}
+	nums2 = []int{1}
+	result3 := findMedianSortedArrays(nums1, nums2)
+	fmt.Printf("Test 3: nums1 = %v, nums2 = %v\n", nums1, nums2)
+	fmt.Printf("Output: %.5f\n", result3)
+	fmt.Printf("Expected: 1.00000\n\n")
+
+	// Test case 4: Single elements
+	nums1 = []int{2}
+	nums2 = []int{1}
+	result4 := findMedianSortedArrays(nums1, nums2)
+	fmt.Printf("Test 4: nums1 = %v, nums2 = %v\n", nums1, nums2)
+	fmt.Printf("Output: %.5f\n", result4)
+	fmt.Printf("Expected: 1.50000\n\n")
+
+	// Test case 5: Negative numbers
+	nums1 = []int{-2, -1}
+	nums2 = []int{0, 1}
+	result5 := findMedianSortedArrays(nums1, nums2)
+	fmt.Printf("Test 5: nums1 = %v, nums2 = %v\n", nums1, nums2)
+	fmt.Printf("Output: %.5f\n", result5)
+	fmt.Printf("Expected: -0.50000\n")
+}

@@ -1,0 +1,110 @@
+package main
+
+import (
+	"fmt"
+)
+
+func containsNearbyAlmostDuplicate(nums []int, indexDiff int, valueDiff int) bool {
+	if valueDiff < 0 {
+		return false
+	}
+
+	// Use a bucket approach with sliding window
+	// Bucket size is valueDiff + 1
+	bucketSize := int64(valueDiff) + 1
+	buckets := make(map[int64]int64)
+
+	for i := 0; i < len(nums); i++ {
+		num := int64(nums[i])
+
+		// Calculate bucket ID
+		bucketID := getBucketID(num, bucketSize)
+
+		// Check if same bucket exists (definitely within valueDiff)
+		if _, exists := buckets[bucketID]; exists {
+			return true
+		}
+
+		// Check adjacent buckets
+		if prevBucket, exists := buckets[bucketID-1]; exists {
+			if abs(num-prevBucket) <= int64(valueDiff) {
+				return true
+			}
+		}
+
+		if nextBucket, exists := buckets[bucketID+1]; exists {
+			if abs(num-nextBucket) <= int64(valueDiff) {
+				return true
+			}
+		}
+
+		// Add current number to bucket
+		buckets[bucketID] = num
+
+		// Remove element outside the indexDiff window
+		if i >= indexDiff {
+			oldNum := int64(nums[i-indexDiff])
+			oldBucketID := getBucketID(oldNum, bucketSize)
+			delete(buckets, oldBucketID)
+		}
+	}
+
+	return false
+}
+
+func getBucketID(num int64, bucketSize int64) int64 {
+	if num >= 0 {
+		return num / bucketSize
+	}
+	// Handle negative numbers correctly
+	return (num+1)/bucketSize - 1
+}
+
+func abs(x int64) int64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func main() {
+	// Test case 1
+	nums1 := []int{1, 2, 3, 1}
+	indexDiff1 := 3
+	valueDiff1 := 0
+	result1 := containsNearbyAlmostDuplicate(nums1, indexDiff1, valueDiff1)
+	fmt.Printf("Test 1 - nums: %v, indexDiff: %d, valueDiff: %d\n", nums1, indexDiff1, valueDiff1)
+	fmt.Printf("Result: %v (Expected: true)\n\n", result1)
+
+	// Test case 2
+	nums2 := []int{1, 5, 9, 1, 5, 9}
+	indexDiff2 := 2
+	valueDiff2 := 3
+	result2 := containsNearbyAlmostDuplicate(nums2, indexDiff2, valueDiff2)
+	fmt.Printf("Test 2 - nums: %v, indexDiff: %d, valueDiff: %d\n", nums2, indexDiff2, valueDiff2)
+	fmt.Printf("Result: %v (Expected: false)\n\n", result2)
+
+	// Test case 3: Edge case with negative numbers
+	nums3 := []int{-2147483648, 2147483647}
+	indexDiff3 := 1
+	valueDiff3 := 2147483647
+	result3 := containsNearbyAlmostDuplicate(nums3, indexDiff3, valueDiff3)
+	fmt.Printf("Test 3 - nums: %v, indexDiff: %d, valueDiff: %d\n", nums3, indexDiff3, valueDiff3)
+	fmt.Printf("Result: %v (Expected: false)\n\n", result3)
+
+	// Test case 4: Simple duplicate within range
+	nums4 := []int{99, 99}
+	indexDiff4 := 2
+	valueDiff4 := 2
+	result4 := containsNearbyAlmostDuplicate(nums4, indexDiff4, valueDiff4)
+	fmt.Printf("Test 4 - nums: %v, indexDiff: %d, valueDiff: %d\n", nums4, indexDiff4, valueDiff4)
+	fmt.Printf("Result: %v (Expected: true)\n\n", result4)
+
+	// Test case 5: Values within range but indices too far
+	nums5 := []int{1, 2, 3, 4, 5}
+	indexDiff5 := 2
+	valueDiff5 := 3
+	result5 := containsNearbyAlmostDuplicate(nums5, indexDiff5, valueDiff5)
+	fmt.Printf("Test 5 - nums: %v, indexDiff: %d, valueDiff: %d\n", nums5, indexDiff5, valueDiff5)
+	fmt.Printf("Result: %v (Expected: true)\n\n", result5)
+}

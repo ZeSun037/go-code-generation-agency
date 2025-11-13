@@ -1,0 +1,118 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+type MedianFinder struct {
+	window []int
+	k      int
+}
+
+func (mf *MedianFinder) getMedian() float64 {
+	sorted := make([]int, len(mf.window))
+	copy(sorted, mf.window)
+	sort.Ints(sorted)
+
+	n := len(sorted)
+	if n%2 == 1 {
+		return float64(sorted[n/2])
+	}
+	return float64(sorted[n/2-1]+sorted[n/2]) / 2.0
+}
+
+func medianSlidingWindow(nums []int, k int) []float64 {
+	if len(nums) == 0 || k == 0 || k > len(nums) {
+		return []float64{}
+	}
+
+	result := make([]float64, 0, len(nums)-k+1)
+	mf := &MedianFinder{
+		window: make([]int, 0, k),
+		k:      k,
+	}
+
+	for i := 0; i < len(nums); i++ {
+		if len(mf.window) < k {
+			mf.window = append(mf.window, nums[i])
+		} else {
+			mf.window = append(mf.window, nums[i])
+			mf.window = mf.window[1:]
+		}
+
+		if len(mf.window) == k {
+			result = append(result, mf.getMedian())
+		}
+	}
+
+	return result
+}
+
+func main() {
+	testCases := []struct {
+		nums     []int
+		k        int
+		expected []float64
+	}{
+		{
+			nums:     []int{1, 3, -1, -3, 5, 3, 6, 7},
+			k:        3,
+			expected: []float64{1.0, -1.0, -1.0, 3.0, 5.0, 6.0},
+		},
+		{
+			nums:     []int{1, 2, 3, 4, 2, 3, 1, 4, 2},
+			k:        3,
+			expected: []float64{2.0, 3.0, 3.0, 3.0, 2.0, 3.0, 2.0},
+		},
+		{
+			nums:     []int{1},
+			k:        1,
+			expected: []float64{1.0},
+		},
+		{
+			nums:     []int{1, 2},
+			k:        1,
+			expected: []float64{1.0, 2.0},
+		},
+		{
+			nums:     []int{1, 2, 3, 4},
+			k:        2,
+			expected: []float64{1.5, 2.5, 3.5},
+		},
+	}
+
+	for i, tc := range testCases {
+		result := medianSlidingWindow(tc.nums, tc.k)
+		fmt.Printf("Test case %d:\n", i+1)
+		fmt.Printf("Input: nums = %v, k = %d\n", tc.nums, tc.k)
+		fmt.Printf("Output: %v\n", result)
+		fmt.Printf("Expected: %v\n", tc.expected)
+
+		match := true
+		if len(result) != len(tc.expected) {
+			match = false
+		} else {
+			for j := range result {
+				if abs(result[j]-tc.expected[j]) > 1e-5 {
+					match = false
+					break
+				}
+			}
+		}
+
+		if match {
+			fmt.Println("✓ PASS")
+		} else {
+			fmt.Println("✗ FAIL")
+		}
+		fmt.Println()
+	}
+}
+
+func abs(x float64) float64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

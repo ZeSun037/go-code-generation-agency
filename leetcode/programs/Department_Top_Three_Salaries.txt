@@ -1,0 +1,112 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+type Employee struct {
+	ID           int
+	Name         string
+	Salary       int
+	DepartmentID int
+}
+
+type Department struct {
+	ID   int
+	Name string
+}
+
+type Result struct {
+	Department string
+	Employee   string
+	Salary     int
+}
+
+func getDepartmentTopThreeSalaries(employees []Employee, departments []Department) []Result {
+	// Create a map of department ID to department name
+	deptMap := make(map[int]string)
+	for _, dept := range departments {
+		deptMap[dept.ID] = dept.Name
+	}
+
+	// Group employees by department
+	deptEmployees := make(map[int][]Employee)
+	for _, emp := range employees {
+		deptEmployees[emp.DepartmentID] = append(deptEmployees[emp.DepartmentID], emp)
+	}
+
+	var results []Result
+
+	// Process each department
+	for deptID, emps := range deptEmployees {
+		// Get unique salaries for this department
+		salarySet := make(map[int]bool)
+		for _, emp := range emps {
+			salarySet[emp.Salary] = true
+		}
+
+		// Convert to sorted slice (descending)
+		var uniqueSalaries []int
+		for salary := range salarySet {
+			uniqueSalaries = append(uniqueSalaries, salary)
+		}
+		sort.Slice(uniqueSalaries, func(i, j int) bool {
+			return uniqueSalaries[i] > uniqueSalaries[j]
+		})
+
+		// Get top 3 salaries
+		topThree := make(map[int]bool)
+		for i := 0; i < 3 && i < len(uniqueSalaries); i++ {
+			topThree[uniqueSalaries[i]] = true
+		}
+
+		// Add employees with top 3 salaries to results
+		for _, emp := range emps {
+			if topThree[emp.Salary] {
+				results = append(results, Result{
+					Department: deptMap[deptID],
+					Employee:   emp.Name,
+					Salary:     emp.Salary,
+				})
+			}
+		}
+	}
+
+	return results
+}
+
+func main() {
+	// Test case from example
+	employees := []Employee{
+		{1, "Joe", 85000, 1},
+		{2, "Henry", 80000, 2},
+		{3, "Sam", 60000, 2},
+		{4, "Max", 90000, 1},
+		{5, "Janet", 69000, 1},
+		{6, "Randy", 85000, 1},
+		{7, "Will", 70000, 1},
+	}
+
+	departments := []Department{
+		{1, "IT"},
+		{2, "Sales"},
+	}
+
+	results := getDepartmentTopThreeSalaries(employees, departments)
+
+	// Sort results for consistent output
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].Department != results[j].Department {
+			return results[i].Department < results[j].Department
+		}
+		return results[i].Salary > results[j].Salary
+	})
+
+	// Print results
+	fmt.Println("Department | Employee | Salary")
+	fmt.Println("-----------+----------+--------")
+	for _, r := range results {
+		fmt.Printf("%-10s | %-8s | %d\n", r.Department, r.Employee, r.Salary)
+	}
+}

@@ -1,0 +1,102 @@
+package main
+
+import (
+	"fmt"
+)
+
+func kthSmallestPath(destination []int, k int) string {
+	row := destination[0]
+	col := destination[1]
+
+	// Precompute factorials for combination calculation
+	factorial := make([]int64, row+col+1)
+	factorial[0] = 1
+	for i := 1; i <= row+col; i++ {
+		factorial[i] = factorial[i-1] * int64(i)
+	}
+
+	// Function to calculate nCr (n choose r)
+	nCr := func(n, r int) int64 {
+		if r > n || r < 0 {
+			return 0
+		}
+		if r == 0 || r == n {
+			return 1
+		}
+		return factorial[n] / (factorial[r] * factorial[n-r])
+	}
+
+	result := make([]byte, 0, row+col)
+	remainingH := col // number of 'H's remaining
+	remainingV := row // number of 'V's remaining
+	remainingK := k
+
+	// Greedily build the kth lexicographically smallest string
+	for remainingH > 0 || remainingV > 0 {
+		if remainingH == 0 {
+			// Only 'V's left
+			for i := 0; i < remainingV; i++ {
+				result = append(result, 'V')
+			}
+			break
+		}
+
+		if remainingV == 0 {
+			// Only 'H's left
+			for i := 0; i < remainingH; i++ {
+				result = append(result, 'H')
+			}
+			break
+		}
+
+		// Count how many strings start with 'H'
+		// If we place 'H' first, we need to arrange (remainingH-1) 'H's and remainingV 'V's
+		countStartingWithH := nCr(remainingH-1+remainingV, remainingV)
+
+		if int64(remainingK) <= countStartingWithH {
+			// The kth string starts with 'H'
+			result = append(result, 'H')
+			remainingH--
+		} else {
+			// The kth string starts with 'V'
+			result = append(result, 'V')
+			remainingV--
+			remainingK -= int(countStartingWithH)
+		}
+	}
+
+	return string(result)
+}
+
+func main() {
+	// Test cases
+	testCases := []struct {
+		destination []int
+		k           int
+		expected    string
+	}{
+		{[]int{2, 3}, 1, "HHHVV"},
+		{[]int{2, 3}, 2, "HHVHV"},
+		{[]int{2, 3}, 3, "HHVVH"},
+		{[]int{1, 1}, 1, "HV"},
+		{[]int{1, 2}, 1, "HHV"},
+		{[]int{1, 2}, 2, "HVH"},
+		{[]int{1, 2}, 3, "VHH"},
+	}
+
+	fmt.Println("Testing kthSmallestPath function:")
+	fmt.Println()
+
+	for i, tc := range testCases {
+		result := kthSmallestPath(tc.destination, tc.k)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s\n", i+1, status)
+		fmt.Printf("  Destination: %v, k: %d\n", tc.destination, tc.k)
+		fmt.Printf("  Expected: %s\n", tc.expected)
+		fmt.Printf("  Got:      %s\n", result)
+		fmt.Println()
+	}
+}

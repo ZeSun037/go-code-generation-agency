@@ -1,0 +1,56 @@
+package main
+
+import (
+	"fmt"
+)
+
+func countDigitOne(n int) int {
+	if n < 1 {
+		return 0
+	}
+
+	count := 0
+	factor := 1
+
+	for factor <= n {
+		divideHigher := n / (factor * 10)
+		modCurrent := (n / factor) % 10
+		divideLower := n % factor
+
+		if modCurrent == 0 {
+			count += divideHigher * factor
+		} else if modCurrent == 1 {
+			count += divideHigher*factor + divideLower + 1
+		} else {
+			count += (divideHigher + 1) * factor
+		}
+
+		factor *= 10
+	}
+
+	return count
+}
+
+func main() {
+	testCases := []struct {
+		input    int
+		expected int
+	}{
+		{13, 6},
+		{0, 0},
+		{1, 1},
+		{10, 2},
+		{11, 4},
+		{100, 21},
+		{824883294, 0},
+	}
+
+	for _, tc := range testCases {
+		result := countDigitOne(tc.input)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s Input: %d, Expected: %d, Got: %d\n", status, tc.input, tc.expected, result)
+	}
+}

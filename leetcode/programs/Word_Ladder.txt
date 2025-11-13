@@ -1,0 +1,102 @@
+package main
+
+import (
+	"fmt"
+	"slices"
+)
+
+func ladderLength(beginWord string, endWord string, wordList []string) int {
+	// Check if endWord exists in wordList
+	if !slices.Contains(wordList, endWord) {
+		return 0
+	}
+
+	// Create a set of words for O(1) lookup
+	wordSet := make(map[string]bool)
+	for _, word := range wordList {
+		wordSet[word] = true
+	}
+
+	// BFS to find shortest path
+	queue := []string{beginWord}
+	visited := make(map[string]bool)
+	visited[beginWord] = true
+	level := 1
+
+	for len(queue) > 0 {
+		levelSize := len(queue)
+
+		for i := 0; i < levelSize; i++ {
+			currentWord := queue[0]
+			queue = queue[1:]
+
+			if currentWord == endWord {
+				return level
+			}
+
+			// Get all neighbors (words that differ by one letter)
+			neighbors := getNeighbors(currentWord, wordSet)
+			for _, neighbor := range neighbors {
+				if !visited[neighbor] {
+					visited[neighbor] = true
+					queue = append(queue, neighbor)
+				}
+			}
+		}
+
+		level++
+	}
+
+	return 0
+}
+
+func getNeighbors(word string, wordSet map[string]bool) []string {
+	var neighbors []string
+	wordChars := []rune(word)
+
+	for i := 0; i < len(wordChars); i++ {
+		for c := 'a'; c <= 'z'; c++ {
+			if c != wordChars[i] {
+				wordChars[i] = c
+				newWord := string(wordChars)
+
+				if wordSet[newWord] {
+					neighbors = append(neighbors, newWord)
+				}
+			}
+		}
+		// Restore original character
+		wordChars[i] = rune(word[i])
+	}
+
+	return neighbors
+}
+
+func main() {
+	// Example 1
+	beginWord1 := "hit"
+	endWord1 := "cog"
+	wordList1 := []string{"hot", "dot", "dog", "lot", "log", "cog"}
+	result1 := ladderLength(beginWord1, endWord1, wordList1)
+	fmt.Printf("Example 1: beginWord = \"%s\", endWord = \"%s\", wordList = %v\n", beginWord1, endWord1, wordList1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 5\n\n")
+
+	// Example 2
+	beginWord2 := "hit"
+	endWord2 := "cog"
+	wordList2 := []string{"hot", "dot", "dog", "lot", "log"}
+	result2 := ladderLength(beginWord2, endWord2, wordList2)
+	fmt.Printf("Example 2: beginWord = \"%s\", endWord = \"%s\", wordList = %v\n", beginWord2, endWord2, wordList2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 0\n\n")
+
+	// Additional test case
+	beginWord3 := "red"
+	endWord3 := "tax"
+	wordList3 := []string{"ted", "tex", "red", "tax", "tad", "tax"}
+	result3 := ladderLength(beginWord3, endWord3, wordList3)
+	fmt.Printf("Example 3: beginWord = \"%s\", endWord = \"%s\", wordList = %v\n", beginWord3, endWord3, wordList3)
+	fmt.Printf("Output: %d\n", result3)
+	fmt.Printf("Expected: 5\n")
+}

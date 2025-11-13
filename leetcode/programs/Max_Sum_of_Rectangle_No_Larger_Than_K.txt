@@ -1,0 +1,131 @@
+package main
+
+import (
+	"fmt"
+	"math"
+	"sort"
+)
+
+func maxSumSubmatrix(matrix [][]int, k int) int {
+	if len(matrix) == 0 || len(matrix[0]) == 0 {
+		return 0
+	}
+
+	m := len(matrix)
+	n := len(matrix[0])
+	maxSum := math.MinInt32
+
+	// Iterate through all possible top rows
+	for top := 0; top < m; top++ {
+		// Initialize column sums array
+		columnSums := make([]int, n)
+
+		// Iterate through all possible bottom rows
+		for bottom := top; bottom < m; bottom++ {
+			// Add current row to column sums
+			for col := 0; col < n; col++ {
+				columnSums[col] += matrix[bottom][col]
+			}
+
+			// Find max sum of subarray in columnSums that is <= k
+			currentMax := maxSumSubarray(columnSums, k)
+			if currentMax > maxSum {
+				maxSum = currentMax
+			}
+		}
+	}
+
+	return maxSum
+}
+
+// maxSumSubarray finds the maximum sum of a contiguous subarray that doesn't exceed k
+// Uses a balanced BST approach with sorted slice to maintain O(n log n) complexity
+func maxSumSubarray(arr []int, k int) int {
+	maxSum := math.MinInt32
+	prefixSum := 0
+
+	// Use a sorted slice to simulate a balanced BST
+	sortedSums := []int{0}
+
+	for _, num := range arr {
+		prefixSum += num
+
+		// Binary search to find the smallest sum >= (prefixSum - k)
+		target := prefixSum - k
+		idx := lowerBound(sortedSums, target)
+
+		if idx < len(sortedSums) {
+			currentSum := prefixSum - sortedSums[idx]
+			if currentSum > maxSum {
+				maxSum = currentSum
+			}
+		}
+
+		// Insert prefixSum into sorted slice
+		sortedSums = insertSorted(sortedSums, prefixSum)
+	}
+
+	return maxSum
+}
+
+// lowerBound performs binary search to find the first element >= target
+func lowerBound(arr []int, target int) int {
+	left, right := 0, len(arr)
+	for left < right {
+		mid := (left + right) / 2
+		if arr[mid] < target {
+			left = mid + 1
+		} else {
+			right = mid
+		}
+	}
+	return left
+}
+
+// insertSorted inserts a value into a sorted slice maintaining order
+func insertSorted(arr []int, val int) []int {
+	idx := sort.SearchInts(arr, val)
+	arr = append(arr[:idx], append([]int{val}, arr[idx:]...)...)
+	return arr
+}
+
+func main() {
+	// Test case 1
+	matrix1 := [][]int{{1, 0, 1}, {0, -2, 3}}
+	k1 := 2
+	result1 := maxSumSubmatrix(matrix1, k1)
+	fmt.Printf("Test 1 - Input: matrix = %v, k = %d\n", matrix1, k1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 2\n\n")
+
+	// Test case 2
+	matrix2 := [][]int{{2, 2, -1}}
+	k2 := 3
+	result2 := maxSumSubmatrix(matrix2, k2)
+	fmt.Printf("Test 2 - Input: matrix = %v, k = %d\n", matrix2, k2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 3\n\n")
+
+	// Test case 3: Single element
+	matrix3 := [][]int{{5}}
+	k3 := 10
+	result3 := maxSumSubmatrix(matrix3, k3)
+	fmt.Printf("Test 3 - Input: matrix = %v, k = %d\n", matrix3, k3)
+	fmt.Printf("Output: %d\n", result3)
+	fmt.Printf("Expected: 5\n\n")
+
+	// Test case 4: Negative numbers
+	matrix4 := [][]int{{-1, -2}, {-3, -4}}
+	k4 := -1
+	result4 := maxSumSubmatrix(matrix4, k4)
+	fmt.Printf("Test 4 - Input: matrix = %v, k = %d\n", matrix4, k4)
+	fmt.Printf("Output: %d\n", result4)
+	fmt.Printf("Expected: -1\n\n")
+
+	// Test case 5: Mixed values
+	matrix5 := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	k5 := 15
+	result5 := maxSumSubmatrix(matrix5, k5)
+	fmt.Printf("Test 5 - Input: matrix = %v, k = %d\n", matrix5, k5)
+	fmt.Printf("Output: %d\n", result5)
+}

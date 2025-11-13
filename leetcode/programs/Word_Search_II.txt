@@ -1,0 +1,118 @@
+package main
+
+import (
+	"fmt"
+)
+
+type TrieNode struct {
+	children map[byte]*TrieNode
+	word     string
+	isEnd    bool
+}
+
+func findWords(board [][]byte, words []string) []string {
+	if len(board) == 0 || len(board[0]) == 0 || len(words) == 0 {
+		return []string{}
+	}
+
+	root := buildTrie(words)
+	result := make([]string, 0)
+	visited := make([][]bool, len(board))
+	for i := range visited {
+		visited[i] = make([]bool, len(board[0]))
+	}
+
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[0]); j++ {
+			dfs(board, i, j, root, visited, &result)
+		}
+	}
+
+	return result
+}
+
+func buildTrie(words []string) *TrieNode {
+	root := &TrieNode{
+		children: make(map[byte]*TrieNode),
+		word:     "",
+		isEnd:    false,
+	}
+
+	for _, word := range words {
+		node := root
+		for i := 0; i < len(word); i++ {
+			ch := word[i]
+			if _, exists := node.children[ch]; !exists {
+				node.children[ch] = &TrieNode{
+					children: make(map[byte]*TrieNode),
+					word:     "",
+					isEnd:    false,
+				}
+			}
+			node = node.children[ch]
+		}
+		node.word = word
+		node.isEnd = true
+	}
+
+	return root
+}
+
+func dfs(board [][]byte, i int, j int, node *TrieNode, visited [][]bool, result *[]string) {
+	if i < 0 || i >= len(board) || j < 0 || j >= len(board[0]) || visited[i][j] {
+		return
+	}
+
+	ch := board[i][j]
+	if childNode, exists := node.children[ch]; exists {
+		visited[i][j] = true
+
+		if childNode.isEnd && childNode.word != "" {
+			*result = append(*result, childNode.word)
+			childNode.word = ""
+			childNode.isEnd = false
+		}
+
+		dfs(board, i+1, j, childNode, visited, result)
+		dfs(board, i-1, j, childNode, visited, result)
+		dfs(board, i, j+1, childNode, visited, result)
+		dfs(board, i, j-1, childNode, visited, result)
+
+		visited[i][j] = false
+	}
+}
+
+func main() {
+	board1 := [][]byte{
+		{'o', 'a', 'a', 'n'},
+		{'e', 't', 'a', 'e'},
+		{'i', 'h', 'k', 'r'},
+		{'i', 'f', 'l', 'v'},
+	}
+	words1 := []string{"oath", "pea", "eat", "rain"}
+	result1 := findWords(board1, words1)
+	fmt.Println("Test 1:")
+	fmt.Println("Input: board = [[o,a,a,n],[e,t,a,e],[i,h,k,r],[i,f,l,v]], words = [oath,pea,eat,rain]")
+	fmt.Println("Output:", result1)
+	fmt.Println()
+
+	board2 := [][]byte{
+		{'a', 'b'},
+		{'c', 'd'},
+	}
+	words2 := []string{"abcb"}
+	result2 := findWords(board2, words2)
+	fmt.Println("Test 2:")
+	fmt.Println("Input: board = [[a,b],[c,d]], words = [abcb]")
+	fmt.Println("Output:", result2)
+	fmt.Println()
+
+	board3 := [][]byte{
+		{'a', 'a'},
+	}
+	words3 := []string{"aa", "aaa"}
+	result3 := findWords(board3, words3)
+	fmt.Println("Test 3:")
+	fmt.Println("Input: board = [[a,a]], words = [aa,aaa]")
+	fmt.Println("Output:", result3)
+}

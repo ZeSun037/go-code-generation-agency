@@ -1,0 +1,275 @@
+package main
+
+import (
+	"fmt"
+	"math/big"
+)
+
+func maxPoints(points [][]int) int {
+	if len(points) <= 2 {
+		return len(points)
+	}
+
+	maxCount := 1
+
+	for i := 0; i < len(points); i++ {
+		slopes := make(map[string]int)
+		duplicate := 0
+		currentMax := 0
+
+		for j := 0; j < len(points); j++ {
+			if i == j {
+				continue
+			}
+
+			dx := points[j][0] - points[i][0]
+			dy := points[j][1] - points[i][1]
+
+			if dx == 0 && dy == 0 {
+				duplicate++
+				continue
+			}
+
+			gcd := gcdInt(dx, dy)
+			dx /= gcd
+			dy /= gcd
+
+			if dx < 0 || (dx == 0 && dy < 0) {
+				dx = -dx
+				dy = -dy
+			}
+
+			key := fmt.Sprintf("%d/%d", dy, dx)
+			slopes[key]++
+
+			if slopes[key] > currentMax {
+				currentMax = slopes[key]
+			}
+		}
+
+		if currentMax+duplicate+1 > maxCount {
+			maxCount = currentMax + duplicate + 1
+		}
+	}
+
+	return maxCount
+}
+
+func gcdInt(a, b int) int {
+	if a < 0 {
+		a = -a
+	}
+	if b < 0 {
+		b = -b
+	}
+
+	for b != 0 {
+		temp := b
+		b = a % b
+		a = temp
+	}
+	return a
+}
+
+func maxPointsWithBigInt(points [][]int) int {
+	if len(points) <= 2 {
+		return len(points)
+	}
+
+	maxCount := 1
+
+	for i := 0; i < len(points); i++ {
+		slopes := make(map[string]int)
+		duplicate := 0
+		currentMax := 0
+
+		for j := 0; j < len(points); j++ {
+			if i == j {
+				continue
+			}
+
+			dx := int64(points[j][0] - points[i][0])
+			dy := int64(points[j][1] - points[i][1])
+
+			if dx == 0 && dy == 0 {
+				duplicate++
+				continue
+			}
+
+			gcdVal := gcdInt64(dx, dy)
+			dx /= gcdVal
+			dy /= gcdVal
+
+			if dx < 0 || (dx == 0 && dy < 0) {
+				dx = -dx
+				dy = -dy
+			}
+
+			key := fmt.Sprintf("%d/%d", dy, dx)
+			slopes[key]++
+
+			if slopes[key] > currentMax {
+				currentMax = slopes[key]
+			}
+		}
+
+		if currentMax+duplicate+1 > maxCount {
+			maxCount = currentMax + duplicate + 1
+		}
+	}
+
+	return maxCount
+}
+
+func gcdInt64(a, b int64) int64 {
+	if a < 0 {
+		a = -a
+	}
+	if b < 0 {
+		b = -b
+	}
+
+	for b != 0 {
+		temp := b
+		b = a % b
+		a = temp
+	}
+	return a
+}
+
+func maxPointsWithRational(points [][]int) int {
+	if len(points) <= 2 {
+		return len(points)
+	}
+
+	maxCount := 1
+
+	for i := 0; i < len(points); i++ {
+		slopes := make(map[string]int)
+		duplicate := 0
+		currentMax := 0
+
+		for j := 0; j < len(points); j++ {
+			if i == j {
+				continue
+			}
+
+			dx := int64(points[j][0] - points[i][0])
+			dy := int64(points[j][1] - points[i][1])
+
+			if dx == 0 && dy == 0 {
+				duplicate++
+				continue
+			}
+
+			numerator := big.NewInt(dy)
+			denominator := big.NewInt(dx)
+
+			if denominator.Sign() == 0 {
+				denominator = big.NewInt(1)
+				numerator = big.NewInt(0)
+			} else if denominator.Sign() < 0 {
+				numerator.Neg(numerator)
+				denominator.Neg(denominator)
+			}
+
+			gcd := big.NewInt(0)
+			gcd.GCD(nil, nil, numerator, denominator)
+			if gcd.Cmp(big.NewInt(0)) != 0 {
+				numerator.Div(numerator, gcd)
+				denominator.Div(denominator, gcd)
+			}
+
+			key := fmt.Sprintf("%s/%s", numerator.String(), denominator.String())
+			slopes[key]++
+
+			if slopes[key] > currentMax {
+				currentMax = slopes[key]
+			}
+		}
+
+		if currentMax+duplicate+1 > maxCount {
+			maxCount = currentMax + duplicate + 1
+		}
+	}
+
+	return maxCount
+}
+
+func main() {
+	testCases := []struct {
+		name     string
+		points   [][]int
+		expected int
+	}{
+		{
+			name:     "Example 1",
+			points:   [][]int{{1, 1}, {2, 2}, {3, 3}},
+			expected: 3,
+		},
+		{
+			name:     "Example 2",
+			points:   [][]int{{1, 1}, {3, 2}, {5, 3}, {4, 1}, {2, 3}, {1, 4}},
+			expected: 4,
+		},
+		{
+			name:     "Single point",
+			points:   [][]int{{1, 1}},
+			expected: 1,
+		},
+		{
+			name:     "Two points",
+			points:   [][]int{{1, 1}, {2, 2}},
+			expected: 2,
+		},
+		{
+			name:     "All same point",
+			points:   [][]int{{0, 0}, {0, 0}, {0, 0}},
+			expected: 3,
+		},
+		{
+			name:     "Horizontal line",
+			points:   [][]int{{0, 0}, {1, 0}, {2, 0}},
+			expected: 3,
+		},
+		{
+			name:     "Vertical line",
+			points:   [][]int{{0, 0}, {0, 1}, {0, 2}},
+			expected: 3,
+		},
+		{
+			name:     "No three collinear",
+			points:   [][]int{{0, 0}, {1, 1}, {0, 1}, {1, 0}},
+			expected: 2,
+		},
+	}
+
+	for _, tc := range testCases {
+		result := maxPoints(tc.points)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s %s: got %d, expected %d\n", status, tc.name, result, tc.expected)
+	}
+
+	fmt.Println("\n--- Alternative implementations ---")
+	for _, tc := range testCases {
+		result := maxPointsWithBigInt(tc.points)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s %s (BigInt): got %d, expected %d\n", status, tc.name, result, tc.expected)
+	}
+
+	fmt.Println("\n--- Rational implementation ---")
+	for _, tc := range testCases {
+		result := maxPointsWithRational(tc.points)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s %s (Rational): got %d, expected %d\n", status, tc.name, result, tc.expected)
+	}
+}

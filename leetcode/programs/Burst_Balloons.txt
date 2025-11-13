@@ -1,0 +1,93 @@
+package main
+
+import (
+	"fmt"
+)
+
+func maxCoins(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+
+	// Create a new array with padding of 1s at both ends
+	// This handles the edge cases where we burst balloons at the boundaries
+	balloons := make([]int, len(nums)+2)
+	balloons[0] = 1
+	balloons[len(balloons)-1] = 1
+	for i, num := range nums {
+		balloons[i+1] = num
+	}
+
+	n := len(balloons)
+	// dp[i][j] represents the maximum coins we can get by bursting all balloons
+	// between index i and j (exclusive), assuming balloons at i and j are not burst
+	dp := make([][]int, n)
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+
+	// len represents the distance between i and j
+	// We iterate from smaller gaps to larger gaps
+	for len := 2; len < n; len++ {
+		for i := 0; i+len < n; i++ {
+			j := i + len
+			// Try bursting each balloon k between i and j as the last balloon to burst
+			for k := i + 1; k < j; k++ {
+				// When balloon k is burst last between i and j:
+				// - All balloons between i and k are already burst
+				// - All balloons between k and j are already burst
+				// - Balloons at i and j are still there
+				// - So we get: balloons[i] * balloons[k] * balloons[j] coins
+				coins := balloons[i]*balloons[k]*balloons[j] + dp[i][k] + dp[k][j]
+				dp[i][j] = max(dp[i][j], coins)
+			}
+		}
+	}
+
+	// The answer is bursting all balloons between index 0 and n-1
+	// (which are the padding 1s we added)
+	return dp[0][n-1]
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	// Test case 1
+	nums1 := []int{3, 1, 5, 8}
+	result1 := maxCoins(nums1)
+	fmt.Printf("Input: %v\n", nums1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 167\n\n")
+
+	// Test case 2
+	nums2 := []int{1, 5}
+	result2 := maxCoins(nums2)
+	fmt.Printf("Input: %v\n", nums2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 10\n\n")
+
+	// Test case 3: Single balloon
+	nums3 := []int{5}
+	result3 := maxCoins(nums3)
+	fmt.Printf("Input: %v\n", nums3)
+	fmt.Printf("Output: %d\n", result3)
+	fmt.Printf("Expected: 5\n\n")
+
+	// Test case 4: All zeros except one
+	nums4 := []int{0, 0, 0}
+	result4 := maxCoins(nums4)
+	fmt.Printf("Input: %v\n", nums4)
+	fmt.Printf("Output: %d\n", result4)
+	fmt.Printf("Expected: 0\n\n")
+
+	// Test case 5: Larger case
+	nums5 := []int{9, 76, 64, 21, 97, 60}
+	result5 := maxCoins(nums5)
+	fmt.Printf("Input: %v\n", nums5)
+	fmt.Printf("Output: %d\n", result5)
+}

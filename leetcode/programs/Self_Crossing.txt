@@ -1,0 +1,66 @@
+package main
+
+import "fmt"
+
+func isSelfCrossing(distance []int) bool {
+	n := len(distance)
+	if n < 4 {
+		return false
+	}
+
+	for i := 3; i < n; i++ {
+		// Fourth line crosses first line
+		if i >= 3 {
+			if distance[i] >= distance[i-2] && distance[i-1] <= distance[i-3] {
+				return true
+			}
+		}
+
+		// Fifth line crosses second line
+		if i >= 4 {
+			if distance[i-1] == distance[i-3] &&
+				distance[i] + distance[i-4] >= distance[i-2] {
+				return true
+			}
+		}
+
+		// Sixth line crosses third line
+		if i >= 5 {
+			if distance[i-2] >= distance[i-4] &&
+				distance[i] + distance[i-4] >= distance[i-2] &&
+				distance[i-1] + distance[i-5] >= distance[i-3] &&
+				distance[i-3] >= distance[i-1] {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func main() {
+	testCases := []struct {
+		distance []int
+		expected bool
+	}{
+		{[]int{2, 1, 1, 2}, true},
+		{[]int{1, 2, 3, 4}, false},
+		{[]int{1, 1, 1, 2, 1}, true},
+		{[]int{1, 1, 2}, false},
+		{[]int{1, 1, 1, 1}, true},
+		{[]int{1}, false},
+		{[]int{1, 1}, false},
+		{[]int{2, 2, 3, 2}, false},
+		{[]int{1, 2, 2, 3, 2}, false},
+		{[]int{1, 1, 2, 1, 1}, true},
+	}
+
+	for _, tc := range testCases {
+		result := isSelfCrossing(tc.distance)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s distance: %v, expected: %v, got: %v\n", status, tc.distance, tc.expected, result)
+	}
+}

@@ -1,0 +1,115 @@
+package main
+
+import (
+	"fmt"
+	"math/big"
+	"strings"
+)
+
+func closestPalindrome(n string) string {
+	length := len(n)
+	isOdd := length%2 == 1
+	mid := length / 2
+
+	candidates := []string{}
+
+	// Candidate 1: 999...9 (length - 1 digits)
+	candidates = append(candidates, strings.Repeat("9", length-1))
+
+	// Candidate 2: 100...001 (length + 1 digits)
+	candidates = append(candidates, "1"+strings.Repeat("0", length-1)+"1")
+
+	// Candidate 3 & 4: Mirror the first half and increment/decrement
+	var prefix string
+	if isOdd {
+		prefix = n[:mid+1]
+	} else {
+		prefix = n[:mid]
+	}
+
+	// Try prefix as is
+	palin := getPalindrome(prefix, isOdd)
+	candidates = append(candidates, palin)
+
+	// Try prefix + 1
+	prefixNum := new(big.Int)
+	prefixNum.SetString(prefix, 10)
+	prefixNum.Add(prefixNum, big.NewInt(1))
+	palin = getPalindrome(prefixNum.String(), isOdd)
+	candidates = append(candidates, palin)
+
+	// Try prefix - 1
+	prefixNum = new(big.Int)
+	prefixNum.SetString(prefix, 10)
+	prefixNum.Sub(prefixNum, big.NewInt(1))
+	if prefixNum.Sign() >= 0 {
+		palin = getPalindrome(prefixNum.String(), isOdd)
+		candidates = append(candidates, palin)
+	}
+
+	// Find the closest palindrome
+	closest := ""
+	minDiff := new(big.Int)
+	minDiff.SetString(strings.Repeat("9", 19), 10) // Large number
+
+	nNum := new(big.Int)
+	nNum.SetString(n, 10)
+
+	for _, cand := range candidates {
+		if cand == "" || cand == n || (len(cand) > 1 && cand[0] == '0') {
+			continue
+		}
+
+		candNum := new(big.Int)
+		candNum.SetString(cand, 10)
+
+		diff := new(big.Int)
+		diff.Sub(candNum, nNum)
+		if diff.Sign() < 0 {
+			diff.Neg(diff)
+		}
+
+		closestNum := new(big.Int)
+		closestNum.SetString(closest, 10)
+
+		if closest == "" || diff.Cmp(minDiff) < 0 || (diff.Cmp(minDiff) == 0 && candNum.Cmp(closestNum) < 0) {
+			minDiff = diff
+			closest = cand
+		}
+	}
+
+	return closest
+}
+
+func getPalindrome(prefix string, isOdd bool) string {
+	if isOdd {
+		return prefix + reverse(prefix[:len(prefix)-1])
+	}
+	return prefix + reverse(prefix)
+}
+
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+func main() {
+	testCases := []string{
+		"123",
+		"1",
+		"99",
+		"9999",
+		"88",
+		"12321",
+		"1000000000000000000",
+		"999999999",
+	}
+
+	for _, tc := range testCases {
+		result := closestPalindrome(tc)
+		fmt.Printf("Input: %s, Output: %s\n", tc, result)
+	}
+}

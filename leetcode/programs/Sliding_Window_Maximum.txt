@@ -1,0 +1,105 @@
+package main
+
+import (
+	"fmt"
+)
+
+func maxSlidingWindow(nums []int, k int) []int {
+	if len(nums) == 0 || k == 0 {
+		return []int{}
+	}
+
+	result := make([]int, 0, len(nums)-k+1)
+	deque := make([]int, 0, k)
+
+	for i := 0; i < len(nums); i++ {
+		// Remove indices outside the current window
+		if len(deque) > 0 && deque[0] < i-k+1 {
+			deque = deque[1:]
+		}
+
+		// Remove elements smaller than current element from the back
+		for len(deque) > 0 && nums[deque[len(deque)-1]] < nums[i] {
+			deque = deque[:len(deque)-1]
+		}
+
+		// Add current index to deque
+		deque = append(deque, i)
+
+		// The front of deque is the maximum of current window
+		if i >= k-1 {
+			result = append(result, nums[deque[0]])
+		}
+	}
+
+	return result
+}
+
+func main() {
+	tests := []struct {
+		nums     []int
+		k        int
+		expected []int
+	}{
+		{
+			nums:     []int{1, 3, -1, -3, 5, 3, 6, 7},
+			k:        3,
+			expected: []int{3, 3, 5, 5, 6, 7},
+		},
+		{
+			nums:     []int{1},
+			k:        1,
+			expected: []int{1},
+		},
+		{
+			nums:     []int{1, -1},
+			k:        1,
+			expected: []int{1, -1},
+		},
+		{
+			nums:     []int{9, 11},
+			k:        2,
+			expected: []int{11},
+		},
+		{
+			nums:     []int{1, 3, 1, 2, 0, 5},
+			k:        3,
+			expected: []int{3, 3, 2, 5},
+		},
+		{
+			nums:     []int{-7, -8, 7, 5, 7, 1, 6, 0},
+			k:        4,
+			expected: []int{7, 7, 7, 7},
+		},
+	}
+
+	allPassed := true
+	for i, test := range tests {
+		result := maxSlidingWindow(test.nums, test.k)
+		if !slicesEqual(result, test.expected) {
+			allPassed = false
+			fmt.Printf("Test %d FAILED\n", i+1)
+			fmt.Printf("  Input: nums = %v, k = %d\n", test.nums, test.k)
+			fmt.Printf("  Expected: %v\n", test.expected)
+			fmt.Printf("  Got: %v\n\n", result)
+		} else {
+			fmt.Printf("Test %d PASSED\n", i+1)
+		}
+	}
+
+	if allPassed {
+		fmt.Println("\nAll tests passed!")
+	}
+}
+
+func slicesEqual(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}

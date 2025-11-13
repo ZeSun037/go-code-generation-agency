@@ -1,0 +1,133 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func isScramble(s1 string, s2 string) bool {
+	if s1 == s2 {
+		return true
+	}
+
+	if !canBeRearranged(s1, s2) {
+		return false
+	}
+
+	n := len(s1)
+	for i := 1; i < n; i++ {
+		// Case 1: Don't swap
+		if isScramble(s1[:i], s2[:i]) && isScramble(s1[i:], s2[i:]) {
+			return true
+		}
+
+		// Case 2: Swap
+		if isScramble(s1[:i], s2[n-i:]) && isScramble(s1[i:], s2[:n-i]) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func canBeRearranged(s1, s2 string) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+
+	chars1 := []rune(s1)
+	chars2 := []rune(s2)
+
+	sort.Slice(chars1, func(i, j int) bool { return chars1[i] < chars1[j] })
+	sort.Slice(chars2, func(i, j int) bool { return chars2[i] < chars2[j] })
+
+	for i := 0; i < len(chars1); i++ {
+		if chars1[i] != chars2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isScrambleOptimized(s1 string, s2 string) bool {
+	memo := make(map[string]bool)
+
+	var helper func(string, string) bool
+	helper = func(s1, s2 string) bool {
+		if s1 == s2 {
+			return true
+		}
+
+		key := s1 + "|" + s2
+		if val, exists := memo[key]; exists {
+			return val
+		}
+
+		if !canBeRearranged(s1, s2) {
+			memo[key] = false
+			return false
+		}
+
+		n := len(s1)
+		for i := 1; i < n; i++ {
+			// Case 1: Don't swap
+			if helper(s1[:i], s2[:i]) && helper(s1[i:], s2[i:]) {
+				memo[key] = true
+				return true
+			}
+
+			// Case 2: Swap
+			if helper(s1[:i], s2[n-i:]) && helper(s1[i:], s2[:n-i]) {
+				memo[key] = true
+				return true
+			}
+		}
+
+		memo[key] = false
+		return false
+	}
+
+	return helper(s1, s2)
+}
+
+func main() {
+	testCases := []struct {
+		s1       string
+		s2       string
+		expected bool
+	}{
+		{"great", "rgeat", true},
+		{"abcde", "caebd", false},
+		{"a", "a", true},
+		{"ab", "ba", true},
+		{"abb", "bab", true},
+		{"abab", "baba", true},
+		{"abab", "abab", true},
+		{"abc", "bca", false},
+		{"ababab", "ababab", true},
+		{"ababab", "bababa", true},
+	}
+
+	fmt.Println("Testing isScrambleOptimized (with memoization):")
+	for _, tc := range testCases {
+		result := isScrambleOptimized(tc.s1, tc.s2)
+		status := "PASS"
+		if result != tc.expected {
+			status = "FAIL"
+		}
+		fmt.Printf("s1: %s, s2: %s, expected: %v, got: %v [%s]\n",
+			tc.s1, tc.s2, tc.expected, result, status)
+	}
+
+	fmt.Println("\nTesting isScramble (without memoization):")
+	for _, tc := range testCases {
+		result := isScramble(tc.s1, tc.s2)
+		status := "PASS"
+		if result != tc.expected {
+			status = "FAIL"
+		}
+		fmt.Printf("s1: %s, s2: %s, expected: %v, got: %v [%s]\n",
+			tc.s1, tc.s2, tc.expected, result, status)
+	}
+}

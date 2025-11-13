@@ -1,0 +1,84 @@
+package main
+
+import (
+	"fmt"
+)
+
+func minWindow(s string, t string) string {
+	if len(s) == 0 || len(t) == 0 || len(s) < len(t) {
+		return ""
+	}
+
+	dictT := make(map[rune]int)
+	for _, char := range t {
+		dictT[char]++
+	}
+
+	required := len(dictT)
+	formed := 0
+
+	windowCounts := make(map[rune]int)
+
+	left := 0
+	minLen := len(s) + 1
+	minLeft := 0
+
+	for right := 0; right < len(s); right++ {
+		char := rune(s[right])
+		windowCounts[char]++
+
+		if _, exists := dictT[char]; exists && windowCounts[char] == dictT[char] {
+			formed++
+		}
+
+		for left <= right && formed == required {
+			char := rune(s[left])
+
+			if right-left+1 < minLen {
+				minLen = right - left + 1
+				minLeft = left
+			}
+
+			windowCounts[char]--
+			if _, exists := dictT[char]; exists && windowCounts[char] < dictT[char] {
+				formed--
+			}
+
+			left++
+		}
+	}
+
+	if minLen == len(s)+1 {
+		return ""
+	}
+
+	return s[minLeft : minLeft+minLen]
+}
+
+func main() {
+	testCases := []struct {
+		s        string
+		t        string
+		expected string
+	}{
+		{"ADOBECODEBANC", "ABC", "BANC"},
+		{"a", "a", "a"},
+		{"a", "aa", ""},
+		{"ab", "b", "b"},
+		{"abc", "cba", "abc"},
+		{"bba", "ab", "ab"},
+	}
+
+	for i, tc := range testCases {
+		result := minWindow(tc.s, tc.t)
+		status := "PASS"
+		if result != tc.expected {
+			status = "FAIL"
+		}
+		fmt.Printf("Test %d: %s\n", i+1, status)
+		fmt.Printf("  Input: s = %q, t = %q\n", tc.s, tc.t)
+		fmt.Printf("  Expected: %q\n", tc.expected)
+		fmt.Printf("  Got: %q\n", result)
+		fmt.Println()
+	}
+}

@@ -1,0 +1,58 @@
+package main
+
+import (
+	"fmt"
+)
+
+func firstMissingPositive(nums []int) int {
+	n := len(nums)
+	
+	// Step 1: Place each number in its correct position
+	// Number i should be at index i-1 (1-indexed to 0-indexed conversion)
+	for i := 0; i < n; i++ {
+		for nums[i] > 0 && nums[i] <= n && nums[nums[i]-1] != nums[i] {
+			// Swap nums[i] with nums[nums[i]-1]
+			correctIndex := nums[i] - 1
+			nums[i], nums[correctIndex] = nums[correctIndex], nums[i]
+		}
+	}
+	
+	// Step 2: Find the first position where the number doesn't match
+	for i := 0; i < n; i++ {
+		if nums[i] != i+1 {
+			return i + 1
+		}
+	}
+	
+	// Step 3: If all positions are correct, the answer is n+1
+	return n + 1
+}
+
+func main() {
+	testCases := []struct {
+		nums     []int
+		expected int
+	}{
+		{[]int{1, 2, 0}, 3},
+		{[]int{3, 4, -1, 1}, 2},
+		{[]int{7, 8, 9, 11, 12}, 1},
+		{[]int{1}, 2},
+		{[]int{2}, 1},
+		{[]int{1, 2, 3, 4, 5}, 6},
+		{[]int{-1, -2, -3}, 1},
+		{[]int{1, 1000000}, 2},
+		{[]int{2, 3, 4}, 1},
+		{[]int{1, 2, 3}, 4},
+	}
+	
+	for i, tc := range testCases {
+		result := firstMissingPositive(tc.nums)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s\n", i+1, status)
+		fmt.Printf("  Input: %v\n", tc.nums)
+		fmt.Printf("  Expected: %d, Got: %d\n", tc.expected, result)
+	}
+}

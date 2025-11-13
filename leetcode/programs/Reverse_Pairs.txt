@@ -1,0 +1,113 @@
+package main
+
+import (
+	"fmt"
+)
+
+func reversePairs(nums []int) int {
+	if len(nums) <= 1 {
+		return 0
+	}
+	return mergeSort(nums, 0, len(nums)-1)
+}
+
+func mergeSort(nums []int, left, right int) int {
+	if left >= right {
+		return 0
+	}
+
+	mid := left + (right-left)/2
+	count := 0
+
+	// Count reverse pairs in left half
+	count += mergeSort(nums, left, mid)
+	// Count reverse pairs in right half
+	count += mergeSort(nums, mid+1, right)
+	// Count reverse pairs across halves
+	count += mergeAndCount(nums, left, mid, right)
+
+	return count
+}
+
+func mergeAndCount(nums []int, left, mid, right int) int {
+	count := 0
+
+	// Count reverse pairs where i is in left half and j is in right half
+	j := mid + 1
+	for i := left; i <= mid; i++ {
+		for j <= right && nums[i] > 2*nums[j] {
+			j++
+		}
+		count += j - (mid + 1)
+	}
+
+	// Merge the two sorted halves
+	leftPart := make([]int, mid-left+1)
+	rightPart := make([]int, right-mid)
+
+	for i := 0; i < len(leftPart); i++ {
+		leftPart[i] = nums[left+i]
+	}
+	for i := 0; i < len(rightPart); i++ {
+		rightPart[i] = nums[mid+1+i]
+	}
+
+	i, j := 0, 0
+	k := left
+
+	for i < len(leftPart) && j < len(rightPart) {
+		if leftPart[i] <= rightPart[j] {
+			nums[k] = leftPart[i]
+			i++
+		} else {
+			nums[k] = rightPart[j]
+			j++
+		}
+		k++
+	}
+
+	for i < len(leftPart) {
+		nums[k] = leftPart[i]
+		i++
+		k++
+	}
+
+	for j < len(rightPart) {
+		nums[k] = rightPart[j]
+		j++
+		k++
+	}
+
+	return count
+}
+
+func main() {
+	testCases := []struct {
+		nums     []int
+		expected int
+	}{
+		{[]int{1, 3, 2, 3, 1}, 2},
+		{[]int{2, 4, 3, 5, 1}, 3},
+		{[]int{}, 0},
+		{[]int{1}, 0},
+		{[]int{5, 2}, 1},
+		{[]int{1, 2, 3, 4, 5}, 0},
+		{[]int{5, 4, 3, 2, 1}, 2},
+		{[]int{-5, -5}, 0},
+		{[]int{2147483647, -2147483648}, 1},
+	}
+
+	for idx, tc := range testCases {
+		// Create a copy to avoid modifying test case
+		nums := make([]int, len(tc.nums))
+		copy(nums, tc.nums)
+
+		result := reversePairs(nums)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s | Input: %v | Expected: %d | Got: %d\n",
+			idx+1, status, tc.nums, tc.expected, result)
+	}
+}

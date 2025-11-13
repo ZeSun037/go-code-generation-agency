@@ -1,0 +1,115 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func fullJustify(words []string, maxWidth int) []string {
+	result := []string{}
+	i := 0
+
+	for i < len(words) {
+		// Gather words for current line
+		lineWords := []string{}
+		lineLength := 0
+
+		for i < len(words) {
+			wordLen := len(words[i])
+			// Check if we can fit this word: current length + spaces between words + new word
+			if lineLength+wordLen+len(lineWords) <= maxWidth {
+				lineWords = append(lineWords, words[i])
+				lineLength += wordLen
+				i++
+			} else {
+				break
+			}
+		}
+
+		// Format the line
+		line := formatLine(lineWords, maxWidth, i == len(words))
+		result = append(result, line)
+	}
+
+	return result
+}
+
+func formatLine(words []string, maxWidth int, isLastLine bool) string {
+	if isLastLine {
+		// Left-justified: join with single space and pad right with spaces
+		line := strings.Join(words, " ")
+		return line + strings.Repeat(" ", maxWidth-len(line))
+	}
+
+	if len(words) == 1 {
+		// Single word: left-justified
+		return words[0] + strings.Repeat(" ", maxWidth-len(words[0]))
+	}
+
+	// Full justification for non-last lines with multiple words
+	totalWordLength := 0
+	for _, word := range words {
+		totalWordLength += len(word)
+	}
+
+	totalSpaces := maxWidth - totalWordLength
+	gaps := len(words) - 1
+	spacesPerGap := totalSpaces / gaps
+	extraSpaces := totalSpaces % gaps
+
+	var result strings.Builder
+	for i, word := range words {
+		result.WriteString(word)
+		if i < len(words)-1 {
+			// Add base spaces
+			result.WriteString(strings.Repeat(" ", spacesPerGap))
+			// Add extra space to left gaps
+			if i < extraSpaces {
+				result.WriteString(" ")
+			}
+		}
+	}
+
+	return result.String()
+}
+
+func main() {
+	// Test Case 1
+	words1 := []string{"This", "is", "an", "example", "of", "text", "justification."}
+	maxWidth1 := 16
+	result1 := fullJustify(words1, maxWidth1)
+	fmt.Println("Test Case 1:")
+	for _, line := range result1 {
+		fmt.Printf("|%s|\n", line)
+	}
+	fmt.Println()
+
+	// Test Case 2
+	words2 := []string{"What", "must", "be", "acknowledgment", "shall", "be"}
+	maxWidth2 := 16
+	result2 := fullJustify(words2, maxWidth2)
+	fmt.Println("Test Case 2:")
+	for _, line := range result2 {
+		fmt.Printf("|%s|\n", line)
+	}
+	fmt.Println()
+
+	// Test Case 3
+	words3 := []string{"Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to", "a", "computer.", "Art", "is", "everything", "else", "we", "do"}
+	maxWidth3 := 20
+	result3 := fullJustify(words3, maxWidth3)
+	fmt.Println("Test Case 3:")
+	for _, line := range result3 {
+		fmt.Printf("|%s|\n", line)
+	}
+	fmt.Println()
+
+	// Test Case 4: Single word per line
+	words4 := []string{"justification"}
+	maxWidth4 := 16
+	result4 := fullJustify(words4, maxWidth4)
+	fmt.Println("Test Case 4:")
+	for _, line := range result4 {
+		fmt.Printf("|%s|\n", line)
+	}
+}

@@ -1,0 +1,174 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func isRectangleCover(rectangles [][]int) bool {
+	if len(rectangles) == 0 {
+		return false
+	}
+
+	// Find the bounding box
+	minX, minY := rectangles[0][0], rectangles[0][1]
+	maxX, maxY := rectangles[0][2], rectangles[0][3]
+
+	totalArea := 0
+
+	for _, rect := range rectangles {
+		x1, y1, x2, y2 := rect[0], rect[1], rect[2], rect[3]
+
+		if x1 < minX {
+			minX = x1
+		}
+		if y1 < minY {
+			minY = y1
+		}
+		if x2 > maxX {
+			maxX = x2
+		}
+		if y2 > maxY {
+			maxY = y2
+		}
+
+		area := (x2 - x1) * (y2 - y1)
+		if area <= 0 {
+			return false
+		}
+		totalArea += area
+	}
+
+	expectedArea := (maxX - minX) * (maxY - minY)
+
+	if totalArea != expectedArea {
+		return false
+	}
+
+	// Use a map to track which corners appear an odd or even number of times
+	// For a perfect cover, only the 4 corners of the bounding rectangle should appear odd times
+	cornerCount := make(map[[2]int]int)
+
+	for _, rect := range rectangles {
+		x1, y1, x2, y2 := rect[0], rect[1], rect[2], rect[3]
+
+		corners := [][2]int{
+			{x1, y1},
+			{x2, y1},
+			{x1, y2},
+			{x2, y2},
+		}
+
+		for _, corner := range corners {
+			cornerCount[corner]++
+		}
+	}
+
+	// Check if only the 4 corners of the bounding box have odd count
+	expectedCorners := [][2]int{
+		{minX, minY},
+		{maxX, minY},
+		{minX, maxY},
+		{maxX, maxY},
+	}
+
+	expectedCornerSet := make(map[[2]int]bool)
+	for _, corner := range expectedCorners {
+		expectedCornerSet[corner] = true
+	}
+
+	for corner, count := range cornerCount {
+		if count%2 == 1 {
+			if !expectedCornerSet[corner] {
+				return false
+			}
+		}
+	}
+
+	// Verify all expected corners have odd count
+	for _, corner := range expectedCorners {
+		if cornerCount[corner]%2 == 0 {
+			return false
+		}
+	}
+
+	// Use sweep line algorithm to detect overlaps
+	events := make([]event, 0)
+
+	for _, rect := range rectangles {
+		x1, y1, x2, y2 := rect[0], rect[1], rect[2], rect[3]
+		events = append(events, event{x: x1, y1: y1, y2: y2, isStart: true})
+		events = append(events, event{x: x2, y1: y1, y2: y2, isStart: false})
+	}
+
+	sort.Slice(events, func(i, j int) bool {
+		if events[i].x != events[j].x {
+			return events[i].x < events[j].x
+		}
+		return events[i].isStart
+	})
+
+	activeIntervals := make(map[[2]int]int)
+
+	for i, ev := range events {
+		if ev.isStart {
+			activeIntervals[[2]int{ev.y1, ev.y2}]++
+		} else {
+			activeIntervals[[2]int{ev.y1, ev.y2}]--
+			if activeIntervals[[2]int{ev.y1, ev.y2}] == 0 {
+				delete(activeIntervals, [2]int{ev.y1, ev.y2})
+			}
+		}
+
+		if i+1 < len(events) && events[i].x != events[i+1].x {
+			totalHeight := 0
+			for interval, count := range activeIntervals {
+				if count > 0 {
+					totalHeight += interval[1] - interval[0]
+				}
+			}
+
+			if totalHeight != (maxY - minY) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+type event struct {
+	x       int
+	y1      int
+	y2      int
+	isStart bool
+}
+
+func main() {
+	testCases := []struct {
+		rectangles [][]int
+		expected   bool
+	}{
+		{
+			rectangles: [][]int{{1, 1, 3, 3}, {3, 1, 4, 2}, {3, 2, 4, 4}, {1, 3, 2, 4}, {2, 3, 3, 4}},
+			expected:   true,
+		},
+		{
+			rectangles: [][]int{{1, 1, 2, 3}, {1, 3, 2, 4}, {3, 1, 4, 2}, {3, 2, 4, 4}},
+			expected:   false,
+		},
+		{
+			rectangles: [][]int{{1, 1, 3, 3}, {3, 1, 4, 2}, {1, 3, 2, 4}, {2, 2, 4, 4}},
+			expected:   false,
+		},
+	}
+
+	for i, tc := range testCases {
+		result := isRectangleCover(tc.rectangles)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s (expected %v, got %v)\n", i+1, status, tc.expected, result)
+	}
+}

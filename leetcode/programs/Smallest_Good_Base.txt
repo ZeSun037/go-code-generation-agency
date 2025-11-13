@@ -1,0 +1,97 @@
+package main
+
+import (
+	"fmt"
+	"math"
+	"strconv"
+)
+
+func smallestGoodBase(n string) string {
+	num, _ := strconv.ParseInt(n, 10, 64)
+	
+	// Maximum possible length of representation in base k is when k=2
+	// For n represented as m ones in base k: n = k^(m-1) + k^(m-2) + ... + k + 1
+	// This is a geometric series: n = (k^m - 1) / (k - 1)
+	// Maximum m is around 60 for n up to 10^18
+	maxLength := 60
+	
+	// Try from smallest base upwards, but check from longest representation first
+	// because smaller bases give longer representations
+	for length := maxLength; length >= 2; length-- {
+		base := binarySearchBase(num, length)
+		if base > 0 {
+			return strconv.FormatInt(base, 10)
+		}
+	}
+	
+	// Fallback: n = k + 1 (length = 2), so k = n - 1
+	return strconv.FormatInt(num-1, 10)
+}
+
+func binarySearchBase(n int64, length int) int64 {
+	// For a given length, find if there exists a base k such that
+	// n in base k has exactly 'length' ones
+	// n = k^(length-1) + k^(length-2) + ... + k + 1
+	// This is (k^length - 1) / (k - 1) = n
+	
+	// Binary search for the base
+	left := int64(2)
+	right := int64(math.Pow(float64(n), 1.0/float64(length-1))) + 2
+	
+	for left <= right {
+		mid := left + (right-left)/2
+		
+		// Calculate sum: mid^(length-1) + mid^(length-2) + ... + mid + 1
+		sum := geometricSum(mid, length)
+		
+		if sum == n {
+			return mid
+		} else if sum < n {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	
+	return -1
+}
+
+func geometricSum(base int64, length int) int64 {
+	// Calculate base^(length-1) + base^(length-2) + ... + base + 1
+	// Using the formula: (base^length - 1) / (base - 1)
+	// But we need to be careful with overflow
+	
+	if base == 1 {
+		return int64(length)
+	}
+	
+	result := int64(0)
+	power := int64(1)
+	
+	for i := 0; i < length; i++ {
+		result += power
+		// Check for overflow
+		if result < 0 || (i < length-1 && power > math.MaxInt64/base) {
+			return math.MaxInt64
+		}
+		power *= base
+	}
+	
+	return result
+}
+
+func main() {
+	testCases := []string{
+		"13",
+		"4681",
+		"1000000000000000000",
+		"3",
+		"1",
+		"100",
+	}
+	
+	for _, tc := range testCases {
+		result := smallestGoodBase(tc)
+		fmt.Printf("n = \"%s\" -> \"%s\"\n", tc, result)
+	}
+}

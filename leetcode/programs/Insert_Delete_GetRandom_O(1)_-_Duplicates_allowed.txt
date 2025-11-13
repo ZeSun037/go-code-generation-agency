@@ -1,0 +1,108 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+)
+
+type RandomizedCollection struct {
+	nums     []int
+	valToIndices map[int]map[int]bool
+}
+
+func Constructor() RandomizedCollection {
+	return RandomizedCollection{
+		nums:     make([]int, 0),
+		valToIndices: make(map[int]map[int]bool),
+	}
+}
+
+func (rc *RandomizedCollection) Insert(val int) bool {
+	isPresent := len(rc.valToIndices[val]) > 0
+	
+	if rc.valToIndices[val] == nil {
+		rc.valToIndices[val] = make(map[int]bool)
+	}
+	
+	rc.valToIndices[val][len(rc.nums)] = true
+	rc.nums = append(rc.nums, val)
+	
+	return !isPresent
+}
+
+func (rc *RandomizedCollection) Remove(val int) bool {
+	indices, exists := rc.valToIndices[val]
+	if !exists || len(indices) == 0 {
+		return false
+	}
+	
+	var indexToRemove int
+	for idx := range indices {
+		indexToRemove = idx
+		break
+	}
+	
+	lastIndex := len(rc.nums) - 1
+	lastVal := rc.nums[lastIndex]
+	
+	rc.nums[indexToRemove] = lastVal
+	
+	rc.valToIndices[lastVal][indexToRemove] = true
+	delete(rc.valToIndices[lastVal], lastIndex)
+	
+	if len(rc.valToIndices[lastVal]) == 0 {
+		delete(rc.valToIndices, lastVal)
+	}
+	
+	rc.nums = rc.nums[:lastIndex]
+	
+	delete(indices, indexToRemove)
+	if len(indices) == 0 {
+		delete(rc.valToIndices, val)
+	}
+	
+	return true
+}
+
+func (rc *RandomizedCollection) GetRandom() int {
+	randomIndex := rand.Intn(len(rc.nums))
+	return rc.nums[randomIndex]
+}
+
+func main() {
+	rc := Constructor()
+	
+	fmt.Println(rc.Insert(1))
+	fmt.Println(rc.Insert(1))
+	fmt.Println(rc.Insert(2))
+	fmt.Println(rc.GetRandom())
+	fmt.Println(rc.Remove(1))
+	fmt.Println(rc.GetRandom())
+	
+	fmt.Println("\nAdditional test cases:")
+	rc2 := Constructor()
+	
+	fmt.Println(rc2.Insert(0))
+	fmt.Println(rc2.Remove(0))
+	fmt.Println(rc2.Insert(1))
+	fmt.Println(rc2.Insert(1))
+	fmt.Println(rc2.Insert(2))
+	random := rc2.GetRandom()
+	fmt.Printf("Random value from [1, 1, 2]: %d\n", random)
+	fmt.Println(rc2.Remove(1))
+	fmt.Println(rc2.GetRandom())
+	
+	fmt.Println("\nStress test:")
+	rc3 := Constructor()
+	for i := 0; i < 100; i++ {
+		rc3.Insert(i % 10)
+	}
+	
+	for i := 0; i < 50; i++ {
+		rc3.Remove(i % 10)
+	}
+	
+	randomVal := rc3.GetRandom()
+	fmt.Printf("Random value after operations: %d\n", randomVal)
+	fmt.Printf("Collection size: %d\n", len(rc3.nums))
+}

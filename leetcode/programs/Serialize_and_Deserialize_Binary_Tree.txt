@@ -1,0 +1,158 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+type Codec struct{}
+
+func Constructor() *Codec {
+	return &Codec{}
+}
+
+// Serialize converts a binary tree to a string representation
+func (c *Codec) Serialize(root *TreeNode) string {
+	var result []string
+	c.serializeHelper(root, &result)
+	return strings.Join(result, ",")
+}
+
+func (c *Codec) serializeHelper(node *TreeNode, result *[]string) {
+	if node == nil {
+		*result = append(*result, "null")
+		return
+	}
+	*result = append(*result, strconv.Itoa(node.Val))
+	c.serializeHelper(node.Left, result)
+	c.serializeHelper(node.Right, result)
+}
+
+// Deserialize converts a string representation back to a binary tree
+func (c *Codec) Deserialize(data string) *TreeNode {
+	if data == "" {
+		return nil
+	}
+	tokens := strings.Split(data, ",")
+	var index int
+	return c.deserializeHelper(tokens, &index)
+}
+
+func (c *Codec) deserializeHelper(tokens []string, index *int) *TreeNode {
+	if *index >= len(tokens) || tokens[*index] == "null" {
+		*index++
+		return nil
+	}
+	val, _ := strconv.Atoi(tokens[*index])
+	*index++
+	node := &TreeNode{Val: val}
+	node.Left = c.deserializeHelper(tokens, index)
+	node.Right = c.deserializeHelper(tokens, index)
+	return node
+}
+
+// Helper function to create a tree from array representation (for testing)
+func createTreeFromArray(arr []interface{}) *TreeNode {
+	if len(arr) == 0 || arr[0] == nil {
+		return nil
+	}
+
+	root := &TreeNode{Val: arr[0].(int)}
+	queue := []*TreeNode{root}
+	i := 1
+
+	for len(queue) > 0 && i < len(arr) {
+		node := queue[0]
+		queue = queue[1:]
+
+		if i < len(arr) && arr[i] != nil {
+			node.Left = &TreeNode{Val: arr[i].(int)}
+			queue = append(queue, node.Left)
+		}
+		i++
+
+		if i < len(arr) && arr[i] != nil {
+			node.Right = &TreeNode{Val: arr[i].(int)}
+			queue = append(queue, node.Right)
+		}
+		i++
+	}
+
+	return root
+}
+
+// Helper function to verify tree structure (for testing)
+func treeToArray(root *TreeNode) []interface{} {
+	if root == nil {
+		return []interface{}{}
+	}
+
+	var result []interface{}
+	queue := []*TreeNode{root}
+
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+
+		if node == nil {
+			result = append(result, nil)
+		} else {
+			result = append(result, node.Val)
+			queue = append(queue, node.Left)
+			queue = append(queue, node.Right)
+		}
+	}
+
+	// Remove trailing nils
+	for len(result) > 0 && result[len(result)-1] == nil {
+		result = result[:len(result)-1]
+	}
+
+	return result
+}
+
+func main() {
+	codec := Constructor()
+
+	// Test case 1: [1,2,3,null,null,4,5]
+	root1 := createTreeFromArray([]interface{}{1, 2, 3, nil, nil, 4, 5})
+	serialized1 := codec.Serialize(root1)
+	fmt.Println("Test 1 - Serialized:", serialized1)
+	deserialized1 := codec.Deserialize(serialized1)
+	fmt.Println("Test 1 - Deserialized:", treeToArray(deserialized1))
+
+	// Test case 2: empty tree
+	root2 := createTreeFromArray([]interface{}{})
+	serialized2 := codec.Serialize(root2)
+	fmt.Println("\nTest 2 - Serialized:", serialized2)
+	deserialized2 := codec.Deserialize(serialized2)
+	fmt.Println("Test 2 - Deserialized:", treeToArray(deserialized2))
+
+	// Test case 3: single node
+	root3 := createTreeFromArray([]interface{}{42})
+	serialized3 := codec.Serialize(root3)
+	fmt.Println("\nTest 3 - Serialized:", serialized3)
+	deserialized3 := codec.Deserialize(serialized3)
+	fmt.Println("Test 3 - Deserialized:", treeToArray(deserialized3))
+
+	// Test case 4: complex tree
+	root4 := createTreeFromArray([]interface{}{1, 2, 3, 4, 5, nil, 6})
+	serialized4 := codec.Serialize(root4)
+	fmt.Println("\nTest 4 - Serialized:", serialized4)
+	deserialized4 := codec.Deserialize(serialized4)
+	fmt.Println("Test 4 - Deserialized:", treeToArray(deserialized4))
+
+	// Test case 5: negative values
+	root5 := createTreeFromArray([]interface{}{-1, -2, -3, nil, nil, -4, -5})
+	serialized5 := codec.Serialize(root5)
+	fmt.Println("\nTest 5 - Serialized:", serialized5)
+	deserialized5 := codec.Deserialize(serialized5)
+	fmt.Println("Test 5 - Deserialized:", treeToArray(deserialized5))
+}

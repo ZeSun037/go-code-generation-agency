@@ -1,0 +1,101 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+	"unicode"
+)
+
+func calculate(s string) int {
+	s = strings.TrimSpace(s)
+	
+	stack := []int{}
+	num := 0
+	sign := '+'
+	
+	for i := 0; i < len(s); i++ {
+		ch := rune(s[i])
+		
+		if unicode.IsDigit(ch) {
+			num = num*10 + int(ch-'0')
+		}
+		
+		if ch == '(' {
+			j := findMatchingParen(s, i)
+			num = calculate(s[i+1 : j])
+			i = j
+		}
+		
+		if ch == '+' || ch == '-' || ch == ')' || i == len(s)-1 {
+			switch sign {
+			case '+':
+				stack = append(stack, num)
+			case '-':
+				stack = append(stack, -num)
+			}
+			
+			if ch == '+' || ch == '-' {
+				sign = ch
+			}
+			
+			num = 0
+		}
+	}
+	
+	result := 0
+	for _, val := range stack {
+		result += val
+	}
+	
+	return result
+}
+
+func findMatchingParen(s string, start int) int {
+	count := 1
+	for i := start + 1; i < len(s); i++ {
+		if s[i] == '(' {
+			count++
+		} else if s[i] == ')' {
+			count--
+			if count == 0 {
+				return i
+			}
+		}
+	}
+	return len(s) - 1
+}
+
+func main() {
+	testCases := []struct {
+		input    string
+		expected int
+	}{
+		{"1 + 1", 2},
+		{" 2-1 + 2 ", 3},
+		{"(1+(4+5+2)-3)+(6+8)", 23},
+		{"2", 2},
+		{"-1", -1},
+		{"-(2+3)", -5},
+		{"1+(2-3)*4", -3},
+		{"(2+3)*2", 10},
+		{"100-50+12", 62},
+		{"0", 0},
+	}
+	
+	allPassed := true
+	for _, tc := range testCases {
+		result := calculate(tc.input)
+		if result != tc.expected {
+			fmt.Printf("FAIL: calculate(\"%s\") = %d, expected %d\n", tc.input, result, tc.expected)
+			allPassed = false
+		} else {
+			fmt.Printf("PASS: calculate(\"%s\") = %d\n", tc.input, result)
+		}
+	}
+	
+	if allPassed {
+		fmt.Println("\nAll tests passed!")
+	} else {
+		fmt.Println("\nSome tests failed!")
+	}
+}

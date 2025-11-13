@@ -1,0 +1,65 @@
+package main
+
+import (
+	"fmt"
+)
+
+func getKthLexicographicallySmallestInteger(n int, k int) int {
+	current := 1
+	steps := 0
+
+	for steps+countSteps(current, n) < k {
+		steps += countSteps(current, n)
+		current++
+	}
+
+	for steps < k {
+		current *= 10
+		steps++
+	}
+
+	return current
+}
+
+func countSteps(prefix int, n int) int {
+	steps := 0
+	first := prefix
+	last := prefix
+
+	for first <= n {
+		steps += min(n+1, last+1) - first
+		first *= 10
+		last = last*10 + 9
+	}
+
+	return steps
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	testCases := []struct {
+		n        int
+		k        int
+		expected int
+	}{
+		{13, 2, 10},
+		{1, 1, 1},
+		{100, 10, 17},
+		{1000000000, 1, 1},
+	}
+
+	for _, tc := range testCases {
+		result := getKthLexicographicallySmallestInteger(tc.n, tc.k)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s n=%d, k=%d => %d (expected %d)\n", status, tc.n, tc.k, result, tc.expected)
+	}
+}

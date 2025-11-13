@@ -1,0 +1,117 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func findAllConcatenatedWordsInADict(words []string) []string {
+	if len(words) == 0 {
+		return []string{}
+	}
+
+	// Sort words by length to ensure shorter words are checked first
+	sort.Slice(words, func(i, j int) bool {
+		return len(words[i]) < len(words[j])
+	})
+
+	// Create a set of words for quick lookup
+	wordSet := make(map[string]bool)
+	for _, word := range words {
+		wordSet[word] = true
+	}
+
+	result := []string{}
+
+	// Check each word to see if it's a concatenated word
+	for _, word := range words {
+		if isConcatenated(word, wordSet) {
+			result = append(result, word)
+		}
+	}
+
+	return result
+}
+
+// isConcatenated checks if a word can be formed by concatenating other words from the set
+func isConcatenated(word string, wordSet map[string]bool) bool {
+	// dp[i] represents whether word[0:i] can be formed by concatenating words from wordSet
+	dp := make([]bool, len(word)+1)
+	dp[0] = true
+
+	for i := 1; i <= len(word); i++ {
+		// Check if we can form word[0:i] by combining a previously formable word[0:j]
+		// with a word from the set that matches word[j:i]
+		for j := 1; j < i; j++ {
+			if dp[j] {
+				substr := word[j:i]
+				// The substring must be in wordSet and cannot be the entire word
+				if wordSet[substr] && substr != word {
+					dp[i] = true
+					break
+				}
+			}
+		}
+	}
+
+	// word is concatenated if it can be fully formed AND it's made of at least 2 words
+	// We ensure at least 2 words by checking that dp[len(word)] is true and
+	// the word itself is not in the wordSet as a base (handled by logic above)
+	if !dp[len(word)] {
+		return false
+	}
+
+	// Verify it's actually made of at least 2 parts by checking if we can form it
+	// using at least one proper substring that's in the set
+	for j := 1; j < len(word); j++ {
+		if dp[j] {
+			substr := word[j:]
+			if wordSet[substr] {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func main() {
+	// Test case 1
+	words1 := []string{"cat", "cats", "catsdogcats", "dog", "dogcatsdog", "hippopotamuses", "rat", "ratcatdogcat"}
+	result1 := findAllConcatenatedWordsInADict(words1)
+	fmt.Println("Test 1:")
+	fmt.Println("Input:", words1)
+	fmt.Println("Output:", result1)
+	fmt.Println()
+
+	// Test case 2
+	words2 := []string{"cat", "dog", "catdog"}
+	result2 := findAllConcatenatedWordsInADict(words2)
+	fmt.Println("Test 2:")
+	fmt.Println("Input:", words2)
+	fmt.Println("Output:", result2)
+	fmt.Println()
+
+	// Test case 3: No concatenated words
+	words3 := []string{"cat", "dog", "bird"}
+	result3 := findAllConcatenatedWordsInADict(words3)
+	fmt.Println("Test 3:")
+	fmt.Println("Input:", words3)
+	fmt.Println("Output:", result3)
+	fmt.Println()
+
+	// Test case 4: Single word
+	words4 := []string{"a"}
+	result4 := findAllConcatenatedWordsInADict(words4)
+	fmt.Println("Test 4:")
+	fmt.Println("Input:", words4)
+	fmt.Println("Output:", result4)
+	fmt.Println()
+
+	// Test case 5: Multiple concatenations possible
+	words5 := []string{"a", "b", "ab", "abc", "ababc"}
+	result5 := findAllConcatenatedWordsInADict(words5)
+	fmt.Println("Test 5:")
+	fmt.Println("Input:", words5)
+	fmt.Println("Output:", result5)
+}

@@ -1,0 +1,84 @@
+package main
+
+import (
+	"fmt"
+)
+
+func canCross(stones []int) bool {
+	if len(stones) < 2 {
+		return true
+	}
+
+	// If the second stone is not at position 1, the frog can't proceed
+	if stones[1] != 1 {
+		return false
+	}
+
+	// Create a map to store all possible jump sizes that can reach each stone
+	// Key: stone position, Value: set of jump sizes that can reach this stone
+	reachable := make(map[int]map[int]bool)
+
+	for _, stone := range stones {
+		reachable[stone] = make(map[int]bool)
+	}
+
+	// Initially, the frog is at position 0 and can jump 1 unit
+	reachable[0][0] = true
+
+	for _, stone := range stones {
+		for k := range reachable[stone] {
+			// Try all three possible next jumps: k-1, k, k+1
+			for nextJump := k - 1; nextJump <= k+1; nextJump++ {
+				if nextJump <= 0 {
+					continue
+				}
+
+				nextPos := stone + nextJump
+				if nextPos > stones[len(stones)-1] {
+					continue
+				}
+
+				// Check if nextPos is a valid stone
+				if _, exists := reachable[nextPos]; exists {
+					reachable[nextPos][nextJump] = true
+				}
+			}
+		}
+	}
+
+	// Check if we can reach the last stone
+	lastStone := stones[len(stones)-1]
+	return len(reachable[lastStone]) > 0
+}
+
+func main() {
+	// Test case 1
+	stones1 := []int{0, 1, 3, 5, 6, 8, 12, 17}
+	result1 := canCross(stones1)
+	fmt.Printf("Test 1 - stones: %v\n", stones1)
+	fmt.Printf("Result: %v (Expected: true)\n\n", result1)
+
+	// Test case 2
+	stones2 := []int{0, 1, 2, 3, 4, 8, 9, 11}
+	result2 := canCross(stones2)
+	fmt.Printf("Test 2 - stones: %v\n", stones2)
+	fmt.Printf("Result: %v (Expected: false)\n\n", result2)
+
+	// Test case 3: Simple case
+	stones3 := []int{0, 1, 2}
+	result3 := canCross(stones3)
+	fmt.Printf("Test 3 - stones: %v\n", stones3)
+	fmt.Printf("Result: %v (Expected: true)\n\n", result3)
+
+	// Test case 4: Gap too large
+	stones4 := []int{0, 1, 3, 6}
+	result4 := canCross(stones4)
+	fmt.Printf("Test 4 - stones: %v\n", stones4)
+	fmt.Printf("Result: %v (Expected: false)\n\n", result4)
+
+	// Test case 5: Exactly reachable
+	stones5 := []int{0, 1, 3, 4, 5}
+	result5 := canCross(stones5)
+	fmt.Printf("Test 5 - stones: %v\n", stones5)
+	fmt.Printf("Result: %v (Expected: true)\n", result5)
+}

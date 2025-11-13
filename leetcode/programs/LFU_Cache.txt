@@ -1,0 +1,138 @@
+package main
+
+import (
+	"container/list"
+	"fmt"
+)
+
+type LFUCache struct {
+	capacity   int
+	minFreq    int
+	keyToVal   map[int]int
+	keyToFreq  map[int]int
+	freqToKeys map[int]*list.List
+	keyToNode  map[int]*list.Element
+}
+
+func Constructor(capacity int) LFUCache {
+	return LFUCache{
+		capacity:   capacity,
+		minFreq:    0,
+		keyToVal:   make(map[int]int),
+		keyToFreq:  make(map[int]int),
+		freqToKeys: make(map[int]*list.List),
+		keyToNode:  make(map[int]*list.Element),
+	}
+}
+
+func (lfu *LFUCache) Get(key int) int {
+	if val, exists := lfu.keyToVal[key]; exists {
+		lfu.increaseFreq(key)
+		return val
+	}
+	return -1
+}
+
+func (lfu *LFUCache) Put(key int, value int) {
+	if lfu.capacity <= 0 {
+		return
+	}
+
+	if _, exists := lfu.keyToVal[key]; exists {
+		lfu.keyToVal[key] = value
+		lfu.increaseFreq(key)
+		return
+	}
+
+	if len(lfu.keyToVal) >= lfu.capacity {
+		lfu.evict()
+	}
+
+	lfu.keyToVal[key] = value
+	lfu.keyToFreq[key] = 1
+	lfu.minFreq = 1
+
+	if lfu.freqToKeys[1] == nil {
+		lfu.freqToKeys[1] = list.New()
+	}
+	node := lfu.freqToKeys[1].PushBack(key)
+	lfu.keyToNode[key] = node
+}
+
+func (lfu *LFUCache) increaseFreq(key int) {
+	freq := lfu.keyToFreq[key]
+	lfu.keyToFreq[key] = freq + 1
+
+	// Remove from current frequency list
+	lfu.freqToKeys[freq].Remove(lfu.keyToNode[key])
+
+	if lfu.freqToKeys[freq].Len() == 0 {
+		delete(lfu.freqToKeys, freq)
+		if freq == lfu.minFreq {
+			lfu.minFreq++
+		}
+	}
+
+	// Add to new frequency list
+	if lfu.freqToKeys[freq+1] == nil {
+		lfu.freqToKeys[freq+1] = list.New()
+	}
+	node := lfu.freqToKeys[freq+1].PushBack(key)
+	lfu.keyToNode[key] = node
+}
+
+func (lfu *LFUCache) evict() {
+	if lfu.freqToKeys[lfu.minFreq] == nil || lfu.freqToKeys[lfu.minFreq].Len() == 0 {
+		return
+	}
+
+	lruElement := lfu.freqToKeys[lfu.minFreq].Front()
+	if lruElement == nil {
+		return
+	}
+
+	keyToRemove := lruElement.Value.(int)
+	lfu.freqToKeys[lfu.minFreq].Remove(lruElement)
+
+	if lfu.freqToKeys[lfu.minFreq].Len() == 0 {
+		delete(lfu.freqToKeys, lfu.minFreq)
+	}
+
+	delete(lfu.keyToVal, keyToRemove)
+	delete(lfu.keyToFreq, keyToRemove)
+	delete(lfu.keyToNode, keyToRemove)
+}
+
+func main() {
+	lfu := Constructor(2)
+
+	lfu.Put(1, 1)
+	fmt.Println("put(1, 1)")
+
+	lfu.Put(2, 2)
+	fmt.Println("put(2, 2)")
+
+	result := lfu.Get(1)
+	fmt.Printf("get(1) = %d (expected 1)\n", result)
+
+	lfu.Put(3, 3)
+	fmt.Println("put(3, 3)")
+
+	result = lfu.Get(2)
+	fmt.Printf("get(2) = %d (expected -1)\n", result)
+
+	result = lfu.Get(3)
+	fmt.Printf("get(3) = %d (expected 3)\n", result)
+
+	lfu.Put(4, 4)
+	fmt.Println("put(4, 4)")
+
+	result = lfu.Get(1)
+	fmt.Printf("get(1) = %d (expected -1)\n", result)
+
+	result = lfu.Get(3)
+	fmt.Printf("get(3) = %d (expected 3)\n", result)
+
+	result = lfu.Get(4)
+	fmt.Printf("get(4) = %d (expected 4)\n", result)
+}

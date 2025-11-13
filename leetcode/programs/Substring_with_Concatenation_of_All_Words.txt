@@ -1,0 +1,99 @@
+package main
+
+import (
+	"fmt"
+)
+
+func findSubstring(s string, words []string) []int {
+	if len(words) == 0 || len(s) == 0 {
+		return []int{}
+	}
+
+	result := []int{}
+	wordLen := len(words[0])
+	wordCount := len(words)
+	totalLen := wordLen * wordCount
+	sLen := len(s)
+
+	if totalLen > sLen {
+		return result
+	}
+
+	// Create a map to store the count of each word
+	wordMap := make(map[string]int)
+	for _, word := range words {
+		wordMap[word]++
+	}
+
+	// For each possible starting position
+	for i := 0; i <= sLen-totalLen; i++ {
+		// Create a map for the current window
+		windowMap := make(map[string]int)
+		j := 0
+
+		// Check if we can form a valid concatenation starting at position i
+		for j < wordCount {
+			// Extract the word at position i + j*wordLen
+			start := i + j*wordLen
+			end := start + wordLen
+			if end > sLen {
+				break
+			}
+
+			word := s[start:end]
+
+			// Check if this word exists in wordMap
+			if count, exists := wordMap[word]; !exists || windowMap[word] >= count {
+				break
+			}
+
+			windowMap[word]++
+			j++
+		}
+
+		// If we successfully matched all words, add the starting index
+		if j == wordCount {
+			result = append(result, i)
+		}
+	}
+
+	return result
+}
+
+func main() {
+	// Example 1
+	s1 := "barfoothefoobarman"
+	words1 := []string{"foo", "bar"}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s1, words1)
+	fmt.Printf("Output: %v\n\n", findSubstring(s1, words1))
+
+	// Example 2
+	s2 := "wordgoodgoodgoodbestword"
+	words2 := []string{"word", "good", "best", "word"}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s2, words2)
+	fmt.Printf("Output: %v\n\n", findSubstring(s2, words2))
+
+	// Example 3
+	s3 := "barfoofoobarthefoobarman"
+	words3 := []string{"bar", "foo", "the"}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s3, words3)
+	fmt.Printf("Output: %v\n\n", findSubstring(s3, words3))
+
+	// Additional edge case: empty words
+	s4 := "test"
+	words4 := []string{}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s4, words4)
+	fmt.Printf("Output: %v\n\n", findSubstring(s4, words4))
+
+	// Additional edge case: single word
+	s5 := "abababab"
+	words5 := []string{"ab"}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s5, words5)
+	fmt.Printf("Output: %v\n\n", findSubstring(s5, words5))
+
+	// Additional edge case: duplicate words
+	s6 := "ababaababa"
+	words6 := []string{"ab", "ba"}
+	fmt.Printf("Input: s = \"%s\", words = %v\n", s6, words6)
+	fmt.Printf("Output: %v\n\n", findSubstring(s6, words6))
+}

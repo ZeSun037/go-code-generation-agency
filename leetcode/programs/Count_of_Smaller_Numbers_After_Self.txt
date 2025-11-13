@@ -1,0 +1,157 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+type IndexedValue struct {
+	value int
+	index int
+}
+
+func countSmaller(nums []int) []int {
+	if len(nums) == 0 {
+		return []int{}
+	}
+
+	result := make([]int, len(nums))
+	indexed := make([]IndexedValue, len(nums))
+	for i, v := range nums {
+		indexed[i] = IndexedValue{value: v, index: i}
+	}
+
+	mergeSort(indexed, result)
+	return result
+}
+
+func mergeSort(arr []IndexedValue, result []int) []IndexedValue {
+	if len(arr) <= 1 {
+		return arr
+	}
+
+	mid := len(arr) / 2
+	left := mergeSort(arr[:mid], result)
+	right := mergeSort(arr[mid:], result)
+
+	return merge(left, right, result)
+}
+
+func merge(left, right []IndexedValue, result []int) []IndexedValue {
+	merged := make([]IndexedValue, 0, len(left)+len(right))
+
+	i, j := 0, 0
+	rightCount := 0
+
+	for i < len(left) && j < len(right) {
+		if left[i].value <= right[j].value {
+			result[left[i].index] += rightCount
+			merged = append(merged, left[i])
+			i++
+		} else {
+			rightCount++
+			merged = append(merged, right[j])
+			j++
+		}
+	}
+
+	for i < len(left) {
+		result[left[i].index] += rightCount
+		merged = append(merged, left[i])
+		i++
+	}
+
+	for j < len(right) {
+		merged = append(merged, right[j])
+		j++
+	}
+
+	return merged
+}
+
+func countSmallerBIT(nums []int) []int {
+	if len(nums) == 0 {
+		return []int{}
+	}
+
+	result := make([]int, len(nums))
+
+	sortedNums := make([]int, len(nums))
+	copy(sortedNums, nums)
+	sort.Ints(sortedNums)
+
+	compressed := make([]int, 0)
+	for i, v := range sortedNums {
+		if i == 0 || sortedNums[i-1] != v {
+			compressed = append(compressed, v)
+		}
+	}
+
+	compress := func(x int) int {
+		return sort.SearchInts(compressed, x) + 1
+	}
+
+	bit := make([]int, len(compressed)+1)
+
+	for i := len(nums) - 1; i >= 0; i-- {
+		compressedVal := compress(nums[i])
+		result[i] = query(bit, compressedVal-1)
+		update(bit, compressedVal, 1)
+	}
+
+	return result
+}
+
+func update(bit []int, index, delta int) {
+	for index < len(bit) {
+		bit[index] += delta
+		index += index & (-index)
+	}
+}
+
+func query(bit []int, index int) int {
+	sum := 0
+	for index > 0 {
+		sum += bit[index]
+		index -= index & (-index)
+	}
+	return sum
+}
+
+func main() {
+	testCases := []struct {
+		input    []int
+		expected []int
+	}{
+		{[]int{5, 2, 6, 1}, []int{2, 1, 1, 0}},
+		{[]int{-1}, []int{0}},
+		{[]int{-1, -1}, []int{0, 0}},
+		{[]int{1, 2, 3}, []int{0, 0, 0}},
+		{[]int{3, 2, 1}, []int{2, 1, 0}},
+		{[]int{26, 78, 27, 100, 33, 81, 30, 21, 54, 43}, []int{0, 6, 0, 6, 1, 5, 1, 0, 2, 1}},
+	}
+
+	for _, tc := range testCases {
+		result := countSmaller(tc.input)
+		resultBIT := countSmallerBIT(tc.input)
+
+		fmt.Printf("Input: %v\n", tc.input)
+		fmt.Printf("Expected: %v\n", tc.expected)
+		fmt.Printf("Merge Sort: %v\n", result)
+		fmt.Printf("BIT: %v\n", resultBIT)
+		fmt.Printf("Pass (Merge): %v, Pass (BIT): %v\n\n",
+			equal(result, tc.expected), equal(resultBIT, tc.expected))
+	}
+}
+
+func equal(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}

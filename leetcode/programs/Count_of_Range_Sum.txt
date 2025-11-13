@@ -1,0 +1,67 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func countRangeSum(nums []int, lower int, upper int) int {
+	prefixSums := make([]int64, len(nums)+1)
+	for i := 0; i < len(nums); i++ {
+		prefixSums[i+1] = prefixSums[i] + int64(nums[i])
+	}
+
+	count := 0
+	sortedSums := make([]int64, 0)
+
+	for i := len(prefixSums) - 1; i > 0; i-- {
+		target := prefixSums[i-1]
+		lowerBound := target + int64(lower)
+		upperBound := target + int64(upper)
+
+		left := sort.Search(len(sortedSums), func(k int) bool {
+			return sortedSums[k] >= lowerBound
+		})
+
+		right := sort.Search(len(sortedSums), func(k int) bool {
+			return sortedSums[k] > upperBound
+		})
+
+		count += right - left
+
+		insertPos := sort.Search(len(sortedSums), func(k int) bool {
+			return sortedSums[k] > prefixSums[i]
+		})
+		sortedSums = append(sortedSums[:insertPos], append([]int64{prefixSums[i]}, sortedSums[insertPos:]...)...)
+	}
+
+	return count
+}
+
+func main() {
+	// Test case 1
+	nums1 := []int{-2, 5, -1}
+	lower1 := -2
+	upper1 := 2
+	result1 := countRangeSum(nums1, lower1, upper1)
+	fmt.Printf("Test 1: nums = %v, lower = %d, upper = %d\n", nums1, lower1, upper1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 3\n\n")
+
+	// Test case 2
+	nums2 := []int{0}
+	lower2 := 0
+	upper2 := 0
+	result2 := countRangeSum(nums2, lower2, upper2)
+	fmt.Printf("Test 2: nums = %v, lower = %d, upper = %d\n", nums2, lower2, upper2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 1\n\n")
+
+	// Test case 3
+	nums3 := []int{-2147483647, 0, -2147483647, 2147483647}
+	lower3 := -564
+	upper3 := 3864
+	result3 := countRangeSum(nums3, lower3, upper3)
+	fmt.Printf("Test 3: nums = %v, lower = %d, upper = %d\n", nums3, lower3, upper3)
+	fmt.Printf("Output: %d\n", result3)
+}

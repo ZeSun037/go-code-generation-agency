@@ -1,0 +1,130 @@
+package main
+
+import (
+	"container/heap"
+	"fmt"
+)
+
+// MaxHeap implements a max heap for integers
+type MaxHeap []int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] }
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+func (h *MaxHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+// MinHeap implements a min heap for integers
+type MinHeap []int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+// MedianFinder finds the median of a data stream
+type MedianFinder struct {
+	small *MaxHeap // max heap for smaller half
+	large *MinHeap // min heap for larger half
+}
+
+// Constructor initializes the MedianFinder object
+func Constructor() MedianFinder {
+	return MedianFinder{
+		small: &MaxHeap{},
+		large: &MinHeap{},
+	}
+}
+
+// AddNum adds the integer num from the data stream to the data structure
+func (mf *MedianFinder) AddNum(num int) {
+	// Add to max heap (smaller half)
+	heap.Push(mf.small, num)
+
+	// Ensure every element in small is <= every element in large
+	if mf.small.Len() > 0 && mf.large.Len() > 0 {
+		if (*mf.small)[0] > (*mf.large)[0] {
+			val := heap.Pop(mf.small).(int)
+			heap.Push(mf.large, val)
+			val = heap.Pop(mf.large).(int)
+			heap.Push(mf.small, val)
+		}
+	}
+
+	// Maintain size property: |small| == |large| or |small| == |large| + 1
+	if mf.small.Len() > mf.large.Len()+1 {
+		val := heap.Pop(mf.small).(int)
+		heap.Push(mf.large, val)
+	}
+	if mf.large.Len() > mf.small.Len() {
+		val := heap.Pop(mf.large).(int)
+		heap.Push(mf.small, val)
+	}
+}
+
+// FindMedian returns the median of all elements so far
+func (mf *MedianFinder) FindMedian() float64 {
+	if mf.small.Len() > mf.large.Len() {
+		return float64((*mf.small)[0])
+	}
+	return (float64((*mf.small)[0]) + float64((*mf.large)[0])) / 2.0
+}
+
+func main() {
+	// Test case 1: Example from problem
+	mf := Constructor()
+	mf.AddNum(1)
+	mf.AddNum(2)
+	fmt.Printf("Median after [1, 2]: %.1f (expected 1.5)\n", mf.FindMedian())
+	mf.AddNum(3)
+	fmt.Printf("Median after [1, 2, 3]: %.1f (expected 2.0)\n", mf.FindMedian())
+
+	// Test case 2: Single element
+	mf2 := Constructor()
+	mf2.AddNum(5)
+	fmt.Printf("Median after [5]: %.1f (expected 5.0)\n", mf2.FindMedian())
+
+	// Test case 3: Negative numbers
+	mf3 := Constructor()
+	mf3.AddNum(-1)
+	mf3.AddNum(0)
+	fmt.Printf("Median after [-1, 0]: %.1f (expected -0.5)\n", mf3.FindMedian())
+	mf3.AddNum(1)
+	fmt.Printf("Median after [-1, 0, 1]: %.1f (expected 0.0)\n", mf3.FindMedian())
+
+	// Test case 4: Large dataset
+	mf4 := Constructor()
+	numbers := []int{12, 4, 5, 3, 8, 7}
+	for _, num := range numbers {
+		mf4.AddNum(num)
+	}
+	fmt.Printf("Median after [12, 4, 5, 3, 8, 7]: %.1f (expected 6.5)\n", mf4.FindMedian())
+
+	// Test case 5: Even vs odd size
+	mf5 := Constructor()
+	mf5.AddNum(1)
+	fmt.Printf("Median after [1]: %.1f (expected 1.0)\n", mf5.FindMedian())
+	mf5.AddNum(2)
+	fmt.Printf("Median after [1, 2]: %.1f (expected 1.5)\n", mf5.FindMedian())
+	mf5.AddNum(3)
+	fmt.Printf("Median after [1, 2, 3]: %.1f (expected 2.0)\n", mf5.FindMedian())
+	mf5.AddNum(4)
+	fmt.Printf("Median after [1, 2, 3, 4]: %.1f (expected 2.5)\n", mf5.FindMedian())
+}

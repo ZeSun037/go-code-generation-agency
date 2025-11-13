@@ -1,0 +1,110 @@
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+func maxPathSum(root *TreeNode) int {
+	maxSum := math.MinInt32
+	maxPathSumHelper(root, &maxSum)
+	return maxSum
+}
+
+func maxPathSumHelper(node *TreeNode, maxSum *int) int {
+	if node == nil {
+		return 0
+	}
+
+	// Get the maximum sum going down the left subtree
+	// We use max(0, leftSum) because we can choose not to include negative paths
+	leftSum := max(0, maxPathSumHelper(node.Left, maxSum))
+
+	// Get the maximum sum going down the right subtree
+	rightSum := max(0, maxPathSumHelper(node.Right, maxSum))
+
+	// Calculate the path sum that goes through the current node
+	// This path can go: left subtree -> current node -> right subtree
+	pathThroughNode := leftSum + node.Val + rightSum
+
+	// Update the global maximum
+	*maxSum = max(*maxSum, pathThroughNode)
+
+	// Return the maximum path sum that can be extended to the parent
+	// This is either: current node alone, or current node + left path, or current node + right path
+	return node.Val + max(leftSum, rightSum)
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+// Helper function to build a tree from slice representation (level-order with nil for null)
+func buildTree(values []interface{}) *TreeNode {
+	if len(values) == 0 || values[0] == nil {
+		return nil
+	}
+
+	root := &TreeNode{Val: values[0].(int)}
+	queue := []*TreeNode{root}
+	i := 1
+
+	for len(queue) > 0 && i < len(values) {
+		node := queue[0]
+		queue = queue[1:]
+
+		// Process left child
+		if i < len(values) && values[i] != nil {
+			node.Left = &TreeNode{Val: values[i].(int)}
+			queue = append(queue, node.Left)
+		}
+		i++
+
+		// Process right child
+		if i < len(values) && values[i] != nil {
+			node.Right = &TreeNode{Val: values[i].(int)}
+			queue = append(queue, node.Right)
+		}
+		i++
+	}
+
+	return root
+}
+
+func main() {
+	// Test case 1: [1,2,3]
+	// Expected output: 6 (path: 2 -> 1 -> 3)
+	root1 := buildTree([]interface{}{1, 2, 3})
+	result1 := maxPathSum(root1)
+	fmt.Printf("Test 1 - Input: [1,2,3], Output: %d, Expected: 6\n", result1)
+
+	// Test case 2: [-10,9,20,null,null,15,7]
+	// Expected output: 42 (path: 15 -> 20 -> 7)
+	root2 := buildTree([]interface{}{-10, 9, 20, nil, nil, 15, 7})
+	result2 := maxPathSum(root2)
+	fmt.Printf("Test 2 - Input: [-10,9,20,null,null,15,7], Output: %d, Expected: 42\n", result2)
+
+	// Test case 3: Single node with negative value
+	root3 := buildTree([]interface{}{-3})
+	result3 := maxPathSum(root3)
+	fmt.Printf("Test 3 - Input: [-3], Output: %d, Expected: -3\n", result3)
+
+	// Test case 4: All negative values
+	root4 := buildTree([]interface{}{-2, -1})
+	result4 := maxPathSum(root4)
+	fmt.Printf("Test 4 - Input: [-2,-1], Output: %d, Expected: -1\n", result4)
+
+	// Test case 5: Mixed positive and negative
+	root5 := buildTree([]interface{}{5, 4, 8, 11, nil, 13, 4, 7, 2, nil, nil})
+	result5 := maxPathSum(root5)
+	fmt.Printf("Test 5 - Complex tree, Output: %d\n", result5)
+}

@@ -1,0 +1,79 @@
+package main
+
+import "fmt"
+
+func getMaxRepetitions(s1 string, n1 int, s2 string, n2 int) int {
+	if n1 == 0 {
+		return 0
+	}
+
+	s2Len := len(s2)
+	s1Len := len(s1)
+
+	// For each position in s2, store how many complete s2s we've matched
+	// and what position we're at in s2 after processing each s1
+	s2Count := make([]int, n1+1)
+	s2Index := make([]int, n1+1)
+
+	s2Idx := 0
+
+	for i := 1; i <= n1; i++ {
+		for j := 0; j < s1Len; j++ {
+			if s1[j] == s2[s2Idx] {
+				s2Idx++
+				if s2Idx == s2Len {
+					s2Idx = 0
+					s2Count[i]++
+				}
+			}
+		}
+
+		s2Count[i] += s2Count[i-1]
+		s2Index[i] = s2Idx
+
+		// Optimization: detect cycle to handle large n1 values
+		for k := i - 1; k >= 0; k-- {
+			if s2Index[k] == s2Index[i] {
+				// Found a cycle from k to i
+				prevCount := s2Count[k]
+				cycleLen := i - k
+				cycleCount := s2Count[i] - prevCount
+				remainingReps := n1 - i
+				fullCycles := remainingReps / cycleLen
+				remainder := remainingReps % cycleLen
+
+				totalS2Count := s2Count[i] + fullCycles*cycleCount + (s2Count[k+remainder] - s2Count[k])
+				return totalS2Count / n2
+			}
+		}
+	}
+
+	return s2Count[n1] / n2
+}
+
+func main() {
+	tests := []struct {
+		s1       string
+		n1       int
+		s2       string
+		n2       int
+		expected int
+	}{
+		{"acb", 4, "ab", 2, 2},
+		{"acb", 1, "acb", 1, 1},
+		{"a", 1, "a", 1, 1},
+		{"a", 1000000, "a", 1, 1000000},
+		{"abc", 1, "def", 1, 0},
+		{"abab", 2, "baa", 1, 1},
+	}
+
+	for i, test := range tests {
+		result := getMaxRepetitions(test.s1, test.n1, test.s2, test.n2)
+		status := "✓"
+		if result != test.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d %s: s1=%q, n1=%d, s2=%q, n2=%d => %d (expected %d)\n",
+			i+1, status, test.s1, test.n1, test.s2, test.n2, result, test.expected)
+	}
+}

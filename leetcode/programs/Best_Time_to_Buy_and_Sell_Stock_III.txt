@@ -1,0 +1,74 @@
+package main
+
+import "fmt"
+
+func maxProfit(prices []int) int {
+	if len(prices) <= 1 {
+		return 0
+	}
+
+	n := len(prices)
+
+	// left[i] = max profit from one transaction in prices[0:i+1]
+	left := make([]int, n)
+	minPrice := prices[0]
+	for i := 1; i < n; i++ {
+		minPrice = min(minPrice, prices[i])
+		left[i] = max(left[i-1], prices[i]-minPrice)
+	}
+
+	// right[i] = max profit from one transaction in prices[i:n]
+	right := make([]int, n)
+	maxPrice := prices[n-1]
+	for i := n - 2; i >= 0; i-- {
+		maxPrice = max(maxPrice, prices[i])
+		right[i] = max(right[i+1], maxPrice-prices[i])
+	}
+
+	// Find the maximum profit by considering all split points
+	maxProf := 0
+	for i := 0; i < n; i++ {
+		maxProf = max(maxProf, left[i]+right[i])
+	}
+
+	return maxProf
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	testCases := []struct {
+		prices   []int
+		expected int
+	}{
+		{[]int{3, 3, 5, 0, 0, 3, 1, 4}, 6},
+		{[]int{1, 2, 3, 4, 5}, 4},
+		{[]int{7, 6, 4, 3, 1}, 0},
+		{[]int{1}, 0},
+		{[]int{2, 1}, 0},
+		{[]int{1, 2}, 1},
+		{[]int{1, 4, 5, 7, 6, 3, 6, 7}, 12},
+	}
+
+	for i, tc := range testCases {
+		result := maxProfit(tc.prices)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d %s: prices=%v, expected=%d, got=%d\n",
+			i+1, status, tc.prices, tc.expected, result)
+	}
+}

@@ -1,0 +1,96 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func findItinerary(tickets [][]string) []string {
+	graph := make(map[string][]string)
+	degreeIn := make(map[string]int)
+	degreeOut := make(map[string]int)
+
+	for _, ticket := range tickets {
+		from, to := ticket[0], ticket[1]
+		graph[from] = append(graph[from], to)
+		degreeOut[from]++
+		degreeIn[to]++
+	}
+
+	for airport := range graph {
+		sort.Strings(graph[airport])
+	}
+
+	stack := []string{"JFK"}
+	path := []string{}
+
+	for len(stack) > 0 {
+		curr := stack[len(stack)-1]
+
+		if len(graph[curr]) > 0 {
+			next := graph[curr][0]
+			graph[curr] = graph[curr][1:]
+			stack = append(stack, next)
+		} else {
+			path = append(path, curr)
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
+}
+
+func main() {
+	testCases := []struct {
+		name     string
+		tickets  [][]string
+		expected []string
+	}{
+		{
+			name:     "Example 1",
+			tickets:  [][]string{{"MUC", "LHR"}, {"JFK", "MUC"}, {"SFO", "SJC"}, {"LHR", "SFO"}},
+			expected: []string{"JFK", "MUC", "LHR", "SFO", "SJC"},
+		},
+		{
+			name:     "Example 2",
+			tickets:  [][]string{{"JFK", "SFO"}, {"JFK", "ATL"}, {"SFO", "ATL"}, {"ATL", "JFK"}, {"ATL", "SFO"}},
+			expected: []string{"JFK", "ATL", "JFK", "SFO", "ATL", "SFO"},
+		},
+		{
+			name:     "Single ticket",
+			tickets:  [][]string{{"JFK", "ATL"}},
+			expected: []string{"JFK", "ATL"},
+		},
+		{
+			name:     "Simple cycle",
+			tickets:  [][]string{{"JFK", "ATL"}, {"ATL", "JFK"}},
+			expected: []string{"JFK", "ATL", "JFK"},
+		},
+	}
+
+	for _, tc := range testCases {
+		result := findItinerary(tc.tickets)
+		match := len(result) == len(tc.expected)
+		if match {
+			for i := range result {
+				if result[i] != tc.expected[i] {
+					match = false
+					break
+				}
+			}
+		}
+
+		status := "PASS"
+		if !match {
+			status = "FAIL"
+		}
+
+		fmt.Printf("%s: %s\n", tc.name, status)
+		fmt.Printf("  Result:   %v\n", result)
+		fmt.Printf("  Expected: %v\n", tc.expected)
+	}
+}

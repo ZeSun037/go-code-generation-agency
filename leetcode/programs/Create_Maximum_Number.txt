@@ -1,0 +1,152 @@
+package main
+
+import (
+	"fmt"
+)
+
+func maxNumber(nums1 []int, nums2 []int, k int) []int {
+	result := make([]int, k)
+	m, n := len(nums1), len(nums2)
+
+	// Try all possible splits: i elements from nums1, k-i elements from nums2
+	for i := maxInt(0, k-n); i <= minInt(k, m); i++ {
+		// Get i largest elements from nums1 maintaining order
+		candidate1 := maxArray(nums1, i)
+		// Get k-i largest elements from nums2 maintaining order
+		candidate2 := maxArray(nums2, k-i)
+		// Merge the two arrays
+		merged := merge(candidate1, candidate2)
+		// Update result if merged is larger
+		if isGreater(merged, result) {
+			copy(result, merged)
+		}
+	}
+
+	return result
+}
+
+// maxArray returns the maximum array of length targetLen from nums maintaining relative order
+func maxArray(nums []int, targetLen int) []int {
+	if targetLen == 0 {
+		return []int{}
+	}
+
+	stack := make([]int, 0, targetLen)
+	drop := len(nums) - targetLen
+
+	for _, num := range nums {
+		// Remove smaller elements if we have enough elements left
+		for len(stack) > 0 && stack[len(stack)-1] < num && drop > 0 {
+			stack = stack[:len(stack)-1]
+			drop--
+		}
+		stack = append(stack, num)
+	}
+
+	return stack[:targetLen]
+}
+
+// merge merges two arrays to create the maximum result
+func merge(arr1, arr2 []int) []int {
+	result := make([]int, len(arr1)+len(arr2))
+	i, j, k := 0, 0, 0
+
+	for i < len(arr1) && j < len(arr2) {
+		// Compare which array should contribute next
+		// We need to look ahead to break ties
+		if isGreaterThan(arr1, i, arr2, j) {
+			result[k] = arr1[i]
+			i++
+		} else {
+			result[k] = arr2[j]
+			j++
+		}
+		k++
+	}
+
+	// Copy remaining elements
+	for i < len(arr1) {
+		result[k] = arr1[i]
+		i++
+		k++
+	}
+	for j < len(arr2) {
+		result[k] = arr2[j]
+		j++
+		k++
+	}
+
+	return result
+}
+
+// isGreaterThan compares arr1[i:] with arr2[j:] and returns true if arr1 should go first
+func isGreaterThan(arr1 []int, i int, arr2 []int, j int) bool {
+	for i < len(arr1) && j < len(arr2) {
+		if arr1[i] > arr2[j] {
+			return true
+		}
+		if arr1[i] < arr2[j] {
+			return false
+		}
+		i++
+		j++
+	}
+	// If one array is prefix of another, longer array wins
+	return i < len(arr1)
+}
+
+// isGreater compares two arrays and returns true if arr1 > arr2
+func isGreater(arr1, arr2 []int) bool {
+	for i := 0; i < len(arr1) && i < len(arr2); i++ {
+		if arr1[i] > arr2[i] {
+			return true
+		}
+		if arr1[i] < arr2[i] {
+			return false
+		}
+	}
+	return false
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func maxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	// Test case 1
+	nums1 := []int{3, 4, 6, 5}
+	nums2 := []int{9, 1, 2, 5, 8, 3}
+	k := 5
+	result := maxNumber(nums1, nums2, k)
+	fmt.Printf("Test 1: nums1=%v, nums2=%v, k=%d\n", nums1, nums2, k)
+	fmt.Printf("Output: %v\n", result)
+	fmt.Printf("Expected: [9 8 6 5 3]\n\n")
+
+	// Test case 2
+	nums1 = []int{6, 7}
+	nums2 = []int{6, 0, 4}
+	k = 5
+	result = maxNumber(nums1, nums2, k)
+	fmt.Printf("Test 2: nums1=%v, nums2=%v, k=%d\n", nums1, nums2, k)
+	fmt.Printf("Output: %v\n", result)
+	fmt.Printf("Expected: [6 7 6 0 4]\n\n")
+
+	// Test case 3
+	nums1 = []int{3, 9}
+	nums2 = []int{8, 9}
+	k = 3
+	result = maxNumber(nums1, nums2, k)
+	fmt.Printf("Test 3: nums1=%v, nums2=%v, k=%d\n", nums1, nums2, k)
+	fmt.Printf("Output: %v\n", result)
+	fmt.Printf("Expected: [9 8 9]\n")
+}

@@ -1,0 +1,64 @@
+package main
+
+import (
+	"fmt"
+)
+
+func poorPigs(buckets int, minutesToDie int, minutesToTest int) int {
+	// Calculate the number of test rounds we can perform
+	// We can perform at most minutesToTest / minutesToDie + 1 tests
+	// (the +1 accounts for the initial test at time 0)
+	tests := minutesToTest/minutesToDie + 1
+
+	// Each pig can distinguish between (tests + 1) states:
+	// - Dies at test 1
+	// - Dies at test 2
+	// - ...
+	// - Dies at test 'tests'
+	// - Never dies (survives all tests)
+	// So each pig can represent (tests + 1) different outcomes
+	statesPerPig := tests + 1
+
+	// We need to find the minimum number of pigs such that
+	// (statesPerPig)^n >= buckets
+	// This is because with n pigs, we can distinguish between
+	// statesPerPig^n different states/buckets
+
+	pigs := 0
+	states := 1
+
+	for states < buckets {
+		states *= statesPerPig
+		pigs++
+	}
+
+	return pigs
+}
+
+func main() {
+	// Test case 1
+	buckets1 := 4
+	minutesToDie1 := 15
+	minutesToTest1 := 15
+	result1 := poorPigs(buckets1, minutesToDie1, minutesToTest1)
+	fmt.Printf("Input: buckets = %d, minutesToDie = %d, minutesToTest = %d\n", buckets1, minutesToDie1, minutesToTest1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Println()
+
+	// Test case 2
+	buckets2 := 4
+	minutesToDie2 := 15
+	minutesToTest2 := 30
+	result2 := poorPigs(buckets2, minutesToDie2, minutesToTest2)
+	fmt.Printf("Input: buckets = %d, minutesToDie = %d, minutesToTest = %d\n", buckets2, minutesToDie2, minutesToTest2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Println()
+
+	// Additional test case
+	buckets3 := 1000
+	minutesToDie3 := 15
+	minutesToTest3 := 60
+	result3 := poorPigs(buckets3, minutesToDie3, minutesToTest3)
+	fmt.Printf("Input: buckets = %d, minutesToDie = %d, minutesToTest = %d\n", buckets3, minutesToDie3, minutesToTest3)
+	fmt.Printf("Output: %d\n", result3)
+}

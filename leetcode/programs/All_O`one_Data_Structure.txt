@@ -1,0 +1,170 @@
+package main
+
+import (
+	"fmt"
+)
+
+type Node struct {
+	count int
+	keys  map[string]bool
+	prev  *Node
+	next  *Node
+}
+
+type AllOne struct {
+	keyToCount  map[string]int
+	countToNode map[int]*Node
+	head        *Node
+	tail        *Node
+}
+
+func Constructor() AllOne {
+	head := &Node{count: 0, keys: make(map[string]bool)}
+	tail := &Node{count: 0, keys: make(map[string]bool)}
+	head.next = tail
+	tail.prev = head
+
+	return AllOne{
+		keyToCount:  make(map[string]int),
+		countToNode: make(map[int]*Node),
+		head:        head,
+		tail:        tail,
+	}
+}
+
+func (a *AllOne) Inc(key string) {
+	if count, exists := a.keyToCount[key]; exists {
+		a.keyToCount[key]++
+		newCount := count + 1
+		oldNode := a.countToNode[count]
+		delete(oldNode.keys, key)
+
+		if newNode, nodeExists := a.countToNode[newCount]; nodeExists {
+			newNode.keys[key] = true
+		} else {
+			newNode := &Node{count: newCount, keys: make(map[string]bool)}
+			newNode.keys[key] = true
+
+			nextNode := oldNode.next
+			oldNode.next = newNode
+			newNode.prev = oldNode
+			newNode.next = nextNode
+			nextNode.prev = newNode
+
+			a.countToNode[newCount] = newNode
+		}
+
+		if len(oldNode.keys) == 0 {
+			oldNode.prev.next = oldNode.next
+			oldNode.next.prev = oldNode.prev
+			delete(a.countToNode, count)
+		}
+	} else {
+		a.keyToCount[key] = 1
+
+		if node, exists := a.countToNode[1]; exists {
+			node.keys[key] = true
+		} else {
+			newNode := &Node{count: 1, keys: make(map[string]bool)}
+			newNode.keys[key] = true
+
+			nextNode := a.head.next
+			a.head.next = newNode
+			newNode.prev = a.head
+			newNode.next = nextNode
+			nextNode.prev = newNode
+
+			a.countToNode[1] = newNode
+		}
+	}
+}
+
+func (a *AllOne) Dec(key string) {
+	count := a.keyToCount[key]
+	oldNode := a.countToNode[count]
+	delete(oldNode.keys, key)
+
+	if count == 1 {
+		delete(a.keyToCount, key)
+	} else {
+		a.keyToCount[key] = count - 1
+		newCount := count - 1
+
+		if newNode, exists := a.countToNode[newCount]; exists {
+			newNode.keys[key] = true
+		} else {
+			newNode := &Node{count: newCount, keys: make(map[string]bool)}
+			newNode.keys[key] = true
+
+			prevNode := oldNode.prev
+			prevNode.next = newNode
+			newNode.prev = prevNode
+			newNode.next = oldNode
+			oldNode.prev = newNode
+
+			a.countToNode[newCount] = newNode
+		}
+	}
+
+	if len(oldNode.keys) == 0 {
+		oldNode.prev.next = oldNode.next
+		oldNode.next.prev = oldNode.prev
+		delete(a.countToNode, count)
+	}
+}
+
+func (a *AllOne) GetMaxKey() string {
+	if a.tail.prev == a.head {
+		return ""
+	}
+
+	node := a.tail.prev
+	for key := range node.keys {
+		return key
+	}
+	return ""
+}
+
+func (a *AllOne) GetMinKey() string {
+	if a.head.next == a.tail {
+		return ""
+	}
+
+	node := a.head.next
+	for key := range node.keys {
+		return key
+	}
+	return ""
+}
+
+func main() {
+	allOne := Constructor()
+
+	allOne.Inc("hello")
+	allOne.Inc("hello")
+	fmt.Println("getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("getMinKey:", allOne.GetMinKey())
+
+	allOne.Inc("leet")
+	fmt.Println("getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("getMinKey:", allOne.GetMinKey())
+
+	allOne.Inc("leet")
+	allOne.Inc("leet")
+	fmt.Println("getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("getMinKey:", allOne.GetMinKey())
+
+	allOne.Dec("hello")
+	fmt.Println("After dec hello - getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("After dec hello - getMinKey:", allOne.GetMinKey())
+
+	allOne.Dec("hello")
+	fmt.Println("After dec hello again - getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("After dec hello again - getMinKey:", allOne.GetMinKey())
+
+	allOne.Dec("leet")
+	allOne.Dec("leet")
+	allOne.Dec("leet")
+	fmt.Println("After dec all leet - getMaxKey:", allOne.GetMaxKey())
+	fmt.Println("After dec all leet - getMinKey:", allOne.GetMinKey())
+}

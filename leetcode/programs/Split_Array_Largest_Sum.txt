@@ -1,0 +1,93 @@
+package main
+
+import (
+	"fmt"
+)
+
+func splitArray(nums []int, k int) int {
+	left := 0
+	right := 0
+
+	// left is the maximum element, right is the sum of all elements
+	for _, num := range nums {
+		if num > left {
+			left = num
+		}
+		right += num
+	}
+
+	// Binary search for the minimum largest sum
+	for left < right {
+		mid := left + (right-left)/2
+		if canSplit(nums, k, mid) {
+			right = mid
+		} else {
+			left = mid + 1
+		}
+	}
+
+	return left
+}
+
+func canSplit(nums []int, k int, maxSum int) bool {
+	splits := 1
+	currentSum := 0
+
+	for _, num := range nums {
+		if currentSum+num <= maxSum {
+			currentSum += num
+		} else {
+			splits++
+			currentSum = num
+			if splits > k {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func main() {
+	testCases := []struct {
+		nums     []int
+		k        int
+		expected int
+	}{
+		{
+			nums:     []int{7, 2, 5, 10, 8},
+			k:        2,
+			expected: 18,
+		},
+		{
+			nums:     []int{1, 2, 3, 4, 5},
+			k:        2,
+			expected: 9,
+		},
+		{
+			nums:     []int{1, 4, 4},
+			k:        3,
+			expected: 4,
+		},
+		{
+			nums:     []int{10},
+			k:        1,
+			expected: 10,
+		},
+		{
+			nums:     []int{1, 2, 3, 4, 5, 6},
+			k:        3,
+			expected: 7,
+		},
+	}
+
+	for i, tc := range testCases {
+		result := splitArray(tc.nums, tc.k)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s\nInput: nums=%v, k=%d\nExpected: %d, Got: %d\n\n",
+			i+1, status, tc.nums, tc.k, tc.expected, result)
+	}
+}

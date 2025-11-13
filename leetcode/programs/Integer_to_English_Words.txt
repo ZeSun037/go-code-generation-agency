@@ -1,0 +1,71 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func numberToWords(num int) string {
+	if num == 0 {
+		return "Zero"
+	}
+
+	ones := []string{"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"}
+	teens := []string{"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"}
+	tens := []string{"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"}
+	thousands := []string{"", "Thousand", "Million", "Billion"}
+
+	var result []string
+
+	groupIndex := 0
+	for num > 0 {
+		if num%1000 != 0 {
+			result = append([]string{helper(num%1000, ones, teens, tens) + " " + thousands[groupIndex]}, result...)
+		}
+		num /= 1000
+		groupIndex++
+	}
+
+	var words []string
+	for _, word := range result {
+		word = strings.TrimSpace(word)
+		if word != "" {
+			words = append(words, word)
+		}
+	}
+
+	return strings.Join(words, " ")
+}
+
+func helper(num int, ones, teens, tens []string) string {
+	if num == 0 {
+		return ""
+	} else if num < 10 {
+		return ones[num]
+	} else if num < 20 {
+		return teens[num-10]
+	} else if num < 100 {
+		return tens[num/10] + (func() string {
+			if num%10 == 0 {
+				return ""
+			}
+			return " " + ones[num%10]
+		}())
+	} else {
+		return ones[num/100] + " Hundred" + (func() string {
+			if num%100 == 0 {
+				return ""
+			}
+			return " " + helper(num%100, ones, teens, tens)
+		}())
+	}
+}
+
+func main() {
+	testCases := []int{0, 1, 10, 12, 100, 123, 1000, 12345, 1234567, 1000000, 1000000000, 2147483647}
+
+	for _, num := range testCases {
+		result := numberToWords(num)
+		fmt.Printf("Input: %d\nOutput: %s\n\n", num, result)
+	}
+}

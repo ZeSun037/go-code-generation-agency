@@ -1,0 +1,93 @@
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func freedomTrail(ring string, key string) int {
+	n := len(ring)
+	m := len(key)
+	
+	// Precompute positions of each character in ring
+	positions := make(map[byte][]int)
+	for i := 0; i < n; i++ {
+		positions[ring[i]] = append(positions[ring[i]], i)
+	}
+	
+	// DP: dp[i][j] = minimum steps to spell first i characters of key with ring index at j
+	dp := make([][]int, m+1)
+	for i := range dp {
+		dp[i] = make([]int, n)
+		for j := range dp[i] {
+			dp[i][j] = math.MaxInt32
+		}
+	}
+	
+	// Base case: before spelling any character, we start at position 0
+	dp[0][0] = 0
+	
+	// Fill DP table
+	for i := 0; i < m; i++ {
+		keyChar := key[i]
+		
+		for j := 0; j < n; j++ {
+			if dp[i][j] == math.MaxInt32 {
+				continue
+			}
+			
+			// Try all positions where keyChar appears in ring
+			for _, nextPos := range positions[keyChar] {
+				// Calculate distance from current position j to nextPos
+				clockwise := (nextPos - j + n) % n
+				anticlockwise := (j - nextPos + n) % n
+				
+				minDist := min(clockwise, anticlockwise)
+				
+				// Update dp[i+1][nextPos]: cost is current cost + rotation distance + 1 (for pressing button)
+				dp[i+1][nextPos] = min(dp[i+1][nextPos], dp[i][j]+minDist+1)
+			}
+		}
+	}
+	
+	// Find minimum steps among all final positions
+	result := math.MaxInt32
+	for j := 0; j < n; j++ {
+		result = min(result, dp[m][j])
+	}
+	
+	return result
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	// Test case 1
+	ring1 := "godding"
+	key1 := "gd"
+	result1 := freedomTrail(ring1, key1)
+	fmt.Printf("Input: ring = \"%s\", key = \"%s\"\n", ring1, key1)
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 4\n\n")
+	
+	// Test case 2
+	ring2 := "godding"
+	key2 := "godding"
+	result2 := freedomTrail(ring2, key2)
+	fmt.Printf("Input: ring = \"%s\", key = \"%s\"\n", ring2, key2)
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 13\n\n")
+	
+	// Test case 3
+	ring3 := "aba"
+	key3 := "aab"
+	result3 := freedomTrail(ring3, key3)
+	fmt.Printf("Input: ring = \"%s\", key = \"%s\"\n", ring3, key3)
+	fmt.Printf("Output: %d\n", result3)
+	fmt.Printf("Expected: 7\n")
+}

@@ -1,0 +1,125 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+type SummaryRanges struct {
+	intervals map[int]int
+	sorted    []int
+}
+
+func Constructor() SummaryRanges {
+	return SummaryRanges{
+		intervals: make(map[int]int),
+		sorted:    make([]int, 0),
+	}
+}
+
+func (sr *SummaryRanges) AddNum(value int) {
+	if sr.containsValue(value) {
+		return
+	}
+
+	left := value
+	right := value
+	toDelete := []int{}
+
+	leftInterval := -1
+	rightInterval := -1
+
+	for start, end := range sr.intervals {
+		if end == value-1 {
+			leftInterval = start
+		}
+		if start == value+1 {
+			rightInterval = start
+		}
+	}
+
+	if leftInterval != -1 && rightInterval != -1 {
+		left = leftInterval
+		right = sr.intervals[rightInterval]
+		toDelete = append(toDelete, leftInterval, rightInterval)
+	} else if leftInterval != -1 {
+		left = leftInterval
+		right = value
+		toDelete = append(toDelete, leftInterval)
+	} else if rightInterval != -1 {
+		left = value
+		right = sr.intervals[rightInterval]
+		toDelete = append(toDelete, rightInterval)
+	}
+
+	for _, start := range toDelete {
+		delete(sr.intervals, start)
+	}
+
+	sr.intervals[left] = right
+	sr.rebuildSorted()
+}
+
+func (sr *SummaryRanges) containsValue(value int) bool {
+	for start, end := range sr.intervals {
+		if start <= value && value <= end {
+			return true
+		}
+	}
+	return false
+}
+
+func (sr *SummaryRanges) rebuildSorted() {
+	sr.sorted = make([]int, 0, len(sr.intervals))
+	for start := range sr.intervals {
+		sr.sorted = append(sr.sorted, start)
+	}
+	sort.Ints(sr.sorted)
+}
+
+func (sr *SummaryRanges) GetIntervals() [][]int {
+	result := make([][]int, 0, len(sr.intervals))
+
+	for _, start := range sr.sorted {
+		end := sr.intervals[start]
+		result = append(result, []int{start, end})
+	}
+
+	return result
+}
+
+func main() {
+	summaryRanges := Constructor()
+
+	summaryRanges.AddNum(1)
+	fmt.Println("After addNum(1):", summaryRanges.GetIntervals())
+
+	summaryRanges.AddNum(3)
+	fmt.Println("After addNum(3):", summaryRanges.GetIntervals())
+
+	summaryRanges.AddNum(7)
+	fmt.Println("After addNum(7):", summaryRanges.GetIntervals())
+
+	summaryRanges.AddNum(2)
+	fmt.Println("After addNum(2):", summaryRanges.GetIntervals())
+
+	summaryRanges.AddNum(6)
+	fmt.Println("After addNum(6):", summaryRanges.GetIntervals())
+
+	fmt.Println("\n--- Additional Tests ---")
+	sr2 := Constructor()
+	sr2.AddNum(0)
+	fmt.Println("After addNum(0):", sr2.GetIntervals())
+
+	sr2.AddNum(1)
+	fmt.Println("After addNum(1):", sr2.GetIntervals())
+
+	sr2.AddNum(2)
+	fmt.Println("After addNum(2):", sr2.GetIntervals())
+
+	sr2.AddNum(5)
+	fmt.Println("After addNum(5):", sr2.GetIntervals())
+
+	sr2.AddNum(3)
+	fmt.Println("After addNum(3):", sr2.GetIntervals())
+}

@@ -1,0 +1,115 @@
+package main
+
+import (
+	"fmt"
+)
+
+func findLadders(beginWord string, endWord string, wordList []string) [][]string {
+	wordSet := make(map[string]bool)
+	for _, word := range wordList {
+		wordSet[word] = true
+	}
+
+	if !wordSet[endWord] {
+		return [][]string{}
+	}
+
+	neighbors := make(map[string][]string)
+	distance := make(map[string]int)
+
+	bfs(beginWord, endWord, wordSet, neighbors, distance)
+
+	result := [][]string{}
+	path := []string{beginWord}
+	dfs(beginWord, endWord, neighbors, distance, path, &result)
+
+	return result
+}
+
+func bfs(beginWord, endWord string, wordSet map[string]bool, neighbors map[string][]string, distance map[string]int) {
+	for word := range wordSet {
+		neighbors[word] = []string{}
+		distance[word] = -1
+	}
+	distance[beginWord] = 0
+
+	queue := []string{beginWord}
+	for len(queue) > 0 {
+		word := queue[0]
+		queue = queue[1:]
+
+		currentDistance := distance[word]
+
+		nextWords := getNextWords(word, wordSet)
+		for _, nextWord := range nextWords {
+			neighbors[word] = append(neighbors[word], nextWord)
+
+			if distance[nextWord] == -1 {
+				distance[nextWord] = currentDistance + 1
+				if nextWord != endWord {
+					queue = append(queue, nextWord)
+				} else {
+					queue = append(queue, nextWord)
+				}
+			}
+		}
+	}
+}
+
+func getNextWords(word string, wordSet map[string]bool) []string {
+	nextWords := []string{}
+	chars := []byte(word)
+
+	for i := 0; i < len(chars); i++ {
+		originalChar := chars[i]
+		for c := byte('a'); c <= byte('z'); c++ {
+			chars[i] = c
+			newWord := string(chars)
+			if wordSet[newWord] {
+				nextWords = append(nextWords, newWord)
+			}
+		}
+		chars[i] = originalChar
+	}
+
+	return nextWords
+}
+
+func dfs(word, endWord string, neighbors map[string][]string, distance map[string]int, path []string, result *[][]string) {
+	if word == endWord {
+		pathCopy := make([]string, len(path))
+		copy(pathCopy, path)
+		*result = append(*result, pathCopy)
+		return
+	}
+
+	for _, nextWord := range neighbors[word] {
+		if distance[nextWord] == distance[word]+1 {
+			path = append(path, nextWord)
+			dfs(nextWord, endWord, neighbors, distance, path, result)
+			path = path[:len(path)-1]
+		}
+	}
+}
+
+func main() {
+	// Example 1
+	beginWord1 := "hit"
+	endWord1 := "cog"
+	wordList1 := []string{"hot", "dot", "dog", "lot", "log", "cog"}
+	result1 := findLadders(beginWord1, endWord1, wordList1)
+	fmt.Println("Example 1:")
+	for _, ladder := range result1 {
+		fmt.Println(ladder)
+	}
+
+	fmt.Println()
+
+	// Example 2
+	beginWord2 := "hit"
+	endWord2 := "cog"
+	wordList2 := []string{"hot", "dot", "dog", "lot", "log"}
+	result2 := findLadders(beginWord2, endWord2, wordList2)
+	fmt.Println("Example 2:")
+	fmt.Println(result2)
+}

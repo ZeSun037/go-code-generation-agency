@@ -1,0 +1,123 @@
+package main
+
+import (
+	"fmt"
+)
+
+func maximalRectangle(matrix [][]string) int {
+	if len(matrix) == 0 || len(matrix[0]) == 0 {
+		return 0
+	}
+
+	rows := len(matrix)
+	cols := len(matrix[0])
+	heights := make([]int, cols)
+	maxArea := 0
+
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if matrix[i][j] == "1" {
+				heights[j]++
+			} else {
+				heights[j] = 0
+			}
+		}
+		maxArea = max(maxArea, largestRectangleInHistogram(heights))
+	}
+
+	return maxArea
+}
+
+func largestRectangleInHistogram(heights []int) int {
+	if len(heights) == 0 {
+		return 0
+	}
+
+	stack := make([]int, 0)
+	maxArea := 0
+	index := 0
+
+	for index < len(heights) {
+		if len(stack) == 0 || heights[index] >= heights[stack[len(stack)-1]] {
+			stack = append(stack, index)
+			index++
+		} else {
+			top := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			width := index
+			if len(stack) > 0 {
+				width = index - stack[len(stack)-1] - 1
+			}
+			area := heights[top] * width
+			maxArea = max(maxArea, area)
+		}
+	}
+
+	for len(stack) > 0 {
+		top := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		width := index
+		if len(stack) > 0 {
+			width = index - stack[len(stack)-1] - 1
+		}
+		area := heights[top] * width
+		maxArea = max(maxArea, area)
+	}
+
+	return maxArea
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	tests := []struct {
+		matrix   [][]string
+		expected int
+	}{
+		{
+			matrix: [][]string{
+				{"1", "0", "1", "0", "0"},
+				{"1", "0", "1", "1", "1"},
+				{"1", "1", "1", "1", "1"},
+				{"1", "0", "0", "1", "0"},
+			},
+			expected: 6,
+		},
+		{
+			matrix:   [][]string{{"0"}},
+			expected: 0,
+		},
+		{
+			matrix:   [][]string{{"1"}},
+			expected: 1,
+		},
+		{
+			matrix: [][]string{
+				{"1", "1"},
+				{"1", "1"},
+			},
+			expected: 4,
+		},
+		{
+			matrix: [][]string{
+				{"0", "1"},
+				{"1", "0"},
+			},
+			expected: 1,
+		},
+	}
+
+	for i, test := range tests {
+		result := maximalRectangle(test.matrix)
+		status := "PASS"
+		if result != test.expected {
+			status = "FAIL"
+		}
+		fmt.Printf("Test %d: %s (expected: %d, got: %d)\n", i+1, status, test.expected, result)
+	}
+}

@@ -5,10 +5,10 @@ Generates Go code using LLM and iteratively improves it with static analysis.
 
 Usage:
     python pipeline.py "your task description here"
-    
+
 Environment:
     ANTHROPIC_API_KEY - Required for LLM API access
-    
+
 Example:
     export ANTHROPIC_API_KEY='your-key'
     python pipeline.py "Create a concurrent web scraper with rate limiting"
@@ -26,6 +26,7 @@ from dataclasses import dataclass
 @dataclass
 class AnalysisResult:
     """Result from a single analysis tool."""
+
     tool_name: str
     passed: bool
     output: str
@@ -34,16 +35,23 @@ class AnalysisResult:
 
 class GoCodeSynthesisPipeline:
     """Complete pipeline for Go code generation and analysis."""
-    
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-sonnet-4-20250514", max_iterations: int = 5):
+
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: str = "claude-sonnet-4-20250514",
+        max_iterations: int = 5,
+    ):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         if not self.api_key:
-            raise ValueError("ANTHROPIC_API_KEY required. Set via env var or constructor.")
-        
+            raise ValueError(
+                "ANTHROPIC_API_KEY required. Set via env var or constructor."
+            )
+
         self.model = model
         self.max_iterations = max_iterations
         self.workspace = None
-        
+
     def _check_tool(self, tool: str) -> bool:
         """Check if a tool is available."""
         try:
@@ -55,14 +63,14 @@ class GoCodeSynthesisPipeline:
                 return True
             except:
                 return False
-    
+
     def check_prerequisites(self) -> bool:
         """Verify all required tools are installed."""
         tools = {
             "go": "Go compiler",
             "errcheck": "github.com/kisielk/errcheck@latest",
             "go-errorlint": "github.com/polyfloyd/go-errorlint@latest",
-            "staticcheck": "honnef.co/go/tools/cmd/staticcheck@latest"
+            "staticcheck": "honnef.co/go/tools/cmd/staticcheck@latest",
         }
 
         missing = []
@@ -80,27 +88,31 @@ class GoCodeSynthesisPipeline:
             print("\n".join(missing))
             return False
         return True
-    
+
     def setup_workspace(self) -> str:
         """Create temporary Go workspace."""
         self.workspace = tempfile.mkdtemp(prefix="go_synthesis_")
-        subprocess.run(["go", "mod", "init", "synthesis"], cwd=self.workspace, capture_output=True)
+        subprocess.run(
+            ["go", "mod", "init", "synthesis"], cwd=self.workspace, capture_output=True
+        )
         return self.workspace
-    
+
     def cleanup_workspace(self):
         """Remove temporary workspace."""
         if self.workspace and os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
-    
-    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> Tuple[str, str]:
+
+    def generate_code(
+        self, prompt: str, feedback: Optional[str] = None
+    ) -> Tuple[str, str]:
         """Generate Go code using LLM."""
         try:
             import anthropic
         except ImportError:
             raise ImportError("Install anthropic: pip install anthropic")
-        
+
         client = anthropic.Anthropic(api_key=self.api_key)
-        
+
         system = """You are an expert Go programmer. Generate clean, single-file Go code.
                 Return ONLY the Go code with no markdown formatting or explanations."""
 
@@ -123,52 +135,54 @@ class GoCodeSynthesisPipeline:
                         {prompt}
 
                         Include package main and a main() function. Make it production-ready."""
-        
+
         response = client.messages.create(
             model=self.model,
             max_tokens=4000,
             messages=[{"role": "user", "content": message}],
-            system=system
+            system=system,
         )
-        
+
         code = response.content[0].text.strip()
-        
+
         # Strip markdown if present
         if "```go" in code:
             code = code.split("```go")[1].split("```")[0]
         elif "```" in code:
             code = code.split("```")[1].split("```")[0]
-        
+
         return code.strip(), message
-    
+
     def write_to_workspace(self, filename: str, content: str) -> str:
         """Write code to workspace."""
         filepath = os.path.join(self.workspace, filename)
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             f.write(content)
         return filepath
-    
+
     def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
         """Execute analysis tool and capture results."""
         try:
             result = subprocess.run(
-                cmd,
-                cwd=self.workspace,
-                capture_output=True,
-                text=True,
-                timeout=30
+                cmd, cwd=self.workspace, capture_output=True, text=True, timeout=30
             )
-            
+
             output = result.stdout + result.stderr
             passed = result.returncode == 0
-            errors = [] if passed else [line.strip() for line in output.split('\n') if line.strip()]
-            
+            errors = (
+                []
+                if passed
+                else [line.strip() for line in output.split("\n") if line.strip()]
+            )
+
             return AnalysisResult(tool_name, passed, output, errors)
         except subprocess.TimeoutExpired:
-            return AnalysisResult(tool_name, False, "Timeout", ["Tool timed out after 30s"])
+            return AnalysisResult(
+                tool_name, False, "Timeout", ["Tool timed out after 30s"]
+            )
         except Exception as e:
             return AnalysisResult(tool_name, False, str(e), [f"Failed: {e}"])
-    
+
     def analyze_concurrency(self, filepath: str) -> List[AnalysisResult]:
         """Run concurrency analysis tools."""
         # go build -race
@@ -181,20 +195,17 @@ class GoCodeSynthesisPipeline:
         ]
         # go vet
         print("    → go vet")
-        results.append(self.run_tool(
-            ["go", "vet", filepath],
-            "go vet"
-        ))
+        results.append(self.run_tool(["go", "vet", filepath], "go vet"))
 
         return results
-    
+
     def analyze_memory(self, filepath: str) -> List[AnalysisResult]:
         """Run memory analysis (static checks only)."""
         # Note: gops and pkg/profile are runtime tools, not static analyzers
         # Using go vet for static memory-related checks
         print("    → go vet (memory)")
         return [self.run_tool(["go", "vet", filepath], "go vet (memory checks)")]
-    
+
     def analyze_error_handling(self, filepath: str) -> List[AnalysisResult]:
         """Run error handling analysis."""
         # errcheck
@@ -202,52 +213,50 @@ class GoCodeSynthesisPipeline:
         results = [self.run_tool(["errcheck", filepath], "errcheck")]
         # go-errorlint
         print("    → go-errorlint")
-        results.append(self.run_tool(
-            ["go-errorlint", filepath],
-            "go-errorlint"
-        ))
+        results.append(self.run_tool(["go-errorlint", filepath], "go-errorlint"))
 
         return results
-    
+
     def analyze_performance(self, filepath: str) -> List[AnalysisResult]:
         """Run performance analysis."""
         # staticcheck
         print("    → staticcheck")
         return [self.run_tool(["staticcheck", filepath], "staticcheck")]
-    
+
     def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
         """Execute all analysis categories."""
         print("\n  🔍 Running Analysis Tools...")
 
         return {
             "concurrency": self.analyze_concurrency(filepath),
-            #"memory": self.analyze_memory(filepath),
-            #"error_handling": self.analyze_error_handling(filepath),
-            #"performance": self.analyze_performance(filepath),
+            "memory": self.analyze_memory(filepath),
+            "error_handling": self.analyze_error_handling(filepath),
+            "performance": self.analyze_performance(filepath),
         }
-    
-    def format_feedback(self, analyses: Dict[str, List[AnalysisResult]]) -> Optional[str]:
+
+    def format_feedback(
+        self, analyses: Dict[str, List[AnalysisResult]]
+    ) -> Optional[str]:
         """Format analysis results into LLM feedback."""
         feedback = []
         has_errors = False
-        
+
         for category, results in analyses.items():
             category_errors = []
             for result in results:
                 if not result.passed:
                     has_errors = True
                     category_errors.append(f"[{result.tool_name}]\n{result.output}")
-            
+
             if category_errors:
                 feedback.append(
                     f"\n{'='*60}\n"
                     f"{category.upper().replace('_', ' ')} ISSUES\n"
-                    f"{'='*60}\n" +
-                    "\n\n".join(category_errors)
+                    f"{'='*60}\n" + "\n\n".join(category_errors)
                 )
-        
+
         return "\n".join(feedback) if has_errors else None
-    
+
     def print_summary(self, analyses: Dict[str, List[AnalysisResult]]):
         """Print analysis summary."""
         print("\n  📊 Analysis Summary:")
@@ -255,17 +264,17 @@ class GoCodeSynthesisPipeline:
             for result in results:
                 status = "✅" if result.passed else "❌"
                 print(f"    {status} {result.tool_name}")
-    
+
     def run(self, task: str) -> Tuple[str, bool, List[Dict]]:
         """
         Main pipeline execution.
-        
+
         Returns:
             (final_code, success, iteration_history)
         """
-        print("="*70)
+        print("=" * 70)
         print("🚀 Go Code Synthesis Pipeline")
-        print("="*70)
+        print("=" * 70)
         print(f"\n📝 Task: {task}\n")
 
         # Check tools
@@ -307,26 +316,30 @@ class GoCodeSynthesisPipeline:
             all_passed = all(r.passed for results in analyses.values() for r in results)
 
             # Record
-            history.append({
-                "iteration": iteration,
-                "code": code,
-                "analyses": analyses,
-                "passed": all_passed
-            })
+            history.append(
+                {
+                    "iteration": iteration,
+                    "code": code,
+                    "analyses": analyses,
+                    "passed": all_passed,
+                }
+            )
 
             if all_passed:
-                print("\n" + "="*70)
+                print("\n" + "=" * 70)
                 print("✅ SUCCESS! All analyses passed!")
-                print("="*70)
+                print("=" * 70)
                 return final_code, True, history
 
             # Prepare feedback
             feedback = self.format_feedback(analyses)
             print(f"\n  ⚠️  Issues detected, preparing feedback...")
 
-        print("\n" + "="*70)
-        print(f"❌ Max iterations ({self.max_iterations}) reached with issues remaining")
-        print("="*70)
+        print("\n" + "=" * 70)
+        print(
+            f"❌ Max iterations ({self.max_iterations}) reached with issues remaining"
+        )
+        print("=" * 70)
         return final_code, False, history
 
 
@@ -336,10 +349,18 @@ def main():
         print(__doc__)
         print("\nError: Task description required")
         print("\nUsage:")
-        print('  python pipeline.py "Create a concurrent HTTP server with rate limiting"')
+        print(
+            '  python pipeline.py "Create a concurrent HTTP server with rate limiting"'
+        )
         sys.exit(1)
 
-    task = " ".join(sys.argv[1:])
+    # task = " ".join(sys.argv[1:])
+    if sys.argv[1] == "-f":
+        task_file = sys.argv[2]
+        with open(task_file, "r", encoding="utf-8") as f:
+            task = f.read().strip()
+    else:
+        task = " ".join(sys.argv[1:])
 
     try:
         _extracted_from_main_14(task)
@@ -349,6 +370,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 
@@ -356,18 +378,20 @@ def main():
 # TODO Rename this here and in `main`
 def _extracted_from_main_14(task):
     # Run pipeline
-    pipeline = GoCodeSynthesisPipeline(max_iterations=5)
+    pipeline = GoCodeSynthesisPipeline(
+        max_iterations=5, model="claude-haiku-4-5-20251001"
+    )
     final_code, success, history = pipeline.run(task)
 
     # Save output
     output_file = "generated_code.go"
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         f.write(final_code)
 
     # Print results
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("📊 FINAL RESULTS")
-    print("="*70)
+    print("=" * 70)
     print(f"Status: {'✅ PASSED' if success else '⚠️  HAS ISSUES'}")
     print(f"Iterations: {len(history)}")
     print(f"Code saved: {output_file}")

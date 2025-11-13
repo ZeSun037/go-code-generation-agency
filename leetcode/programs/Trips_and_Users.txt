@@ -1,0 +1,142 @@
+package main
+
+import (
+	"fmt"
+	"math"
+	"sort"
+	"time"
+)
+
+type Trip struct {
+	id        int
+	clientID  int
+	driverID  int
+	cityID    int
+	status    string
+	requestAt string
+}
+
+type User struct {
+	userID int
+	banned string
+	role   string
+}
+
+type DayCancellation struct {
+	day               string
+	cancellationRate  float64
+}
+
+func main() {
+	// Initialize trips data
+	trips := []Trip{
+		{1, 1, 10, 1, "completed", "2013-10-01"},
+		{2, 2, 11, 1, "cancelled_by_driver", "2013-10-01"},
+		{3, 3, 12, 6, "completed", "2013-10-01"},
+		{4, 4, 13, 6, "cancelled_by_client", "2013-10-01"},
+		{5, 1, 10, 1, "completed", "2013-10-02"},
+		{6, 2, 11, 6, "completed", "2013-10-02"},
+		{7, 3, 12, 6, "completed", "2013-10-02"},
+		{8, 2, 12, 12, "completed", "2013-10-03"},
+		{9, 3, 10, 12, "completed", "2013-10-03"},
+		{10, 4, 13, 12, "cancelled_by_driver", "2013-10-03"},
+	}
+
+	// Initialize users data
+	users := []User{
+		{1, "No", "client"},
+		{2, "Yes", "client"},
+		{3, "No", "client"},
+		{4, "No", "client"},
+		{10, "No", "driver"},
+		{11, "No", "driver"},
+		{12, "No", "driver"},
+		{13, "No", "driver"},
+	}
+
+	// Create user map for quick lookup
+	userMap := make(map[int]User)
+	for _, u := range users {
+		userMap[u.userID] = u
+	}
+
+	// Process trips
+	results := calculateCancellationRates(trips, userMap)
+
+	// Sort results by day
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].day < results[j].day
+	})
+
+	// Print results
+	fmt.Println("Day | Cancellation Rate")
+	fmt.Println("---|---")
+	for _, result := range results {
+		fmt.Printf("%s | %.2f\n", result.day, result.cancellationRate)
+	}
+}
+
+func calculateCancellationRates(trips []Trip, userMap map[int]User) []DayCancellation {
+	// Map to store daily statistics
+	dailyStats := make(map[string]map[string]int)
+
+	startDate := time.Date(2013, 10, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2013, 10, 3, 0, 0, 0, 0, time.UTC)
+
+	// Process each trip
+	for _, trip := range trips {
+		tripDate, err := time.Parse("2006-01-02", trip.requestAt)
+		if err != nil {
+			continue
+		}
+
+		// Check if trip is within date range
+		if tripDate.Before(startDate) || tripDate.After(endDate) {
+			continue
+		}
+
+		// Check if both client and driver are not banned
+		client, clientExists := userMap[trip.clientID]
+		driver, driverExists := userMap[trip.driverID]
+
+		if !clientExists || !driverExists {
+			continue
+		}
+
+		if client.banned == "Yes" || driver.banned == "Yes" {
+			continue
+		}
+
+		dateStr := trip.requestAt
+
+		// Initialize daily stats if not exists
+		if _, exists := dailyStats[dateStr]; !exists {
+			dailyStats[dateStr] = map[string]int{
+				"total":     0,
+				"cancelled": 0,
+			}
+		}
+
+		// Count trip
+		dailyStats[dateStr]["total"]++
+
+		// Count cancellation
+		if trip.status == "cancelled_by_driver" || trip.status == "cancelled_by_client" {
+			dailyStats[dateStr]["cancelled"]++
+		}
+	}
+
+	// Calculate cancellation rates
+	var results []DayCancellation
+
+	for day, stats := range dailyStats {
+		if stats["total"] > 0 {
+			rate := float64(stats["cancelled"]) / float64(stats["total"])
+			// Round to 2 decimal places
+			rate = math.Round(rate*100) / 100
+			results = append(results, DayCancellation{day, rate})
+		}
+	}
+
+	return results
+}

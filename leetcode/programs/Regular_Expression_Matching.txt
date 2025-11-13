@@ -1,0 +1,91 @@
+package main
+
+import (
+	"fmt"
+)
+
+func isMatch(s string, p string) bool {
+	memo := make(map[string]bool)
+	return matchHelper(s, p, 0, 0, memo)
+}
+
+func matchHelper(s, p string, sIdx, pIdx int, memo map[string]bool) bool {
+	key := fmt.Sprintf("%d:%d", sIdx, pIdx)
+	if val, exists := memo[key]; exists {
+		return val
+	}
+
+	// Both strings exhausted
+	if pIdx == len(p) {
+		result := sIdx == len(s)
+		memo[key] = result
+		return result
+	}
+
+	// Check if current character in pattern is followed by '*'
+	hasNextStar := pIdx+1 < len(p) && p[pIdx+1] == '*'
+
+	if hasNextStar {
+		// Case 1: '*' matches zero occurrences
+		if matchHelper(s, p, sIdx, pIdx+2, memo) {
+			memo[key] = true
+			return true
+		}
+
+		// Case 2: '*' matches one or more occurrences
+		if sIdx < len(s) && (p[pIdx] == '.' || p[pIdx] == s[sIdx]) {
+			if matchHelper(s, p, sIdx+1, pIdx, memo) {
+				memo[key] = true
+				return true
+			}
+		}
+	} else {
+		// No star following, must match current character
+		if sIdx < len(s) && (p[pIdx] == '.' || p[pIdx] == s[sIdx]) {
+			if matchHelper(s, p, sIdx+1, pIdx+1, memo) {
+				memo[key] = true
+				return true
+			}
+		}
+	}
+
+	memo[key] = false
+	return false
+}
+
+func main() {
+	testCases := []struct {
+		s        string
+		p        string
+		expected bool
+	}{
+		{"aa", "a", false},
+		{"aa", "a*", true},
+		{"ab", ".*", true},
+		{"aab", "c*a*b", true},
+		{"mississippi", "m*iss*p*.", false},
+		{"a", ".", true},
+		{"", ".*", true},
+		{"ab", "a?b", false},
+		{"aaa", "a*a", true},
+		{"aaaa", "ab*a*c*a", false},
+		{"aasdfasdfasdfasdfas", "aasdf.*asdf.*asdf.*asdf.*s", true},
+		{"abcabyad", "ab*a?c", false},
+	}
+
+	fmt.Println("Regular Expression Matching Test Results:")
+	fmt.Println("==========================================")
+
+	for i, tc := range testCases {
+		result := isMatch(tc.s, tc.p)
+		status := "✓ PASS"
+		if result != tc.expected {
+			status = "✗ FAIL"
+		}
+
+		fmt.Printf("Test %d: %s\n", i+1, status)
+		fmt.Printf("  String: %q\n", tc.s)
+		fmt.Printf("  Pattern: %q\n", tc.p)
+		fmt.Printf("  Expected: %v, Got: %v\n\n", tc.expected, result)
+	}
+}

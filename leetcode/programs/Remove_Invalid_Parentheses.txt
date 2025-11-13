@@ -1,0 +1,105 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func removeInvalidParentheses(s string) []string {
+	// First, find the minimum number of removals needed
+	minRemovals := getMinRemovals(s)
+	
+	result := make([]string, 0)
+	backtrack(s, 0, 0, minRemovals, &result)
+	
+	// Remove duplicates
+	seen := make(map[string]bool)
+	uniqueResult := make([]string, 0)
+	for _, str := range result {
+		if !seen[str] {
+			seen[str] = true
+			uniqueResult = append(uniqueResult, str)
+		}
+	}
+	
+	sort.Strings(uniqueResult)
+	return uniqueResult
+}
+
+func getMinRemovals(s string) int {
+	open := 0
+	close := 0
+	
+	for _, ch := range s {
+		if ch == '(' {
+			open++
+		} else if ch == ')' {
+			if open > 0 {
+				open--
+			} else {
+				close++
+			}
+		}
+	}
+	
+	return open + close
+}
+
+func backtrack(s string, index int, removals int, minRemovals int, result *[]string) {
+	// Prune if we've already removed more than minimum
+	if removals > minRemovals {
+		return
+	}
+	
+	// Base case: reached end of string
+	if index == len(s) {
+		// Only add if we've made exactly minRemovals removals and string is valid
+		if removals == minRemovals && isValid(s) {
+			*result = append(*result, s)
+		}
+		return
+	}
+	
+	// Option 1: Keep the current character
+	backtrack(s, index+1, removals, minRemovals, result)
+	
+	// Option 2: Remove the current character if it's a parenthesis
+	if s[index] == '(' || s[index] == ')' {
+		// Create new string without current character
+		newS := s[:index] + s[index+1:]
+		backtrack(newS, index, removals+1, minRemovals, result)
+	}
+}
+
+func isValid(s string) bool {
+	balance := 0
+	for _, ch := range s {
+		if ch == '(' {
+			balance++
+		} else if ch == ')' {
+			balance--
+			if balance < 0 {
+				return false
+			}
+		}
+	}
+	return balance == 0
+}
+
+func main() {
+	testCases := []string{
+		"()())()",
+		"(a)())()",
+		")(",
+		"(",
+		")",
+		"(())",
+		"()(()",
+	}
+	
+	for _, test := range testCases {
+		result := removeInvalidParentheses(test)
+		fmt.Printf("Input: \"%s\"\n", test)
+		fmt.Printf("Output: %v\n\n", result)
+	}
+}

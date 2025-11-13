@@ -1,0 +1,90 @@
+package main
+
+import (
+	"fmt"
+)
+
+func shortestPalindrome(s string) string {
+	if s == "" {
+		return s
+	}
+
+	// Find the longest palindrome starting from index 0
+	palinLen := findLongestPalindrome(s)
+
+	// Add the reverse of the remaining characters to the front
+	remaining := s[palinLen:]
+	return reverseString(remaining) + s
+}
+
+func findLongestPalindrome(s string) int {
+	// Use KMP algorithm to find the longest palindromic prefix
+	// Create a new string: s + "#" + reverse(s)
+	reversed := reverseString(s)
+	combined := s + "#" + reversed
+
+	// Build KMP failure function
+	lps := buildLPS(combined)
+
+	// The last value in lps tells us the length of the longest palindromic prefix
+	return lps[len(combined)-1]
+}
+
+func buildLPS(s string) []int {
+	n := len(s)
+	lps := make([]int, n)
+	lps[0] = 0
+	length := 0
+	i := 1
+
+	for i < n {
+		if s[i] == s[length] {
+			length++
+			lps[i] = length
+			i++
+		} else {
+			if length != 0 {
+				length = lps[length-1]
+			} else {
+				lps[i] = 0
+				i++
+			}
+		}
+	}
+
+	return lps
+}
+
+func reverseString(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+func main() {
+	testCases := []struct {
+		input    string
+		expected string
+	}{
+		{"aacecaaa", "aaacecaaa"},
+		{"abcd", "dcbabcd"},
+		{"", ""},
+		{"a", "a"},
+		{"ab", "bab"},
+		{"abc", "cbabc"},
+		{"racecar", "racecar"},
+		{"abbacd", "dcabbacd"},
+	}
+
+	fmt.Println("Testing shortestPalindrome:")
+	for _, tc := range testCases {
+		result := shortestPalindrome(tc.input)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("%s Input: %q => Output: %q (Expected: %q)\n", status, tc.input, result, tc.expected)
+	}
+}

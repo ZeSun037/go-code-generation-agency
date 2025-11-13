@@ -1,0 +1,92 @@
+package main
+
+import (
+	"container/heap"
+	"sort"
+)
+
+func maximizeCapital(k int, w int, profits []int, capital []int) int {
+	n := len(profits)
+	
+	// Create pairs of (capital, profit) and sort by capital required
+	projects := make([]struct{ cap, prof int }, n)
+	for i := 0; i < n; i++ {
+		projects[i] = struct{ cap, prof int }{capital[i], profits[i]}
+	}
+	sort.Slice(projects, func(i, j int) bool {
+		return projects[i].cap < projects[j].cap
+	})
+	
+	// MaxHeap for profits (use negative values for min-heap to act as max-heap)
+	pq := &MaxHeap{}
+	heap.Init(pq)
+	
+	currentCapital := w
+	projectIdx := 0
+	
+	// Try to do at most k projects
+	for i := 0; i < k; i++ {
+		// Add all projects we can afford to the heap
+		for projectIdx < n && projects[projectIdx].cap <= currentCapital {
+			heap.Push(pq, projects[projectIdx].prof)
+			projectIdx++
+		}
+		
+		// If no projects available, we're done
+		if pq.Len() == 0 {
+			break
+		}
+		
+		// Pick the most profitable project
+		maxProfit := heap.Pop(pq).(int)
+		currentCapital += maxProfit
+	}
+	
+	return currentCapital
+}
+
+// MaxHeap implements heap.Interface for max heap of integers
+type MaxHeap []int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] } // Reverse for max heap
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+func main() {
+	// Test case 1
+	k1, w1 := 2, 0
+	profits1 := []int{1, 2, 3}
+	capital1 := []int{0, 1, 1}
+	result1 := maximizeCapital(k1, w1, profits1, capital1)
+	// Expected: 4
+
+	// Test case 2
+	k2, w2 := 3, 0
+	profits2 := []int{1, 2, 3}
+	capital2 := []int{0, 1, 2}
+	result2 := maximizeCapital(k2, w2, profits2, capital2)
+	// Expected: 6
+
+	// Test case 3
+	k3, w3 := 1, 0
+	profits3 := []int{1, 2, 3}
+	capital3 := []int{0, 1, 1}
+	result3 := maximizeCapital(k3, w3, profits3, capital3)
+	// Expected: 1
+
+	_ = result1
+	_ = result2
+	_ = result3
+}

@@ -1,0 +1,164 @@
+package main
+
+import (
+	"container/heap"
+	"fmt"
+)
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+type minHeap []*ListNode
+
+func (h minHeap) Len() int {
+	return len(h)
+}
+
+func (h minHeap) Less(i, j int) bool {
+	return h[i].Val < h[j].Val
+}
+
+func (h minHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *minHeap) Push(x interface{}) {
+	*h = append(*h, x.(*ListNode))
+}
+
+func (h *minHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+
+	h := &minHeap{}
+	heap.Init(h)
+
+	for _, list := range lists {
+		if list != nil {
+			heap.Push(h, list)
+		}
+	}
+
+	dummy := &ListNode{Val: 0}
+	current := dummy
+
+	for h.Len() > 0 {
+		node := heap.Pop(h).(*ListNode)
+		current.Next = node
+		current = current.Next
+
+		if node.Next != nil {
+			heap.Push(h, node.Next)
+		}
+	}
+
+	return dummy.Next
+}
+
+func createList(values []int) *ListNode {
+	if len(values) == 0 {
+		return nil
+	}
+	head := &ListNode{Val: values[0]}
+	current := head
+	for i := 1; i < len(values); i++ {
+		current.Next = &ListNode{Val: values[i]}
+		current = current.Next
+	}
+	return head
+}
+
+func listToSlice(head *ListNode) []int {
+	var result []int
+	current := head
+	for current != nil {
+		result = append(result, current.Val)
+		current = current.Next
+	}
+	return result
+}
+
+func main() {
+	tests := []struct {
+		name     string
+		input    [][]int
+		expected []int
+	}{
+		{
+			name:     "Example 1: Three sorted lists",
+			input:    [][]int{{1, 4, 5}, {1, 3, 4}, {2, 6}},
+			expected: []int{1, 1, 2, 3, 4, 4, 5, 6},
+		},
+		{
+			name:     "Example 2: Empty list",
+			input:    [][]int{},
+			expected: []int{},
+		},
+		{
+			name:     "Example 3: List with empty list",
+			input:    [][]int{{}},
+			expected: []int{},
+		},
+		{
+			name:     "Single list",
+			input:    [][]int{{1, 2, 3}},
+			expected: []int{1, 2, 3},
+		},
+		{
+			name:     "Multiple single-element lists",
+			input:    [][]int{{3}, {1}, {2}},
+			expected: []int{1, 2, 3},
+		},
+		{
+			name:     "Lists with negative numbers",
+			input:    [][]int{{-5, -3, 0}, {-4, -1, 2}, {-2, 1, 3}},
+			expected: []int{-5, -4, -3, -2, -1, 0, 1, 2, 3},
+		},
+		{
+			name:     "Two lists",
+			input:    [][]int{{1, 3, 5}, {2, 4, 6}},
+			expected: []int{1, 2, 3, 4, 5, 6},
+		},
+	}
+
+	for _, test := range tests {
+		lists := make([]*ListNode, len(test.input))
+		for i, values := range test.input {
+			lists[i] = createList(values)
+		}
+
+		result := mergeKLists(lists)
+		actual := listToSlice(result)
+
+		passed := true
+		if len(actual) != len(test.expected) {
+			passed = false
+		} else {
+			for i := range actual {
+				if actual[i] != test.expected[i] {
+					passed = false
+					break
+				}
+			}
+		}
+
+		status := "✓ PASS"
+		if !passed {
+			status = "✗ FAIL"
+		}
+		fmt.Printf("%s: %s\n", status, test.name)
+		fmt.Printf("  Expected: %v\n", test.expected)
+		fmt.Printf("  Got:      %v\n", actual)
+	}
+}

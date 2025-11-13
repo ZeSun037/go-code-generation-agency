@@ -1,0 +1,82 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func maxEnvelopes(envelopes [][]int) int {
+	if len(envelopes) == 0 {
+		return 0
+	}
+
+	// Sort envelopes: by width ascending, then by height descending
+	sort.Slice(envelopes, func(i, j int) bool {
+		if envelopes[i][0] == envelopes[j][0] {
+			return envelopes[i][1] > envelopes[j][1]
+		}
+		return envelopes[i][0] < envelopes[j][0]
+	})
+
+	// Find LIS (Longest Increasing Subsequence) on heights using binary search
+	dp := make([]int, 0)
+
+	for _, envelope := range envelopes {
+		height := envelope[1]
+		// Binary search for the position to insert/replace
+		left, right := 0, len(dp)
+		for left < right {
+			mid := (left + right) / 2
+			if dp[mid] < height {
+				left = mid + 1
+			} else {
+				right = mid
+			}
+		}
+
+		if left == len(dp) {
+			dp = append(dp, height)
+		} else {
+			dp[left] = height
+		}
+	}
+
+	return len(dp)
+}
+
+func main() {
+	// Test case 1
+	envelopes1 := [][]int{{5, 4}, {6, 4}, {6, 7}, {2, 3}}
+	result1 := maxEnvelopes(envelopes1)
+	fmt.Printf("Input: envelopes = [[5,4],[6,4],[6,7],[2,3]]\n")
+	fmt.Printf("Output: %d\n", result1)
+	fmt.Printf("Expected: 3\n\n")
+
+	// Test case 2
+	envelopes2 := [][]int{{1, 1}, {1, 1}, {1, 1}}
+	result2 := maxEnvelopes(envelopes2)
+	fmt.Printf("Input: envelopes = [[1,1],[1,1],[1,1]]\n")
+	fmt.Printf("Output: %d\n", result2)
+	fmt.Printf("Expected: 1\n\n")
+
+	// Test case 3
+	envelopes3 := [][]int{{2, 100}, {3, 200}, {4, 300}, {5, 500}, {5, 400}, {5, 250}, {6, 370}, {6, 360}, {7, 380}}
+	result3 := maxEnvelopes(envelopes3)
+	fmt.Printf("Input: envelopes = [[2,100],[3,200],[4,300],[5,500],[5,400],[5,250],[6,370],[6,360],[7,380]]\n")
+	fmt.Printf("Output: %d\n", result3)
+	fmt.Printf("Expected: 5\n\n")
+
+	// Test case 4
+	envelopes4 := [][]int{{1, 2}, {2, 3}}
+	result4 := maxEnvelopes(envelopes4)
+	fmt.Printf("Input: envelopes = [[1,2],[2,3]]\n")
+	fmt.Printf("Output: %d\n", result4)
+	fmt.Printf("Expected: 2\n\n")
+
+	// Test case 5
+	envelopes5 := [][]int{{3, 4}, {2, 3}, {1, 2}}
+	result5 := maxEnvelopes(envelopes5)
+	fmt.Printf("Input: envelopes = [[3,4],[2,3],[1,2]]\n")
+	fmt.Printf("Output: %d\n", result5)
+	fmt.Printf("Expected: 3\n")
+}

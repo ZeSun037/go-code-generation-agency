@@ -1,0 +1,77 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+)
+
+func largestPalindrome(n int) int {
+	if n == 1 {
+		return 9
+	}
+
+	maxNum := 1
+	for i := 0; i < n; i++ {
+		maxNum *= 10
+	}
+	maxNum--
+
+	minNum := maxNum / 10
+	if minNum == 0 {
+		minNum = 1
+	}
+
+	largestPalin := 0
+
+	for i := maxNum; i > minNum; i-- {
+		for j := i; j > minNum; j-- {
+			product := i * j
+			if product <= largestPalin {
+				break
+			}
+
+			if isPalindrome(product) {
+				largestPalin = product
+				break
+			}
+		}
+		if largestPalin > 0 && i*maxNum < largestPalin {
+			break
+		}
+	}
+
+	return largestPalin % 1337
+}
+
+func isPalindrome(num int) bool {
+	str := strconv.Itoa(num)
+	for i, j := 0, len(str)-1; i < j; i, j = i+1, j-1 {
+		if str[i] != str[j] {
+			return false
+		}
+	}
+	return true
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: program <n>")
+		fmt.Println("Where n is an integer between 1 and 8")
+		os.Exit(1)
+	}
+
+	n, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		log.Fatalf("Invalid input: %v", err)
+	}
+
+	if n < 1 || n > 8 {
+		log.Fatalf("n must be between 1 and 8, got %d", n)
+	}
+
+	result := largestPalindrome(n)
+	fmt.Printf("Input: n = %d\n", n)
+	fmt.Printf("Output: %d\n", result)
+}

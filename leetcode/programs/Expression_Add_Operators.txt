@@ -1,0 +1,92 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func addOperators(num string, target int) []string {
+	var result []string
+	backtrack(num, target, 0, 0, 0, "", &result)
+	return result
+}
+
+func backtrack(num string, target int, index int, currentValue int64, previousValue int64, path string, result *[]string) {
+	// Base case: reached the end of the string
+	if index == len(num) {
+		if currentValue == int64(target) {
+			*result = append(*result, path)
+		}
+		return
+	}
+
+	// Try to build the next number
+	for i := index; i < len(num); i++ {
+		// Avoid leading zeros: if current digit is '0', we can only use it as a single digit
+		if i != index && num[index] == '0' {
+			break
+		}
+
+		currentNum := int64(0)
+		for j := index; j <= i; j++ {
+			currentNum = currentNum*10 + int64(num[j]-'0')
+		}
+
+		// First number in the expression
+		if index == 0 {
+			backtrack(num, target, i+1, currentNum, currentNum, strconv.FormatInt(currentNum, 10), result)
+		} else {
+			// Try addition
+			newPath := path + "+" + strconv.FormatInt(currentNum, 10)
+			backtrack(num, target, i+1, currentValue+currentNum, currentNum, newPath, result)
+
+			// Try subtraction
+			newPath = path + "-" + strconv.FormatInt(currentNum, 10)
+			backtrack(num, target, i+1, currentValue-currentNum, -currentNum, newPath, result)
+
+			// Try multiplication
+			// For multiplication, we need to handle operator precedence
+			// We need to undo the last operation and apply multiplication
+			newValue := currentValue - previousValue + previousValue*currentNum
+			newPath = path + "*" + strconv.FormatInt(currentNum, 10)
+			backtrack(num, target, i+1, newValue, previousValue*currentNum, newPath, result)
+		}
+	}
+}
+
+func main() {
+	// Test case 1
+	num1 := "123"
+	target1 := 6
+	result1 := addOperators(num1, target1)
+	fmt.Printf("Input: num = \"%s\", target = %d\n", num1, target1)
+	fmt.Printf("Output: %v\n\n", result1)
+
+	// Test case 2
+	num2 := "232"
+	target2 := 8
+	result2 := addOperators(num2, target2)
+	fmt.Printf("Input: num = \"%s\", target = %d\n", num2, target2)
+	fmt.Printf("Output: %v\n\n", result2)
+
+	// Test case 3
+	num3 := "3456237490"
+	target3 := 9191
+	result3 := addOperators(num3, target3)
+	fmt.Printf("Input: num = \"%s\", target = %d\n", num3, target3)
+	fmt.Printf("Output: %v\n\n", result3)
+
+	// Additional test case
+	num4 := "00"
+	target4 := 0
+	result4 := addOperators(num4, target4)
+	fmt.Printf("Input: num = \"%s\", target = %d\n", num4, target4)
+	fmt.Printf("Output: %v\n\n", result4)
+
+	// Additional test case
+	num5 := "2"
+	target5 := 2
+	result5 := addOperators(num5, target5)
+	fmt.Printf("Input: num = \"%s\", target = %d\n", num5, target5)
+	fmt.Printf("Output: %v\n", result5)
+}

@@ -1,0 +1,126 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
+
+func isMatch(s string, p string) bool {
+	sLen := len(s)
+	pLen := len(p)
+
+	// dp[i][j] represents if s[0:i] matches p[0:j]
+	dp := make([][]bool, sLen+1)
+	for i := range dp {
+		dp[i] = make([]bool, pLen+1)
+	}
+
+	// Empty string matches empty pattern
+	dp[0][0] = true
+
+	// Handle patterns like *, **, ***, etc. that can match empty string
+	for j := 1; j <= pLen; j++ {
+		if p[j-1] == '*' {
+			dp[0][j] = dp[0][j-1]
+		}
+	}
+
+	// Fill the DP table
+	for i := 1; i <= sLen; i++ {
+		for j := 1; j <= pLen; j++ {
+			if p[j-1] == '*' {
+				// '*' can match empty sequence (dp[i][j-1])
+				// or match one or more characters (dp[i-1][j])
+				dp[i][j] = dp[i][j-1] || dp[i-1][j]
+			} else if p[j-1] == '?' || p[j-1] == s[i-1] {
+				// '?' matches any single character
+				// or characters match exactly
+				dp[i][j] = dp[i-1][j-1]
+			}
+		}
+	}
+
+	return dp[sLen][pLen]
+}
+
+func main() {
+	testCases := []struct {
+		s        string
+		p        string
+		expected bool
+	}{
+		{"aa", "a", false},
+		{"aa", "*", true},
+		{"cb", "?a", false},
+		{"adcebdc", "*a*b*c*d", true},
+		{"acdcb", "a*c?b", false},
+		{"", "", true},
+		{"", "*", true},
+		{"", "?", false},
+		{"a", "?", true},
+		{"a", "*", true},
+		{"abc", "*", true},
+		{"abc", "a?c", true},
+		{"abc", "a?d", false},
+		{"mississippi", "m*iss*p*.s*", true},
+		{"mississippi", "m*iss*p*.", false},
+		{"aa", "*a", true},
+		{"aa", "a*", true},
+		{"ab", "*?", true},
+		{"aab", "c*a*b", false},
+		{"aaaa", "***a", true},
+		{"aaaa", "a*a*a*a", true},
+	}
+
+	fmt.Println("Wildcard Pattern Matching Test Results")
+	fmt.Println("========================================")
+
+	allPassed := true
+	for idx, tc := range testCases {
+		result := isMatch(tc.s, tc.p)
+		status := "PASS"
+		if result != tc.expected {
+			status = "FAIL"
+			allPassed = false
+		}
+		fmt.Printf("Test %d: %s\n", idx+1, status)
+		fmt.Printf("  String: \"%s\"\n", tc.s)
+		fmt.Printf("  Pattern: \"%s\"\n", tc.p)
+		fmt.Printf("  Expected: %v, Got: %v\n\n", tc.expected, result)
+	}
+
+	fmt.Println("========================================")
+	if allPassed {
+		fmt.Println("All tests passed!")
+	} else {
+		fmt.Println("Some tests failed!")
+	}
+
+	// Interactive mode
+	fmt.Println("\nInteractive Mode")
+	fmt.Println("================")
+	fmt.Println("Enter string and pattern (or 'quit' to exit):")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Print("\nEnter string (or 'quit'): ")
+		if !scanner.Scan() {
+			break
+		}
+		s := scanner.Text()
+		if strings.ToLower(s) == "quit" {
+			break
+		}
+
+		fmt.Print("Enter pattern: ")
+		if !scanner.Scan() {
+			break
+		}
+		p := scanner.Text()
+
+		result := isMatch(s, p)
+		fmt.Printf("Result: %v\n", result)
+	}
+}

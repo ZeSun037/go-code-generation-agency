@@ -1,0 +1,75 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func getPermutation(n int, k int) string {
+	// Create a list of numbers 1 to n
+	numbers := make([]int, n)
+	for i := 0; i < n; i++ {
+		numbers[i] = i + 1
+	}
+
+	// Precompute factorials
+	factorials := make([]int, n)
+	factorials[0] = 1
+	for i := 1; i < n; i++ {
+		factorials[i] = factorials[i-1] * i
+	}
+
+	// Convert k to 0-indexed
+	k = k - 1
+
+	result := make([]string, 0, n)
+
+	// Find the kth permutation
+	for i := 0; i < n; i++ {
+		// Determine which number should be at position i
+		index := k / factorials[n-1-i]
+		result = append(result, strconv.Itoa(numbers[index]))
+
+		// Remove the used number from the list
+		numbers = append(numbers[:index], numbers[index+1:]...)
+
+		// Update k for the remaining positions
+		k = k % factorials[n-1-i]
+	}
+
+	return concatStrings(result)
+}
+
+func concatStrings(strs []string) string {
+	result := ""
+	for _, s := range strs {
+		result += s
+	}
+	return result
+}
+
+func main() {
+	// Test case 1
+	n1, k1 := 3, 3
+	result1 := getPermutation(n1, k1)
+	fmt.Printf("Input: n = %d, k = %d\nOutput: \"%s\"\n\n", n1, k1, result1)
+
+	// Test case 2
+	n2, k2 := 4, 9
+	result2 := getPermutation(n2, k2)
+	fmt.Printf("Input: n = %d, k = %d\nOutput: \"%s\"\n\n", n2, k2, result2)
+
+	// Test case 3
+	n3, k3 := 3, 1
+	result3 := getPermutation(n3, k3)
+	fmt.Printf("Input: n = %d, k = %d\nOutput: \"%s\"\n\n", n3, k3, result3)
+
+	// Additional test cases
+	n4, k4 := 1, 1
+	result4 := getPermutation(n4, k4)
+	fmt.Printf("Input: n = %d, k = %d\nOutput: \"%s\"\n\n", n4, k4, result4)
+
+	n5, k5 := 3, 6
+	result5 := getPermutation(n5, k5)
+	fmt.Printf("Input: n = %d, k = %d\nOutput: \"%s\"\n", n5, k5, result5)
+}

@@ -1,0 +1,143 @@
+package main
+
+import (
+	"container/heap"
+	"fmt"
+)
+
+type Cell struct {
+	height int
+	row    int
+	col    int
+	index  int
+}
+
+type MinHeap []*Cell
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i].height < h[j].height }
+func (h MinHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+	h[i].index = i
+	h[j].index = j
+}
+func (h *MinHeap) Push(x interface{}) {
+	cell := x.(*Cell)
+	cell.index = len(*h)
+	*h = append(*h, cell)
+}
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	cell := old[n-1]
+	*h = old[0 : n-1]
+	return cell
+}
+
+func trapRainWater(heightMap [][]int) int {
+	if len(heightMap) == 0 || len(heightMap[0]) == 0 {
+		return 0
+	}
+
+	m := len(heightMap)
+	n := len(heightMap[0])
+
+	visited := make([][]bool, m)
+	for i := range visited {
+		visited[i] = make([]bool, n)
+	}
+
+	pq := &MinHeap{}
+	heap.Init(pq)
+
+	// Add all boundary cells to the priority queue
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if i == 0 || i == m-1 || j == 0 || j == n-1 {
+				cell := &Cell{height: heightMap[i][j], row: i, col: j}
+				heap.Push(pq, cell)
+				visited[i][j] = true
+			}
+		}
+	}
+
+	water := 0
+	directions := [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+
+	// Process cells from lowest to highest
+	for pq.Len() > 0 {
+		cell := heap.Pop(pq).(*Cell)
+		currentHeight := cell.height
+		row := cell.row
+		col := cell.col
+
+		// Check all neighbors
+		for _, dir := range directions {
+			newRow := row + dir[0]
+			newCol := col + dir[1]
+
+			if newRow >= 0 && newRow < m && newCol >= 0 && newCol < n && !visited[newRow][newCol] {
+				visited[newRow][newCol] = true
+				neighborHeight := heightMap[newRow][newCol]
+
+				// If neighbor is lower than current max height, water is trapped
+				if neighborHeight < currentHeight {
+					water += currentHeight - neighborHeight
+				}
+
+				// Add neighbor to queue with height of max(neighborHeight, currentHeight)
+				nextHeight := neighborHeight
+				if neighborHeight < currentHeight {
+					nextHeight = currentHeight
+				}
+
+				nextCell := &Cell{height: nextHeight, row: newRow, col: newCol}
+				heap.Push(pq, nextCell)
+			}
+		}
+	}
+
+	return water
+}
+
+func main() {
+	// Test case 1
+	heightMap1 := [][]int{
+		{1, 4, 3, 1, 3, 2},
+		{3, 2, 1, 3, 2, 4},
+		{2, 3, 3, 2, 3, 1},
+	}
+	result1 := trapRainWater(heightMap1)
+	fmt.Printf("Test case 1: %d (expected 4)\n", result1)
+
+	// Test case 2
+	heightMap2 := [][]int{
+		{3, 3, 3, 3, 3},
+		{3, 2, 2, 2, 3},
+		{3, 2, 1, 2, 3},
+		{3, 2, 2, 2, 3},
+		{3, 3, 3, 3, 3},
+	}
+	result2 := trapRainWater(heightMap2)
+	fmt.Printf("Test case 2: %d (expected 10)\n", result2)
+
+	// Test case 3: Single cell
+	heightMap3 := [][]int{{5}}
+	result3 := trapRainWater(heightMap3)
+	fmt.Printf("Test case 3: %d (expected 0)\n", result3)
+
+	// Test case 4: No water trapped
+	heightMap4 := [][]int{
+		{1, 1},
+		{1, 1},
+	}
+	result4 := trapRainWater(heightMap4)
+	fmt.Printf("Test case 4: %d (expected 0)\n", result4)
+
+	// Test case 5: Simple case with water
+	heightMap5 := [][]int{
+		{3, 0, 0, 2, 0, 4},
+	}
+	result5 := trapRainWater(heightMap5)
+	fmt.Printf("Test case 5: %d\n", result5)
+}

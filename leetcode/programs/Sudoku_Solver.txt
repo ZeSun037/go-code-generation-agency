@@ -1,0 +1,97 @@
+package main
+
+import (
+	"fmt"
+)
+
+func solveSudoku(board [][]string) {
+	solve(board)
+}
+
+func solve(board [][]string) bool {
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if board[i][j] == "." {
+				for num := 1; num <= 9; num++ {
+					if isValid(board, i, j, string(rune('0'+num))) {
+						board[i][j] = string(rune('0' + num))
+						if solve(board) {
+							return true
+						}
+						board[i][j] = "."
+					}
+				}
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func isValid(board [][]string, row int, col int, num string) bool {
+	// Check row
+	for j := 0; j < 9; j++ {
+		if board[row][j] == num {
+			return false
+		}
+	}
+
+	// Check column
+	for i := 0; i < 9; i++ {
+		if board[i][col] == num {
+			return false
+		}
+	}
+
+	// Check 3x3 box
+	boxRow := (row / 3) * 3
+	boxCol := (col / 3) * 3
+	for i := boxRow; i < boxRow+3; i++ {
+		for j := boxCol; j < boxCol+3; j++ {
+			if board[i][j] == num {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func printBoard(board [][]string) {
+	for i := 0; i < 9; i++ {
+		if i%3 == 0 && i != 0 {
+			fmt.Println("------+-------+------")
+		}
+		for j := 0; j < 9; j++ {
+			if j%3 == 0 && j != 0 {
+				fmt.Print("| ")
+			}
+			fmt.Print(board[i][j] + " ")
+		}
+		fmt.Println()
+	}
+}
+
+func main() {
+	board := [][]string{
+		{"5", "3", ".", ".", "7", ".", ".", ".", "."},
+		{"6", ".", ".", "1", "9", "5", ".", ".", "."},
+		{".", "9", "8", ".", ".", ".", ".", "6", "."},
+		{"8", ".", ".", ".", "6", ".", ".", ".", "3"},
+		{"4", ".", ".", "8", ".", "3", ".", ".", "1"},
+		{"7", ".", ".", ".", "2", ".", ".", ".", "6"},
+		{".", "6", ".", ".", ".", ".", "2", "8", "."},
+		{".", ".", ".", "4", "1", "9", ".", ".", "5"},
+		{".", ".", ".", ".", "8", ".", ".", "7", "9"},
+	}
+
+	fmt.Println("Sudoku Puzzle:")
+	printBoard(board)
+	fmt.Println("\nSolving...")
+	fmt.Println()
+
+	solveSudoku(board)
+
+	fmt.Println("Sudoku Solution:")
+	printBoard(board)
+}

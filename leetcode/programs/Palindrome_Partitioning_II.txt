@@ -1,0 +1,92 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func minCut(s string) int {
+	n := len(s)
+	if n <= 1 {
+		return 0
+	}
+
+	// isPalindrome[i][j] = true if s[i:j+1] is a palindrome
+	isPalindrome := make([][]bool, n)
+	for i := range isPalindrome {
+		isPalindrome[i] = make([]bool, n)
+	}
+
+	// Every single character is a palindrome
+	for i := 0; i < n; i++ {
+		isPalindrome[i][i] = true
+	}
+
+	// Check for palindromes of length 2 to n
+	for length := 2; length <= n; length++ {
+		for i := 0; i <= n-length; i++ {
+			j := i + length - 1
+			if s[i] == s[j] {
+				if length == 2 {
+					isPalindrome[i][j] = true
+				} else {
+					isPalindrome[i][j] = isPalindrome[i+1][j-1]
+				}
+			}
+		}
+	}
+
+	// dp[i] = minimum cuts needed for s[0:i+1]
+	dp := make([]int, n)
+	for i := 0; i < n; i++ {
+		if isPalindrome[0][i] {
+			dp[i] = 0
+		} else {
+			dp[i] = i // worst case: cut after each character
+			for j := 1; j <= i; j++ {
+				if isPalindrome[j][i] {
+					dp[i] = min(dp[i], dp[j-1]+1)
+				}
+			}
+		}
+	}
+
+	return dp[n-1]
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	testCases := []struct {
+		input    string
+		expected int
+	}{
+		{"aab", 1},
+		{"a", 0},
+		{"ab", 1},
+		{"nitin", 0},
+		{"abcba", 0},
+		{"abcdef", 5},
+		{"abacabad", 2},
+		{"abcdefg", 6},
+	}
+
+	fmt.Println("Palindrome Partitioning II - Minimum Cuts")
+	fmt.Println(strings.Repeat("=", 50))
+
+	for i, tc := range testCases {
+		result := minCut(tc.input)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d: %s\n", i+1, status)
+		fmt.Printf("  Input: %q\n", tc.input)
+		fmt.Printf("  Expected: %d, Got: %d\n", tc.expected, result)
+	}
+}

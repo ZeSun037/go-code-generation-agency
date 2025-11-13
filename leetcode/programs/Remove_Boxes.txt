@@ -1,0 +1,79 @@
+package main
+
+import (
+	"fmt"
+)
+
+func removeBoxes(boxes []int) int {
+	memo := make(map[string]int)
+	return dfs(boxes, memo)
+}
+
+func dfs(boxes []int, memo map[string]int) int {
+	if len(boxes) == 0 {
+		return 0
+	}
+
+	key := fmt.Sprintf("%v", boxes)
+	if val, exists := memo[key]; exists {
+		return val
+	}
+
+	// Remove leading boxes of the same color and calculate points
+	i := 0
+	for i < len(boxes) && boxes[i] == boxes[0] {
+		i++
+	}
+
+	// We can remove first i boxes of same color
+	points := i * i
+
+	// Option 1: Remove the first group and continue with the rest
+	maxPoints := points + dfs(boxes[i:], memo)
+
+	// Option 2: Try to merge with other groups of the same color later
+	// This is the key optimization - we can skip boxes to merge groups
+	for j := i + 1; j < len(boxes); j++ {
+		if boxes[j] == boxes[0] {
+			// Merge the first group with the group starting at j
+			// Remove boxes between i and j, then merge
+			newBoxes := append([]int{}, boxes[i:j]...)
+			newBoxes = append(newBoxes, boxes[j+1:]...)
+
+			// Add the first i boxes at the end to merge with the group at j
+			mergedBoxes := append(newBoxes, boxes[:i]...)
+
+			candidate := dfs(mergedBoxes, memo)
+			if candidate > maxPoints {
+				maxPoints = candidate
+			}
+		}
+	}
+
+	memo[key] = maxPoints
+	return maxPoints
+}
+
+func main() {
+	// Test cases
+	testCases := []struct {
+		boxes    []int
+		expected int
+	}{
+		{[]int{1, 3, 2, 2, 2, 3, 4, 3, 1}, 23},
+		{[]int{1, 1, 1}, 9},
+		{[]int{1}, 1},
+		{[]int{1, 1, 2, 2, 1, 1}, 15},
+		{[]int{1, 2, 1}, 2},
+	}
+
+	for idx, tc := range testCases {
+		result := removeBoxes(tc.boxes)
+		status := "✓"
+		if result != tc.expected {
+			status = "✗"
+		}
+		fmt.Printf("Test %d %s: boxes=%v, expected=%d, got=%d\n",
+			idx+1, status, tc.boxes, tc.expected, result)
+	}
+}
