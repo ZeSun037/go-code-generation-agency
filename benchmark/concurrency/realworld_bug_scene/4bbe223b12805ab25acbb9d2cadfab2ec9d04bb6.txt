@@ -1,0 +1,44 @@
+# Connection State Monitor
+
+Implement a connection state monitoring system that tracks state changes of multiple connections and provides load balancing capabilities.
+
+## Requirements
+
+Your system should include:
+
+1. **ConnectionMonitor**: A central component that manages multiple connections and their states.
+
+2. **Connection States**: Each connection can be in one of the following states:
+   - `Idle`
+   - `Connecting`
+   - `Ready`
+   - `TransientFailure`
+   - `Shutdown`
+
+3. **State Change Handler**: Implement a method `HandleStateChange(connID string, newState State)` that:
+   - Updates the connection's state
+   - When a connection transitions TO `Ready` state (from any non-Ready state), calls `onConnectionUp(connID)`
+   - When a connection transitions FROM `Ready` state (to any non-Ready state), calls `onConnectionDown(connID)`
+
+4. **Concurrent Operations**: The system must support:
+   - Multiple goroutines simultaneously calling `HandleStateChange` for different connections
+   - A background goroutine that periodically calls `GetConnectionStats()` which returns a map of all connection IDs to their current states
+   - A method `SimulateStateChanges(connID string, count int)` that rapidly cycles a connection through different states
+
+5. **Test Scenario**: Create a test that:
+   - Initializes a monitor with 10 connections (all starting in `Idle` state)
+   - Launches 10 goroutines, each simulating 100 state changes for a different connection
+   - Launches 5 additional goroutines that continuously call `GetConnectionStats()` every 10ms
+   - Runs for at least 2 seconds
+   - Verifies the program completes without hanging
+
+## Implementation Notes
+
+- Use appropriate synchronization primitives to ensure thread-safety
+- The `onConnectionUp` and `onConnectionDown` callbacks should simulate some work (e.g., sleep for 1-5ms)
+- `GetConnectionStats()` should return a snapshot of all current connection states
+- Ensure your implementation can handle high concurrency without deadlocks
+
+## Expected Output
+
+Your program should print periodic status updates showing connection state transitions and successfully complete without hanging or panicking.

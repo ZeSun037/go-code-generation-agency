@@ -1,0 +1,61 @@
+# Device Manager Programming Problem
+
+Implement a concurrent device management system in Go that handles virtual storage devices. The system should support creating, mounting, unmounting, and deleting devices with proper concurrency control.
+
+## Requirements
+
+Your system should implement the following operations:
+
+1. **AddDevice(deviceID, parentID string)**: Create a new device based on a parent device (snapshot-like behavior)
+2. **DeleteDevice(deviceID string)**: Remove a device from the system
+3. **MountDevice(deviceID, mountPath string)**: Mount a device to a specific path
+4. **UnmountDevice(deviceID string)**: Unmount a device
+5. **GetDeviceStatus(deviceID string)**: Get the current status of a device (mounted/unmounted, mount count, etc.)
+
+## Specifications
+
+- The system maintains a collection of devices, each identified by a unique string ID
+- There should be a "base" device (ID: "base") that serves as the root parent
+- Each device can be mounted multiple times (reference counting), but always to the same path
+- Devices have states: created, mounted, unmounted
+- The system must be safe for concurrent access from multiple goroutines
+- Device operations may take time (simulate with sleep for mount/unmount operations)
+- A device cannot be deleted while it's mounted
+
+## Implementation Details
+
+- Use appropriate synchronization primitives (mutexes, etc.)
+- Each device should track:
+  - Device ID
+  - Parent device ID
+  - Mount path (if mounted)
+  - Mount count (reference counter)
+  - Active state
+- The global device collection needs protection
+- Individual device state modifications need protection
+
+## Test Scenario
+
+Your program should demonstrate the following concurrent scenario working correctly:
+
+```
+1. Create device "dev1" from "base"
+2. In goroutine A: Mount "dev1", sleep for 2 seconds, then unmount
+3. In goroutine B (started after 500ms): Try to get status of "dev1"
+4. In goroutine C (started after 500ms): Try to mount "dev1" to same path
+5. After all operations complete: Delete "dev1"
+```
+
+All operations should complete without deadlocks, and the program should print the sequence of operations as they occur.
+
+## Expected Output Format
+
+Print each operation with timestamps, such as:
+```
+[Time] Goroutine X: AddDevice dev1 with parent base - Success
+[Time] Goroutine Y: MountDevice dev1 at /mnt/dev1 - Success
+[Time] Goroutine Z: GetDeviceStatus dev1 - Success (mounted, count: 1)
+...
+```
+
+The program should exit cleanly after all operations complete.

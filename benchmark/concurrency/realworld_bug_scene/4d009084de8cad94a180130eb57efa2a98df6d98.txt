@@ -1,0 +1,59 @@
+# Plugin Manager Shutdown System
+
+Implement a plugin manager system in Go that handles the lifecycle of plugins, including initialization, activation, and shutdown.
+
+## Requirements
+
+Your system should support the following operations:
+
+1. **Plugin Registration**: Register new plugins with the manager
+2. **Plugin Activation**: Start a plugin and mark it as active
+3. **Plugin Deactivation**: Stop a plugin and mark it as inactive
+4. **State Persistence**: Save the current state of all plugins (active/inactive status) to an in-memory store
+5. **Shutdown**: Gracefully shut down all active plugins
+
+## Specifications
+
+- Each plugin should have:
+  - A unique name
+  - An active/inactive status
+  - A goroutine that simulates plugin work when active
+  - An exit channel to signal shutdown
+
+- The manager should:
+  - Maintain a collection of plugins
+  - Be safe for concurrent access
+  - Support saving the current state of all plugins
+  - Implement a `Shutdown()` method that stops all active plugins
+
+- When shutting down a plugin:
+  - Signal the plugin's goroutine to stop via the exit channel
+  - Wait for the goroutine to finish
+  - Update the plugin's status to inactive
+  - Save the updated state
+
+## Implementation Details
+
+- Simulate plugin work by having each active plugin's goroutine periodically log messages or perform simple operations
+- The exit channel should be used to coordinate graceful shutdown
+- Multiple goroutines may call manager methods concurrently
+- The `Shutdown()` method should be able to shut down multiple plugins
+
+## Example Usage
+
+```go
+manager := NewPluginManager()
+manager.Register("plugin1")
+manager.Register("plugin2")
+
+manager.Activate("plugin1")
+manager.Activate("plugin2")
+
+// Simulate some work
+time.Sleep(2 * time.Second)
+
+// Shutdown all plugins
+manager.Shutdown()
+```
+
+Your implementation should handle concurrent operations correctly and ensure that the system shuts down cleanly without hanging or panicking.

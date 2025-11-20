@@ -1,0 +1,49 @@
+# Resource Monitor with Dynamic Configuration Updates
+
+Implement a resource monitoring system in Go that tracks usage across multiple resource types (CPU, Memory, Disk, Network). The system should support:
+
+## Requirements
+
+1. **Worker Pool**: Create a pool of worker goroutines that process resource usage updates from two separate queues:
+   - `highPriorityQueue`: For critical resource updates
+   - `lowPriorityQueue`: For routine resource updates
+
+2. **Resource Updates**: Each update contains:
+   - Resource type (string)
+   - Resource identifier (string)
+   - Usage value (float64)
+
+3. **Dynamic Reconfiguration**: Implement a `Reconfigure()` method that:
+   - Updates the list of monitored resource types
+   - Should be callable at any time during system operation
+   - Must ensure workers pause during reconfiguration to maintain consistency
+
+4. **Worker Behavior**: Each worker should:
+   - Continuously pull updates from its assigned queue
+   - Process updates by recording them in a shared data structure
+   - Support graceful shutdown
+
+5. **Thread Safety**: The system must be thread-safe, allowing:
+   - Concurrent workers processing updates
+   - Reconfiguration to happen while workers are running
+   - No data races or corruption
+
+## Implementation Details
+
+- Use channels or a queue-like structure for the two priority queues
+- Implement at least 5 workers per queue (10 total workers)
+- The `Reconfigure()` method should accept a new list of valid resource types
+- Workers should only process updates for currently configured resource types
+- Include a `Shutdown()` method to cleanly stop all workers
+
+## Test Scenario
+
+Your program should demonstrate:
+1. Starting the monitoring system with an initial configuration
+2. Spawning workers that process updates from both queues
+3. Submitting various resource updates to both queues
+4. Calling `Reconfigure()` while workers are actively processing
+5. Continuing to process updates after reconfiguration
+6. Clean shutdown of all workers
+
+The system should handle high load scenarios where queues may be empty (workers idle) when `Reconfigure()` is called, as well as scenarios where queues are full of pending work.

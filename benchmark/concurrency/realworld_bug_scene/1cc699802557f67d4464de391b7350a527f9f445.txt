@@ -1,0 +1,46 @@
+# Distributed Node Manager
+
+Implement a distributed node manager system in Go that handles peer connections and graceful shutdown.
+
+## Requirements
+
+Your system should implement a `NodeManager` that:
+
+1. **Manages outgoing connections** to peer nodes in a distributed system
+2. **Runs two background goroutines**:
+   - A `bootstrap` goroutine that periodically discovers and connects to seed nodes
+   - A `manage` goroutine that maintains connections to peer nodes
+
+3. **Bootstrap goroutine** should:
+   - Run in a loop with a 5-second interval between iterations
+   - Acquire a lock to check if the manager is closed
+   - If closed, exit the loop
+   - Otherwise, simulate discovering and connecting to bootstrap nodes (you can just print a message)
+
+4. **Manage goroutine** should:
+   - Run in a loop with a 3-second interval between iterations
+   - Acquire a lock to check the manager's state
+   - Simulate managing peer connections (you can just print a message)
+   - Exit when the manager is closed AND there are no more outgoing connections
+
+5. **Shutdown method** should:
+   - Mark the manager as closed
+   - Wait for both goroutines to complete before returning
+
+6. **Main function** should:
+   - Create a NodeManager
+   - Start both background goroutines
+   - Let them run for 10 seconds
+   - Call shutdown and wait for clean termination
+   - Print "Shutdown complete" when done
+
+## Implementation Notes
+
+- Use a mutex to protect shared state (closed flag and connection count)
+- Use a WaitGroup or channels to coordinate goroutine completion
+- Simulate the connection count decreasing over time in the manage goroutine
+- The program should complete without hanging or deadlocking
+
+## Expected Behavior
+
+The program should start both goroutines, let them run for a period, then shut down cleanly without any goroutines blocking indefinitely.

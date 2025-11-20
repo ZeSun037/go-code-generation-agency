@@ -1,0 +1,52 @@
+# Health Monitor System
+
+Implement a health monitoring system for long-running services. The system should periodically check the health of a service and maintain its health status.
+
+## Requirements
+
+Your program should implement the following components:
+
+1. **Service struct** with:
+   - A health status (e.g., "starting", "healthy", "unhealthy")
+   - A configuration for health checks including:
+     - Check interval (time between health checks)
+     - Timeout duration (max time to wait for a health check to complete)
+     - Number of consecutive failures before marking as unhealthy
+   - A mutex to protect concurrent access to the health status
+
+2. **Health check probe** that:
+   - Simulates checking service health (you can use a simple function that randomly succeeds or fails, or sleeps for a configurable duration)
+   - Returns a result indicating success or failure
+   - Can be cancelled if it takes too long
+
+3. **Monitor function** that:
+   - Runs in a goroutine
+   - Periodically executes health check probes at the configured interval
+   - Updates the service's health status based on probe results
+   - Implements a timeout mechanism - if a probe doesn't complete within the timeout, it should be cancelled and counted as a failure
+   - Can be stopped gracefully via a stop signal
+
+4. **Start and Stop functions**:
+   - `StartMonitoring()`: Begins the health monitoring process
+   - `StopMonitoring()`: Stops the health monitoring process cleanly
+
+5. **Main function** that:
+   - Creates a service with health check configuration
+   - Starts health monitoring
+   - Lets it run for some time (e.g., 10 seconds)
+   - Stops the monitoring
+   - Prints the final health status
+
+## Example behavior
+
+- Initial status should be "starting"
+- After first successful check, status becomes "healthy"
+- After N consecutive failures (based on configuration), status becomes "unhealthy"
+- After a successful check following failures, status returns to "healthy"
+- The monitoring should stop cleanly without hanging when `StopMonitoring()` is called
+
+## Notes
+
+- Use appropriate synchronization primitives (channels, mutexes, context) to coordinate between goroutines
+- Ensure proper cleanup when stopping the monitor
+- Handle the case where a stop signal arrives while updating health status

@@ -1,0 +1,40 @@
+# Distributed Lock Manager
+
+Implement a distributed lock manager system that allows multiple clients to acquire locks on key prefixes. The system should support the following functionality:
+
+## Requirements
+
+Create a lock manager that:
+
+1. **Allows clients to acquire locks** on string-based key prefixes (e.g., "resource", "db", "cache")
+
+2. **Supports multiple concurrent clients** attempting to acquire locks on different or the same prefixes
+
+3. **Implements a waiting queue** where if a lock is held, other clients wait until it becomes available
+
+4. **Uses lease-based locking** where each lock acquisition is associated with a unique lease ID (you can simulate this with incrementing integers or UUIDs)
+
+5. **Constructs internal keys** by combining the prefix with the lease ID to create unique lock identifiers
+
+6. **Implements lock release** functionality
+
+7. **Handles the scenario** where a client tries to acquire a lock on a prefix that is itself a prefix of existing keys in the system (e.g., acquiring lock on "test" when "testa" already exists as a key)
+
+## Implementation Details
+
+Your program should:
+
+- Simulate a key-value store that tracks which keys are locked
+- Have a `Lock(prefix string, leaseID string)` function that blocks until the lock is acquired
+- Have an `Unlock(prefix string, leaseID string)` function to release locks
+- Use goroutines to simulate multiple concurrent clients
+- Include a test scenario where:
+  - A key "testa" exists in the system
+  - A client attempts to acquire a lock on prefix "test" 
+  - The lock acquisition should complete successfully within a reasonable timeout (e.g., 5 seconds)
+
+## Expected Behavior
+
+The program should demonstrate that multiple clients can successfully acquire and release locks without deadlocking, even when lock prefixes overlap with existing keys in the system.
+
+Create a runnable Go program with at least 2-3 test scenarios showing concurrent lock acquisition and release, including the edge case of prefix overlap.

@@ -1,0 +1,55 @@
+# Concurrent gRPC-like Server Shutdown Manager
+
+Implement a simplified server manager that handles graceful shutdowns for multiple services. Your implementation should support concurrent operations and handle edge cases properly.
+
+## Requirements
+
+Create a `ServerManager` that manages the lifecycle of multiple mock services with the following specifications:
+
+### ServerManager Interface
+
+```go
+type ServerManager struct {
+    // Your implementation
+}
+
+func NewServerManager() *ServerManager
+
+// Start begins running a service with the given name
+func (sm *ServerManager) Start(serviceName string) error
+
+// GracefulStop initiates a graceful shutdown of all services
+// It should wait for all services to complete their shutdown
+// Multiple concurrent calls to GracefulStop should be safe
+func (sm *ServerManager) GracefulStop()
+
+// IsRunning returns whether any service is currently running
+func (sm *ServerManager) IsRunning() bool
+```
+
+### Service Behavior
+
+- Each service, when started, should simulate work by running in a goroutine
+- Services should run until `GracefulStop()` is called
+- During graceful stop, services should simulate cleanup (e.g., sleep for 100ms)
+- The manager should track all running services
+
+### Test Scenarios
+
+Your program should demonstrate:
+
+1. Starting multiple services (at least 3)
+2. Calling `GracefulStop()` from multiple goroutines simultaneously (at least 3 concurrent calls)
+3. Verifying that all services shut down properly
+4. Confirming that subsequent calls to `GracefulStop()` don't cause issues
+5. Printing status messages showing the shutdown process
+
+### Output Requirements
+
+Your program should print:
+- When services start
+- When `GracefulStop()` is called (from which goroutine)
+- When services complete shutdown
+- Final status confirmation
+
+The program should complete successfully without hanging, deadlocking, or panicking.

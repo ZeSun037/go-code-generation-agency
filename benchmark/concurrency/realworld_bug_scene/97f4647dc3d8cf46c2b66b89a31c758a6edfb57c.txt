@@ -1,0 +1,52 @@
+# Event Watcher System
+
+Implement a concurrent event watcher system in Go that monitors events and delivers them to consumers through channels.
+
+## Requirements
+
+Your task is to build a watcher that:
+
+1. **Watches for events** from an external source (you can simulate this with a goroutine that generates events)
+
+2. **Delivers events** to consumers through a result channel
+
+3. **Handles errors** by sending error events through the result channel when they occur
+
+4. **Supports cancellation** via a context that allows consumers to stop watching at any time
+
+## Specifications
+
+Implement a `Watcher` struct with the following behavior:
+
+- A `Start()` method that begins watching for events in a background goroutine
+- A `ResultChan()` method that returns a read-only channel for receiving events
+- A `Stop()` method that cancels the watcher using context cancellation
+- The watcher should handle both normal events and error events
+- When an error occurs, it should be sent as a special error event to the result channel
+- The background goroutine should properly terminate when the context is cancelled
+
+## Implementation Details
+
+Your watcher should:
+- Use a context for cancellation control
+- Have separate internal channels for errors and results
+- Run a main loop that selects between error events and context cancellation
+- Properly clean up and terminate the background goroutine when stopped
+
+## Test Scenario
+
+Write a test that demonstrates the following scenario:
+1. Create a watcher with a cancellable context
+2. Start the watcher
+3. Simulate an error being sent to the error channel (make the result channel blocking/unbuffered)
+4. Immediately call `Stop()` to cancel the context WITHOUT reading from the result channel
+5. Verify that the watcher's background goroutine terminates within a reasonable timeout (e.g., 2 seconds)
+
+The test should use a `sync.WaitGroup` or similar mechanism to detect if the background goroutine properly exits, ensuring there are no goroutine leaks.
+
+## Success Criteria
+
+- The watcher correctly delivers events to consumers
+- The watcher handles errors appropriately
+- The background goroutine terminates promptly when `Stop()` is called, even if the result channel is not being read
+- No goroutine leaks occur in the error + cancellation scenario

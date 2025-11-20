@@ -1,0 +1,54 @@
+# Progress Tracker System
+
+Implement a concurrent progress tracking system in Go that monitors the progress of multiple download tasks.
+
+## Requirements
+
+Create a program that simulates downloading multiple files concurrently and tracks their progress. Your implementation should include:
+
+1. **Download Simulator**: A function that simulates downloading a file by:
+   - Taking a file ID and a total size
+   - Incrementing progress from 0 to the total size
+   - Sending progress updates through a channel
+   - Each progress update should include the file ID and current progress value
+
+2. **Progress Monitor**: A function that:
+   - Receives progress updates from multiple concurrent downloads
+   - Tracks the latest progress for each file ID
+   - Validates that progress values are monotonically increasing for each file
+   - Prints the final progress state for all files
+
+3. **Main Program**: 
+   - Start at least 3 concurrent download simulations with different file IDs
+   - Each download should have at least 100 progress increments
+   - Collect and validate all progress updates
+   - Ensure the program completes without deadlocks
+
+## Specifications
+
+- Use channels to communicate progress updates between goroutines
+- Each progress update should be a struct containing:
+  - `ID`: string identifier for the file
+  - `Current`: current progress value
+  - `Total`: total size (optional)
+  
+- The progress monitor should verify that for each file ID, the progress values it receives are always increasing (or equal)
+
+- The program should handle the completion of all downloads gracefully and exit cleanly
+
+## Example Output
+
+```
+Starting downloads...
+File A: progress 50/100
+File B: progress 75/100
+File C: progress 30/100
+...
+All downloads completed successfully
+Final state:
+  File A: 100/100
+  File B: 100/100
+  File C: 100/100
+```
+
+Your solution should demonstrate proper concurrent programming practices and handle synchronization correctly.

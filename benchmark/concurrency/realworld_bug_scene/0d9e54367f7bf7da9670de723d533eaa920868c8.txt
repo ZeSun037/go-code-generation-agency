@@ -1,0 +1,43 @@
+# Container Process Manager
+
+Implement a container process manager in Go that handles graceful shutdown of running containers with a timeout mechanism.
+
+## Requirements
+
+Your program should implement a `Container` type with the following behavior:
+
+1. **Start Method**: Starts a long-running process in a goroutine that simulates a container. The process should:
+   - Run indefinitely until stopped
+   - Listen for termination signals
+   - Track whether it's currently running
+
+2. **Stop Method**: Attempts to gracefully stop the container with the following logic:
+   - Send a termination signal to the running process
+   - Wait up to 10 seconds for the process to exit gracefully
+   - If the process doesn't exit within 10 seconds, forcefully terminate it
+   - Return any errors that occur during the shutdown process
+
+3. **Kill Method**: Forcefully terminates the container immediately (public method)
+
+4. **WaitTimeout Method**: Waits for the container process to finish, with a timeout
+   - Takes a duration parameter
+   - Returns an error if the timeout is exceeded
+   - Returns nil if the process exits before the timeout
+
+## Implementation Details
+
+- The container should have a unique identifier
+- Use appropriate synchronization primitives to track the container's state
+- The simulated container process should be able to respond to termination signals
+- Some containers should simulate "well-behaved" processes that exit quickly when asked
+- Some containers should simulate "stuck" processes that ignore termination signals and require force-killing
+
+## Test Scenario
+
+Create a `main` function that:
+1. Starts multiple containers (both well-behaved and stuck ones)
+2. Attempts to stop all containers
+3. Prints the status of each shutdown operation
+4. Demonstrates that all containers eventually stop without the program hanging
+
+The program should handle concurrent operations correctly and never deadlock, even when dealing with containers that don't respond to graceful shutdown requests.

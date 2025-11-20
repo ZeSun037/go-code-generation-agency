@@ -1,0 +1,51 @@
+# Distributed Election Coordinator
+
+Implement a distributed election coordinator system in Go that simulates multiple clients competing for leadership.
+
+## Requirements
+
+Your program should:
+
+1. Create multiple clients (at least 3) that compete for leadership in rounds
+2. Each client should:
+   - Attempt to become a leader through a campaign process
+   - If elected as leader, perform validation work
+   - Observe and track who the current leader is
+   - Signal when ready for the next round
+   - Release leadership and prepare for the next election round
+
+3. Implement a coordinator that:
+   - Manages multiple rounds of elections (configurable, e.g., 5 rounds)
+   - Tracks progress across all clients
+   - Ensures all clients complete each round before moving to the next
+   - Reports statistics at the end (e.g., how many times each client became leader)
+
+4. Each client should run concurrently in its own goroutine
+
+5. The election process for each round should include:
+   - A campaign phase where one client becomes the leader
+   - A validation phase where the leader performs some work
+   - A release phase where leadership is given up
+   - Synchronization to ensure all clients are ready before starting the next round
+
+6. Use channels to coordinate between:
+   - Clients signaling they're ready for the next round
+   - Leader notifying followers of state changes
+   - Tracking completion of rounds
+
+## Implementation Details
+
+- Simulate the campaign process (you can use random selection, first-come-first-served, or any deterministic method)
+- The leader should perform some simulated work during validation (e.g., sleep for a short duration)
+- Followers should wait appropriately for the leader to complete its work
+- Use proper synchronization primitives (channels, mutexes, etc.) to coordinate between goroutines
+- The program should complete all rounds without hanging or deadlocking
+- Print progress information showing which client is the leader in each round
+
+## Output
+
+Your program should print:
+- Which client becomes leader in each round
+- Progress through rounds
+- Final statistics of leadership distribution
+- The program should exit cleanly after all rounds complete

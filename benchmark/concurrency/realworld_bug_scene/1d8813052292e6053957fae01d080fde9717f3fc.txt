@@ -1,0 +1,58 @@
+# Distributed Key-Value Store Client
+
+Implement a simplified key-value store client that supports concurrent `Get` operations and client `Close` operations.
+
+## Requirements
+
+Your task is to implement a `KVClient` that can:
+
+1. **Get(key string) (string, error)**: Retrieve a value for a given key from a remote store
+2. **Close() error**: Close the client and clean up resources
+
+## Specifications
+
+### Client Structure
+- The client maintains a connection to a remote service
+- Multiple goroutines may call `Get` concurrently
+- Any goroutine may call `Close` at any time
+- The client should use proper synchronization to manage the connection state
+
+### Behavior Requirements
+
+1. **Get Operation**:
+   - Should acquire access to the connection
+   - Should return an error `ErrConnectionClosed` if the client has been closed
+   - Should simulate a remote call (you can use `time.Sleep` to simulate network delay)
+   - For simplicity, you can return mock data or an empty string for successful gets
+
+2. **Close Operation**:
+   - Should mark the client as closed
+   - Should prevent new `Get` operations from proceeding
+   - Should clean up the connection
+   - Should return `nil` on success
+
+3. **Concurrency**:
+   - `Get` and `Close` may be called concurrently from different goroutines
+   - The program must not deadlock when `Close` is called while `Get` operations are in progress
+   - All operations should complete within a reasonable time (< 3 seconds)
+
+### Test Program
+
+Your program should include a `main` function that:
+1. Creates a client
+2. Launches a goroutine that calls `Get` 
+3. Immediately (or after a small delay) calls `Close` from the main goroutine
+4. Verifies that both operations complete without deadlock within 3 seconds
+5. Prints "SUCCESS" if the test passes, or "FAILURE" if it times out or deadlocks
+
+## Example Output
+
+```
+Starting test...
+Get operation completed with error: connection closed
+Close operation completed
+Test completed in time
+SUCCESS
+```
+
+Your implementation should handle the race condition between `Get` and `Close` operations correctly to avoid deadlocks.

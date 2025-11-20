@@ -1,0 +1,58 @@
+# Event Broadcast System
+
+Implement a concurrent event broadcast system in Go that manages multiple broadcast channels and their subscribers.
+
+## Requirements
+
+Your system should support the following components:
+
+### 1. BroadcastManager
+A manager that:
+- Maintains a collection of active broadcast channels
+- Has an update channel that receives configuration changes
+- Runs a background goroutine (coalesce loop) that processes updates from the update channel
+- Can be stopped gracefully, ensuring all broadcasts are stopped and the background goroutine completes
+
+### 2. Broadcast
+Individual broadcast channels that:
+- Can be started and stopped
+- Have a `stop()` method that signals the broadcast to terminate
+- Simulate some work (e.g., sending events to subscribers)
+
+### 3. Core Functionality
+
+Implement the following operations:
+
+- **AddBroadcast(key string)**: Create and register a new broadcast channel
+- **RemoveBroadcast(key string)**: Remove and stop a broadcast channel
+- **Stop()**: Gracefully shutdown the entire system by:
+  - Stopping all active broadcasts
+  - Closing the update channel
+  - Waiting for the background coalesce goroutine to finish
+- **Run()**: Start the background coalesce loop that processes updates
+
+### 4. Test Scenario
+
+Create a test that:
+1. Starts the broadcast manager
+2. Adds multiple broadcast channels (at least 3)
+3. Concurrently adds/removes broadcasts while the system is running
+4. Calls Stop() to shutdown the system
+5. Verifies that Stop() completes without hanging (use a timeout)
+6. Ensures all resources are properly cleaned up
+
+## Implementation Notes
+
+- Use proper synchronization primitives (mutexes, channels, etc.)
+- The coalesce loop should process updates from the update channel until it's closed
+- The Stop() method must ensure complete cleanup without hanging
+- Include appropriate logging to trace execution flow
+- Your test should complete within a reasonable timeout (e.g., 5 seconds)
+
+## Expected Output
+
+Your program should run the test scenario and print status messages showing:
+- Broadcasts being added/removed
+- The coalesce loop processing updates
+- Successful shutdown of the system
+- Test pass/fail status

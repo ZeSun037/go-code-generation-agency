@@ -1,0 +1,74 @@
+# Plugin Manager with Dynamic Handler Registration
+
+Implement a plugin management system in Go that supports dynamic plugin activation and handler registration. The system should allow plugins to be registered, activated on-demand, and support registering handlers that should be called for all plugins of a specific type.
+
+## Requirements
+
+Your system should support the following operations:
+
+1. **Plugin Registration**: Register plugins with a name and the types/interfaces they implement
+2. **Plugin Activation**: Plugins should be lazily activated (simulated with a delay) when first accessed
+3. **Handler Registration**: Allow registering callback handlers for specific plugin types that should be invoked for all matching plugins
+4. **Plugin Retrieval**: 
+   - Get a specific plugin by name and verify it implements a given type
+   - Get all plugins that implement a specific type
+
+## Specifications
+
+- Plugins have a name and a list of interface types they implement (e.g., "storage", "network", "logging")
+- Plugin activation should be simulated with a 50ms delay to mimic real I/O operations
+- Multiple goroutines may try to activate the same plugin concurrently - activation should only happen once
+- Handlers registered for a plugin type should be called after a plugin is activated
+- When a new handler is registered for a type, it should eventually be called for all already-activated plugins of that type
+- The system must be safe for concurrent use from multiple goroutines
+
+## Implementation Tasks
+
+Create a runnable Go program that:
+
+1. Defines a `Plugin` struct with necessary fields for tracking activation state
+2. Implements a `PluginManager` that stores and manages plugins
+3. Implements these methods:
+   - `RegisterPlugin(name string, implements []string)` - registers a new plugin
+   - `GetPlugin(name, requiredType string) (*Plugin, error)` - gets and activates a plugin
+   - `GetAllPlugins(requiredType string) []*Plugin` - gets all plugins implementing a type
+   - `RegisterHandler(pluginType string, handler func(pluginName string))` - registers a callback handler
+4. Includes a `main()` function that demonstrates:
+   - Registering several plugins with different types
+   - Concurrent access to plugins from multiple goroutines
+   - Registering handlers before and after plugin activation
+   - Retrieving plugins by type
+
+## Example Usage Pattern
+
+```go
+manager := NewPluginManager()
+
+// Register plugins
+manager.RegisterPlugin("plugin1", []string{"storage", "cache"})
+manager.RegisterPlugin("plugin2", []string{"network"})
+
+// Register a handler
+manager.RegisterHandler("storage", func(name string) {
+    fmt.Printf("Storage plugin activated: %s\n", name)
+})
+
+// Concurrent access
+var wg sync.WaitGroup
+for i := 0; i < 5; i++ {
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        plugin, _ := manager.GetPlugin("plugin1", "storage")
+        // use plugin
+    }()
+}
+wg.Wait()
+
+// Register another handler after some plugins are active
+manager.RegisterHandler("storage", func(name string) {
+    fmt.Printf("Another handler for: %s\n", name)
+})
+```
+
+Your implementation should handle all edge cases and race conditions properly.

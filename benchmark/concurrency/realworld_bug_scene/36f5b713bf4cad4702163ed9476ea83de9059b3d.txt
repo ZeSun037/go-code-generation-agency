@@ -1,0 +1,57 @@
+# Key-Value Proxy Service
+
+Implement a key-value proxy service in Go that manages client connections and provides a clean shutdown mechanism.
+
+## Requirements
+
+Your task is to create a key-value proxy service with the following components:
+
+### 1. Cache Component
+Create a simple cache structure that:
+- Stores key-value pairs in memory
+- Has a `Close()` method that cleans up resources
+- Prints a message when closed
+
+### 2. Client Component
+Create a client structure that:
+- Has a context that can be cancelled
+- Provides a `Context()` method to access its context
+- Has a `Close()` method that cancels its context
+
+### 3. Proxy Component
+Create a proxy structure that:
+- Wraps a client and cache
+- Has a constructor function `NewKVProxy(client)` that returns:
+  - The proxy instance
+  - A "done" channel that signals when the proxy is ready to be closed
+- Provides basic key-value operations (Get/Put)
+
+### 4. Main Program
+Write a main program that:
+- Creates multiple proxy instances (at least 3)
+- Performs some operations on each proxy
+- Closes all clients
+- Waits for all proxies to complete cleanup
+- Reports whether any goroutines were leaked
+
+### Success Criteria
+- The program should create and close multiple proxy instances
+- All resources should be properly cleaned up
+- The program should complete execution within 2 seconds
+- Print the number of active goroutines at the start and end of the program
+- The program should not hang or leak goroutines
+
+### Example Output Structure
+```
+Starting goroutines: X
+Created proxy 1
+Created proxy 2
+Created proxy 3
+Performing operations...
+Closing clients...
+Waiting for cleanup...
+Ending goroutines: Y
+Program completed successfully
+```
+
+Implement this service paying careful attention to goroutine lifecycle management and proper cleanup of resources.

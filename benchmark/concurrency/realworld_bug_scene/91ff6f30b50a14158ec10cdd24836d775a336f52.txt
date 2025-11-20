@@ -1,0 +1,68 @@
+# Event Broadcaster System
+
+Implement a concurrent event broadcasting system that distributes events to multiple registered receivers.
+
+## Requirements
+
+Your task is to build a system with the following components:
+
+### 1. Broadcaster
+A broadcaster that:
+- Maintains a collection of registered receivers
+- Broadcasts events to all registered receivers concurrently
+- Tracks metrics about the number of receivers and events distributed
+- Supports thread-safe registration and deregistration of receivers
+
+### 2. Receiver
+A receiver that:
+- Can be registered with a broadcaster
+- Receives events through a channel
+- Processes events asynchronously
+
+### 3. Metrics
+Implement simple metrics tracking:
+- `EventsDistributed`: Total count of events sent to receivers (excluding the original, so if 3 receivers get an event, count it as 2 additional distributions)
+- `ActiveReceivers`: Current number of active receivers
+
+### 4. Operations
+Implement the following operations:
+- `NewBroadcaster()`: Create a new broadcaster
+- `Register(receiver)`: Register a new receiver to get events
+- `Unregister(receiver)`: Remove a receiver from getting events
+- `Broadcast(event)`: Send an event to all registered receivers
+- `ReceiverCount()`: Return the current number of receivers
+- `Close()`: Clean up resources
+
+## Specifications
+
+1. The system must be **thread-safe** and support concurrent operations
+2. Multiple goroutines should be able to register/unregister receivers simultaneously
+3. Broadcasting should work correctly while receivers are being added/removed
+4. Metrics should be accurately maintained during concurrent operations
+5. The program should demonstrate the system working with at least 5 concurrent receivers
+6. Create at least 10 events and broadcast them
+7. Randomly add and remove receivers during the broadcast process
+
+## Example Usage Pattern
+
+```go
+broadcaster := NewBroadcaster()
+
+// Register receivers
+for i := 0; i < 5; i++ {
+    receiver := NewReceiver(i)
+    broadcaster.Register(receiver)
+    go receiver.Start()
+}
+
+// Broadcast events
+for i := 0; i < 10; i++ {
+    broadcaster.Broadcast(Event{ID: i, Data: "event data"})
+}
+
+// Dynamically unregister some receivers
+// Continue broadcasting
+// Print final metrics
+```
+
+Your implementation should run without deadlocks or race conditions. Test your solution with the `-race` flag to ensure correctness.

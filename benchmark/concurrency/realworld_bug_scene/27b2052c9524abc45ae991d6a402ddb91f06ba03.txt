@@ -1,0 +1,53 @@
+# Round-Robin Load Balancer
+
+Implement a round-robin load balancer in Go that distributes requests across multiple backend servers. The load balancer should support dynamic updates to the list of available servers.
+
+## Requirements
+
+1. **LoadBalancer Interface**: Create a load balancer that can:
+   - Start monitoring a list of backend server addresses
+   - Distribute incoming requests in a round-robin fashion across available servers
+   - Handle dynamic updates to the server list
+   - Gracefully shut down
+
+2. **Server Address Updates**: Implement an address watcher that:
+   - Runs in a separate goroutine
+   - Periodically fetches updated server addresses from a resolver
+   - Notifies the load balancer of address changes
+
+3. **Request Handling**: The load balancer should:
+   - Accept incoming requests
+   - Select the next server using round-robin algorithm
+   - Return the selected server address
+
+4. **Concurrency**: The implementation must be thread-safe and handle:
+   - Multiple concurrent requests
+   - Address updates happening while requests are being processed
+   - Proper cleanup on shutdown
+
+## Implementation Details
+
+Your program should include:
+
+- A `RoundRobinBalancer` struct with methods:
+  - `Start()`: Initialize and start the address watcher
+  - `Next()`: Return the next server address in round-robin order
+  - `Close()`: Stop the balancer and clean up resources
+
+- An address resolver that simulates fetching server addresses (you can use a simple function that returns mock addresses)
+
+- A demonstration in `main()` that:
+  - Creates a load balancer
+  - Starts it with an initial set of servers
+  - Simulates concurrent requests (at least 10 goroutines making requests)
+  - Simulates address updates during operation (at least 2-3 updates)
+  - Properly shuts down the balancer
+
+## Expected Output
+
+Your program should print:
+- Which server is selected for each request
+- When address updates occur
+- Confirmation of graceful shutdown
+
+The program should run without hanging or panicking, and should complete within a reasonable time (a few seconds).

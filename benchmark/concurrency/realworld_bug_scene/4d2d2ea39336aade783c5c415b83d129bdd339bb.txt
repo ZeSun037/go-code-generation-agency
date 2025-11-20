@@ -1,0 +1,42 @@
+# Container Monitor Service
+
+You are building a container monitoring service that needs to wait for container state changes. Implement a Go program that simulates monitoring multiple containers concurrently.
+
+## Requirements
+
+Create a program with the following components:
+
+1. **Container struct** that represents a container with:
+   - An ID (string)
+   - A simulated state that can change over time
+
+2. **MonitorService** that provides a method `WaitForContainer(ctx context.Context, containerID string) (status string, error)` which:
+   - Makes an asynchronous call to check the container status
+   - Returns the final status when the container reaches a terminal state
+   - Should handle errors that might occur during the status check
+   - Must respect the context for cancellation
+
+3. **Simulation logic** where:
+   - The status check operation (`checkContainerStatus`) should randomly either:
+     - Succeed and return a status after a short delay (simulate network call)
+     - Fail immediately with an error (simulate connection failure)
+   - Use a 30% chance of immediate failure to test error handling
+
+4. **Main function** that:
+   - Creates a MonitorService
+   - Launches 5 goroutines, each monitoring a different container
+   - Each goroutine should print whether it successfully got a status or encountered an error
+   - Uses a context with a reasonable timeout (e.g., 5 seconds)
+   - Waits for all monitoring operations to complete
+
+## Implementation Notes
+
+- The `checkContainerStatus` function should simulate an HTTP POST request that might fail
+- When the simulated request fails, the error should be properly communicated back to the caller
+- When the simulated request succeeds, return a status like "exited", "stopped", or "completed"
+- Use channels to communicate results and errors between goroutines
+- Ensure your program doesn't hang and completes within the timeout period even when errors occur
+
+## Expected Output
+
+Your program should print results for all 5 containers, showing either their final status or an error message, and then exit cleanly without hanging.

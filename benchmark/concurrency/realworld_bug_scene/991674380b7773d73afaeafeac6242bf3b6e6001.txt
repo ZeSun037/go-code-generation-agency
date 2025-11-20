@@ -1,0 +1,53 @@
+# Resource Watcher with Periodic Sync
+
+Implement a resource watcher system in Go that monitors changes to a collection of resources and periodically resyncs them.
+
+## Requirements
+
+Create a `ResourceWatcher` that:
+
+1. **Watches resources**: Continuously monitors a simulated resource stream (you can simulate this with a channel that occasionally sends resource updates)
+
+2. **Periodic resyncing**: Every 5 seconds, performs a full resync operation that reconciles the local state with the source
+
+3. **Error handling**: The watch operation may fail randomly (simulate this). When it fails, the `WatchAndSync` method should return an error
+
+4. **Graceful shutdown**: Accepts a stop channel that, when closed, should cleanly shut down all operations
+
+5. **Multiple cycles**: The `WatchAndSync` method should be callable multiple times (simulating retries after errors)
+
+## Implementation Details
+
+Your program should include:
+
+- A `ResourceWatcher` struct with a `WatchAndSync(stopCh <-chan struct{}) error` method
+- A `Resync()` function that simulates reconciliation work (just print a message and sleep briefly)
+- A simulated resource stream that occasionally sends updates
+- Random errors in the watch loop (e.g., 20% chance of error every few seconds)
+- A main function that:
+  - Creates a ResourceWatcher
+  - Calls `WatchAndSync` in a loop with retry logic
+  - Demonstrates proper cleanup when the program is interrupted (use signal handling)
+
+## Expected Behavior
+
+- The resync operation should occur every 5 seconds while watching
+- When `WatchAndSync` returns (due to error), all background operations should stop
+- When the stop channel is closed, everything should shut down cleanly
+- The program should be able to restart watching after an error without leaking resources
+
+## Example Output
+
+```
+Starting watch cycle 1...
+Received resource update: item-1
+Performing resync...
+Received resource update: item-2
+Performing resync...
+Watch error occurred: simulated failure
+Starting watch cycle 2...
+Performing resync...
+Received resource update: item-3
+Shutdown signal received
+Cleaning up...
+```

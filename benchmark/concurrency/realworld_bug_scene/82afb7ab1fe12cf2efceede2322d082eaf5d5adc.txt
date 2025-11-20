@@ -1,0 +1,42 @@
+# Concurrent Stream Manager
+
+Implement a concurrent stream manager that handles multiple data streams over a network connection. The manager should support writing data to streams and gracefully closing the connection.
+
+## Requirements
+
+Your program should implement a `StreamManager` with the following functionality:
+
+1. **Stream Writing**: Support concurrent writes to a stream through a `Write(streamID int, data []byte) error` method. Each write should send a message to an internal channel for processing.
+
+2. **Stream Reset Handling**: Maintain a reset channel that receives notifications when streams need to be reset or closed. The channel should have a buffer size of 10.
+
+3. **Connection Closure**: Implement a `Close() error` method that:
+   - Stops accepting new writes
+   - Closes the reset channel
+   - Cleans up all resources
+
+4. **Background Processing**: Run a background goroutine that:
+   - Processes messages from the reset channel
+   - Handles a shutdown signal to stop processing
+   - Properly synchronizes access to shared resources
+
+5. **Concurrent Safety**: The implementation must be safe for concurrent use by multiple goroutines.
+
+## Implementation Details
+
+- Use appropriate synchronization primitives (mutexes, channels, etc.)
+- The `Write` method should acquire a lock before sending to the reset channel
+- Simulate stream resets by having some writes trigger reset notifications
+- Create a test scenario with at least 20 concurrent goroutines performing writes
+- Some goroutines should call `Close()` while others are still writing
+
+## Test Scenario
+
+Your `main` function should:
+1. Create a `StreamManager`
+2. Launch 20+ goroutines that continuously write data to various streams
+3. After a short delay, call `Close()` from another goroutine
+4. Ensure the program completes without hanging or panicking
+5. Print status messages showing successful completion
+
+The program should run for a few seconds and then exit cleanly, demonstrating that all goroutines have properly terminated.

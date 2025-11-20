@@ -1,0 +1,42 @@
+# Bidirectional Stream Processor
+
+Implement a bidirectional stream processor in Go that handles concurrent reading and writing of messages between a client and server.
+
+## Requirements
+
+Create a program that simulates a bidirectional streaming communication system with the following specifications:
+
+1. **Stream Structure**: Implement a `Stream` type that supports both sending and receiving messages concurrently.
+
+2. **Client Component**: Create a client that:
+   - Connects to a stream
+   - Sends a sequence of numbered messages (e.g., "message-1", "message-2", etc.) to the server
+   - Simultaneously receives and processes response messages from the server
+   - Prints all received messages
+   - Properly handles stream closure
+
+3. **Server Component**: Create a server that:
+   - Accepts incoming stream connections
+   - Receives messages from clients
+   - For each received message, sends back a response (e.g., "echo: [original-message]")
+   - Continues processing until the client closes the connection
+
+4. **Main Program**: 
+   - Start the server
+   - Create a client that sends 10 messages
+   - Ensure all messages are sent and all responses are received
+   - Properly shut down both client and server
+   - Print confirmation when all messages have been successfully exchanged
+
+## Constraints
+
+- The client must be able to send messages while simultaneously receiving responses
+- Use goroutines for concurrent send and receive operations
+- Use channels to simulate the bidirectional stream
+- Ensure proper synchronization so that all sent messages receive responses
+- The program should complete successfully without deadlocks or race conditions
+- Include proper error handling and graceful shutdown
+
+## Expected Output
+
+The program should print all sent messages and received responses, demonstrating that bidirectional communication works correctly, and terminate cleanly after all messages are exchanged.

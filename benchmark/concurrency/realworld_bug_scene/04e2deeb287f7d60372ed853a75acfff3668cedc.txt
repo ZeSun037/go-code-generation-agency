@@ -1,0 +1,38 @@
+# Cloud Zone Information Service
+
+You are building a cloud provider service that needs to fetch and cache zone information (like availability zones and regions) for cloud instances.
+
+## Requirements
+
+Implement a Go program that simulates a cloud zone information service with the following specifications:
+
+1. **Zone Information Structure**: Create a service that returns zone information containing:
+   - A failure domain (e.g., "zone-1", "zone-2", etc.)
+   - A region name (e.g., "us-west")
+
+2. **Lazy Initialization**: The failure domain should be fetched from a simulated remote service only once (lazy initialization pattern) and then cached for subsequent calls.
+
+3. **Remote Fetch Simulation**: Implement a function `fetchFailureDomain()` that:
+   - Simulates a network call with a 100ms delay
+   - Returns a failure domain string
+   - Has a 30% chance of returning an error (simulate network failures)
+
+4. **Concurrent Access**: The service must be safe for concurrent access. Multiple goroutines should be able to call `GetZone()` simultaneously.
+
+5. **Test Program**: Create a main function that:
+   - Launches 10 goroutines concurrently
+   - Each goroutine calls `GetZone()` 3 times
+   - Prints the results or errors
+   - All goroutines should complete successfully within a reasonable time
+
+## Expected Behavior
+
+- The first successful call to `GetZone()` should fetch and cache the failure domain
+- Subsequent calls should return the cached value immediately
+- If the fetch fails, the error should be returned to the caller
+- The program should handle concurrent calls gracefully without hanging or deadlocking
+- All goroutines should complete their work
+
+## Deliverable
+
+Provide a complete, runnable Go program that implements this cloud zone information service.

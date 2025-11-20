@@ -1,0 +1,36 @@
+# Task Manager with Status Updates
+
+Implement a concurrent task management system in Go that handles task status updates and synchronization.
+
+## Requirements
+
+Your system should have the following components:
+
+1. **TaskManager**: A manager that tracks the status of tasks and synchronizes status updates to a backend.
+
+2. **Task Structure**: Each task has:
+   - A unique name/ID
+   - A status (e.g., "pending", "running", "completed", "failed")
+   - Metadata (can be a simple map or struct)
+
+3. **Core Functionality**:
+   - `SetTaskStatus(taskName string, status string)`: Updates a task's status in memory and sends it to a channel for backend synchronization
+   - `SyncBatch()`: Reads from the status channel and simulates syncing status updates to a backend (you can just print or log the sync). If the sync fails (simulate random failures), it should clean up the cached status by calling `DeleteTaskStatus`
+   - `DeleteTaskStatus(taskName string)`: Removes a task's status from the in-memory cache
+   - A status channel with limited capacity (e.g., buffer size of 5)
+
+4. **Concurrency Requirements**:
+   - Multiple goroutines should be able to call `SetTaskStatus` concurrently for different tasks
+   - The manager should use appropriate synchronization to protect shared state
+   - A background goroutine should continuously call `SyncBatch()` to process status updates from the channel
+   - `SetTaskStatus` should only send to the channel if the status actually changed
+
+5. **Test Scenario**:
+   Create a simulation where:
+   - 10 worker goroutines each update the status of 3-5 tasks multiple times
+   - Each worker updates tasks through several state transitions (e.g., pending → running → completed)
+   - Simulate occasional sync failures (e.g., 20% failure rate)
+   - The program should run for a reasonable duration (e.g., 5-10 seconds) and then gracefully shut down
+   - Print periodic statistics about how many status updates were processed
+
+Your implementation should handle high concurrency loads without hanging or deadlocking.

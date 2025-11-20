@@ -1,0 +1,46 @@
+# Concurrent Message Sender with Flow Control
+
+Implement a concurrent message sending system that manages flow control using quota pools. The system should handle multiple goroutines attempting to send messages of varying sizes through a shared transport mechanism.
+
+## Requirements
+
+Your program should implement:
+
+1. **QuotaPool**: A thread-safe quota management system that:
+   - Has a fixed initial quota capacity (e.g., 65536 bytes)
+   - Allows goroutines to acquire quota before sending messages
+   - Blocks goroutines when insufficient quota is available
+   - Replenishes quota over time or after messages are acknowledged
+
+2. **MessageSender**: A component that:
+   - Accepts messages of various sizes to send
+   - Manages two levels of quota: transport-level and stream-level
+   - First acquires transport quota, then stream quota
+   - May reject messages that exceed size limits (e.g., max message size of 1024 bytes)
+   - Should handle quota acquisition failures gracefully
+
+3. **Concurrent Sending**: Your program should:
+   - Launch 10 goroutines concurrently
+   - Each goroutine attempts to send 100 messages
+   - Messages should be large (e.g., 10KB each) and exceed the configured limit
+   - All sends should fail with a "message too large" error
+   - The program must complete without deadlocking
+
+4. **Main Function**: 
+   - Set up the quota pools and message sender
+   - Configure a maximum message size of 1024 bytes
+   - Launch the concurrent goroutines
+   - Wait for all goroutines to complete
+   - Print "All sends completed successfully" when done
+
+## Expected Behavior
+
+- When a message exceeds the size limit, the sender should return an error after acquiring transport quota but before/during stream quota acquisition
+- The system should handle hundreds of concurrent failed send attempts without hanging
+- All goroutines should complete within a reasonable time (e.g., 30 seconds)
+
+## Notes
+
+- Use appropriate synchronization primitives (mutexes, channels, wait groups, etc.)
+- Ensure proper resource cleanup on error paths
+- The program should demonstrate correct concurrent quota management under error conditions

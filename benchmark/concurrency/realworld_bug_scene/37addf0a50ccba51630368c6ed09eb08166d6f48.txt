@@ -1,0 +1,51 @@
+# Container Network Manager
+
+Implement a container network manager system in Go that handles connecting and disconnecting containers from networks. The system needs to support concurrent operations while maintaining container state persistence.
+
+## Requirements
+
+Your program should implement the following:
+
+1. **Container Structure**: Create a container type that has:
+   - A unique ID
+   - A list of connected networks
+   - A state that needs to be checkpointed/saved
+   - Thread-safe access methods
+
+2. **Network Manager (Daemon)**: Implement a daemon/manager that:
+   - Manages multiple containers
+   - Provides `ConnectToNetwork(containerID, networkName)` method
+   - Provides `DisconnectFromNetwork(containerID, networkName)` method
+   - Persists container state after network operations
+
+3. **State Persistence**: Implement a `CheckpointTo(storage)` method that:
+   - Saves the current container state to a storage backend (can be simulated with a map or file)
+   - Takes a noticeable amount of time (simulate with a small sleep)
+
+4. **Concurrent Operations**: The program should:
+   - Support multiple goroutines performing network operations on different containers simultaneously
+   - Support multiple goroutines performing network operations on the same container
+   - Ensure thread-safety for all container operations
+
+5. **Demonstration**: Create a main function that:
+   - Initializes several containers
+   - Spawns multiple goroutines that concurrently:
+     - Connect containers to various networks
+     - Disconnect containers from networks
+     - Perform these operations on the same containers from different goroutines
+   - Waits for all operations to complete
+   - Prints success message if all operations complete without hanging
+
+## Example Usage Pattern
+
+```go
+daemon := NewDaemon()
+container := daemon.CreateContainer("container1")
+
+// These should be able to run concurrently
+go daemon.ConnectToNetwork("container1", "network1")
+go daemon.ConnectToNetwork("container1", "network2")
+go daemon.DisconnectFromNetwork("container1", "network1")
+```
+
+Your implementation should handle at least 20-30 concurrent operations across 3-5 containers without deadlocking or data races. Use proper synchronization primitives to ensure correctness.

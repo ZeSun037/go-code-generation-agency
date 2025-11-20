@@ -1,0 +1,36 @@
+# Network Status Monitor
+
+You are building a network status monitoring service that tracks message exchanges between distributed nodes. The service exposes an HTTP endpoint that reports the current status of the system.
+
+## Requirements
+
+Implement a Go web server with the following specifications:
+
+1. **State Management**: Create a `State` struct that tracks:
+   - `Sent`: a map of message IDs that have been sent (use `map[string]bool`)
+   - `Received`: a map of message IDs that have been received (use `map[string]bool`)
+   - A logger that writes timestamped messages to stdout
+
+2. **Concurrent Operations**: The state must be safe for concurrent access from multiple goroutines.
+
+3. **HTTP Endpoints**:
+   - `POST /send?id=<message_id>`: Records that a message was sent
+   - `POST /receive?id=<message_id>`: Records that a message was received
+   - `GET /status?expected=<count>`: Returns the system status:
+     - Returns "running" if the number of received messages equals the expected count
+     - Returns "fail" otherwise, and logs a detailed message including the counts of sent and received messages
+
+4. **Logging**: Implement a `Logf` method on the State struct that:
+   - Acquires appropriate locks to safely read the state
+   - Formats and prints log messages with timestamp, sent count, and received count
+   - The format should be: `[TIMESTAMP] Status check: sent=%d, received=%d, message`
+
+5. **Test Scenario**: In your `main` function, demonstrate the server working by:
+   - Starting the HTTP server on port 8080
+   - Launching multiple goroutines (at least 10) that concurrently send POST requests to `/send` and `/receive` with different message IDs
+   - Having another goroutine periodically call `/status` to check the system state
+   - Let the program run for a few seconds to demonstrate concurrent behavior
+
+## Expected Behavior
+
+The server should handle concurrent requests without crashing or hanging, properly tracking all sent and received messages, and correctly reporting status even under concurrent load.

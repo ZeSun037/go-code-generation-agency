@@ -1,0 +1,35 @@
+# Token Manager with Expiration
+
+Implement a concurrent token management system in Go that handles user authentication tokens with automatic expiration.
+
+## Requirements
+
+Your system should support the following operations that may be called concurrently from multiple goroutines:
+
+1. **CreateToken(username string) string** - Generate and store a new token for a user. The token should be a random string and should expire after 5 seconds.
+
+2. **RefreshToken(token string) bool** - Reset the expiration time of an existing token to 5 seconds from now. Returns true if the token exists, false otherwise.
+
+3. **ValidateToken(token string) (string, bool)** - Check if a token is valid and return the associated username. If valid, also refresh its expiration time. Returns the username and true if valid, empty string and false otherwise.
+
+4. **RevokeUser(username string)** - Immediately invalidate all tokens belonging to a specific user.
+
+5. **Shutdown()** - Clean up all resources and stop background operations.
+
+## Implementation Details
+
+- Tokens should automatically expire and be removed 5 seconds after creation or last refresh
+- A background goroutine should check for expired tokens every 100 milliseconds
+- The system must be safe for concurrent access from multiple goroutines
+- Token strings can be simple random alphanumeric strings of length 16
+
+## Test Program
+
+Your program should include a `main()` function that demonstrates:
+- Creating tokens for multiple users concurrently
+- Validating tokens from multiple goroutines
+- Revoking a user's tokens while other operations are in progress
+- Verifying that tokens expire after the timeout period
+- Proper shutdown of the system
+
+The test should run for at least 10 seconds and demonstrate that all operations work correctly under concurrent access without deadlocks or race conditions.

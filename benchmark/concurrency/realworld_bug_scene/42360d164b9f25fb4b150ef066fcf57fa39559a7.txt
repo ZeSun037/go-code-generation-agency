@@ -1,0 +1,51 @@
+# Plugin Manager Initialization
+
+You are building a plugin management system that needs to initialize multiple plugins concurrently. Each plugin requires some setup work that can be done in parallel to speed up the startup process.
+
+## Task
+
+Implement a `PluginManager` that can initialize multiple plugins concurrently and wait for all of them to complete before proceeding.
+
+## Requirements
+
+1. Create a `Plugin` struct that represents a plugin with:
+   - A `Name` field (string)
+   - An `Initialize()` method that simulates initialization work (sleep for a random duration between 100-500ms and print a message)
+
+2. Create a `PluginManager` struct that:
+   - Maintains a list of plugins
+   - Has an `AddPlugin(plugin Plugin)` method to register plugins
+   - Has an `InitializeAll()` method that:
+     - Initializes all plugins concurrently (each in its own goroutine)
+     - Waits for all plugins to finish initialization
+     - Returns an error if any plugin fails to initialize
+     - Prints "All plugins initialized successfully" when complete
+
+3. In your `main()` function:
+   - Create a `PluginManager`
+   - Add at least 5 plugins with different names
+   - Call `InitializeAll()`
+   - Print the total time taken for initialization
+
+## Example Output
+
+```
+Initializing plugin: plugin-1
+Initializing plugin: plugin-3
+Initializing plugin: plugin-2
+Initializing plugin: plugin-4
+Initializing plugin: plugin-5
+Plugin plugin-3 initialized
+Plugin plugin-1 initialized
+Plugin plugin-5 initialized
+Plugin plugin-2 initialized
+Plugin plugin-4 initialized
+All plugins initialized successfully
+Total initialization time: 523ms
+```
+
+## Notes
+
+- Use proper concurrency primitives to coordinate the goroutines
+- Ensure the program doesn't exit before all plugins are initialized
+- The initialization order may vary due to concurrent execution

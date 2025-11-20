@@ -1,0 +1,73 @@
+# Distributed Data Processing Pipeline
+
+You are building a distributed data processing system that splits work across multiple goroutines and collects results through a channel.
+
+## Task
+
+Implement a `ProcessDataBatch` function that:
+
+1. Takes a context, a slice of data items to process, and a maximum number of concurrent workers
+2. Spawns worker goroutines (up to the max) that process items concurrently
+3. Each worker performs some processing on items and sends results to a results channel
+4. A separate goroutine collects all results from the channel
+5. Returns all collected results or an error if processing fails
+
+## Requirements
+
+- Use a `sync.WaitGroup` or `errgroup.Group` to manage worker goroutines
+- Workers should send their processed results to a shared channel
+- A collector goroutine should receive from this channel and accumulate results
+- The function should respect context cancellation
+- All goroutines should properly clean up when done or when context is cancelled
+
+## Function Signature
+
+```go
+func ProcessDataBatch(ctx context.Context, items []int, maxWorkers int) ([]int, error)
+```
+
+## Processing Logic
+
+- Each worker should "process" items by multiplying them by 2 (simulate work with `time.Sleep(10 * time.Millisecond)`)
+- Workers pull items from a shared work queue (buffered channel)
+- Processed results are sent to a results channel
+- The collector accumulates all results and returns them
+
+## Test Case
+
+Your implementation should handle this scenario:
+```go
+ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+defer cancel()
+
+items := make([]int, 100)
+for i := range items {
+    items[i] = i
+}
+
+results, err := ProcessDataBatch(ctx, items, 5)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Processed %d items\n", len(results))
+```
+
+The program should also gracefully handle early cancellation:
+```go
+ctx, cancel := context.WithCancel(context.Background())
+
+go func() {
+    time.Sleep(100 * time.Millisecond)
+    cancel() // Cancel while processing
+}()
+
+items := make([]int, 1000)
+for i := range items {
+    items[i] = i
+}
+
+results, err := ProcessDataBatch(ctx, items, 5)
+// Should return with context cancellation error
+```
+
+Implement a complete, runnable Go program with the `ProcessDataBatch` function and a `main` function that demonstrates both successful processing and graceful cancellation handling.

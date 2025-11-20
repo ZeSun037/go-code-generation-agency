@@ -1,0 +1,47 @@
+# Task Scheduling System with Caching
+
+Implement a task scheduling system that determines whether tasks can be assigned to workers based on various predicates (rules). The system should support concurrent scheduling decisions and include a caching mechanism to optimize repeated predicate evaluations.
+
+## Requirements
+
+Your program should implement:
+
+1. **Task Scheduler** that evaluates whether a task can be assigned to a worker based on multiple predicates.
+
+2. **Predicate Functions** - Implement at least 3 different predicates that check:
+   - Whether the worker has sufficient capacity for the task
+   - Whether the worker has the required skills for the task
+   - Whether the worker is in the correct location for the task
+
+3. **Equivalence Cache** - A cache that stores predicate evaluation results to avoid redundant computations. The cache should:
+   - Store results keyed by task name, worker name, and predicate name
+   - Support cache invalidation when worker states change
+   - Be thread-safe with Lock/Unlock methods
+   - Have a method `GetCachedResult(taskName, workerName, predicateName string) (fit bool, reasons []string, valid bool)` that returns cached results if valid
+   - Have a method `UpdateCache(taskName, workerName, predicateName string, fit bool, reasons []string)` to store new results
+
+4. **Concurrent Scheduling** - The system should support evaluating multiple task-worker pairs concurrently using goroutines.
+
+5. **Event Handlers** - Simulate background goroutines that periodically invalidate cache entries when worker states change (e.g., capacity updates, skill changes).
+
+## Program Structure
+
+- Create structs for `Task`, `Worker`, and `Cache`
+- Implement predicate functions with signature: `func(task Task, worker Worker) (bool, []string, error)`
+- Implement a `ScheduleTask` function that:
+  - Iterates through all predicates in order
+  - Uses the cache when available
+  - Falls back to executing predicates when cache is invalid or unavailable
+  - Updates the cache with new results
+  - Returns whether the task fits and any failure reasons
+
+## Test Scenario
+
+Create a test scenario with:
+- 5 workers with different capacities, skills, and locations
+- 10 tasks with varying requirements
+- Launch multiple goroutines to schedule tasks concurrently
+- Run background goroutines that simulate worker state changes and cache invalidation
+- Print scheduling results showing which tasks were assigned to which workers
+
+The program should run for a few seconds demonstrating concurrent scheduling operations and proper cache usage.

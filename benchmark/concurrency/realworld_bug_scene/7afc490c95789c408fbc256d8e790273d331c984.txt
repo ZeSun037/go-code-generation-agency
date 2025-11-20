@@ -1,0 +1,49 @@
+# Distributed Task Coordinator Status Query
+
+Implement a distributed task coordinator system in Go that manages worker nodes and allows querying their status.
+
+## Requirements
+
+Your system should include:
+
+1. **TaskCoordinator**: A coordinator that manages task execution and maintains state
+   - Should have a `Start()` method that begins processing
+   - Should have a `Stop()` method that gracefully shuts down the coordinator
+   - Should have a `Status()` method that returns the current state (number of tasks processed, current status string, etc.)
+   - Should process tasks from an internal queue in a background goroutine
+
+2. **Status Information**: The `Status()` method should return a struct containing:
+   - `TasksProcessed`: number of tasks completed
+   - `IsRunning`: whether the coordinator is currently active
+   - `CurrentState`: a string describing the current state
+
+3. **Task Processing**: 
+   - The coordinator should simulate processing tasks in its event loop
+   - Tasks can be simple counters that increment an internal counter
+   - Processing should happen continuously while the coordinator is running
+
+4. **Main Program**: 
+   - Create a coordinator and start it
+   - Launch multiple goroutines (at least 3) that periodically call `Status()` to query the coordinator's state
+   - After a short time, stop the coordinator
+   - Continue calling `Status()` from the goroutines even after the coordinator has stopped
+   - Print the status information from each query
+   - Ensure the program completes within a reasonable time (e.g., 5 seconds total)
+
+## Expected Behavior
+
+- Status queries should work correctly while the coordinator is running
+- Status queries should work correctly (and not hang) after the coordinator is stopped
+- The program should terminate cleanly without deadlocks
+- All goroutines should be able to complete their status queries
+
+## Example Output Structure
+
+```
+Goroutine 1: Status{TasksProcessed: 42, IsRunning: true, CurrentState: "processing"}
+Goroutine 2: Status{TasksProcessed: 45, IsRunning: true, CurrentState: "processing"}
+Coordinator stopped
+Goroutine 1: Status{TasksProcessed: 50, IsRunning: false, CurrentState: "stopped"}
+Goroutine 3: Status{TasksProcessed: 50, IsRunning: false, CurrentState: "stopped"}
+Program completed successfully
+```

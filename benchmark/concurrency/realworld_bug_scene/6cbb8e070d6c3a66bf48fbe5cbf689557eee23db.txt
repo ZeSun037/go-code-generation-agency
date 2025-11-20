@@ -1,0 +1,39 @@
+# UDP Proxy Server
+
+Implement a UDP proxy server in Go that forwards packets between clients and a backend server. The proxy should maintain connection tracking to ensure packets from the same client are consistently forwarded through the same connection to the backend.
+
+## Requirements
+
+1. **Proxy Setup**: Create a UDP proxy that listens on a frontend address and forwards traffic to a backend address.
+
+2. **Connection Tracking**: Maintain a connection tracking table that maps client addresses to their corresponding backend connections. This ensures that packets from the same client reuse the same backend connection.
+
+3. **Bidirectional Forwarding**: 
+   - Forward packets from clients to the backend server
+   - Forward response packets from the backend server back to the appropriate clients
+
+4. **Concurrent Operation**: Handle multiple clients simultaneously, with each client's packets being processed concurrently.
+
+5. **Error Handling**: Handle cases where:
+   - The backend server might be unreachable
+   - Dial operations to the backend might fail
+   - Read/write operations might encounter errors
+
+## Implementation Details
+
+- Use a map to track active connections between clients and the backend
+- Protect the connection tracking table with appropriate synchronization mechanisms
+- When a packet arrives from a new client, establish a new connection to the backend
+- When a packet arrives from an existing client, reuse the existing backend connection
+- Launch a goroutine for each client connection to handle backend-to-client forwarding
+
+## Test Scenario
+
+Your implementation should be testable with:
+- A simple UDP echo server as the backend
+- Multiple concurrent clients sending packets
+- Scenarios where the backend is temporarily unavailable or unreachable
+
+## Expected Behavior
+
+The proxy should continue operating even when individual dial attempts fail, allowing subsequent packets (from the same or different clients) to be processed normally.

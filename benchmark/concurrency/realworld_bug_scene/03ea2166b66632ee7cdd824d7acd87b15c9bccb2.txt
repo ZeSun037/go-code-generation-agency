@@ -1,0 +1,43 @@
+# Container Process Manager
+
+You are building a container process manager that tracks running and exited containers. Your system needs to support listing containers with various filters, including filtering by exit code.
+
+## Requirements
+
+Implement a Go program that simulates a container management system with the following features:
+
+1. **Container Structure**: Each container should have:
+   - A unique ID (string)
+   - A name (string)
+   - A running status (boolean)
+   - An exit code (integer) - only relevant when not running
+
+2. **Container Operations**:
+   - `StartContainer(name string)`: Creates and starts a new container with the given name
+   - `StopContainer(id string, exitCode int)`: Stops a running container with the specified exit code
+   - `ListContainers(filterExitCode *int)`: Lists all containers. If filterExitCode is provided (not nil), only return containers that have exited with that specific exit code
+
+3. **Concurrency Requirements**:
+   - The system must be safe for concurrent access - multiple goroutines should be able to start containers, stop containers, and list containers simultaneously
+   - `ListContainers` should be able to execute while other operations are happening
+   - The program should not deadlock under concurrent operations
+
+4. **Test Scenario**:
+   Create a main function that:
+   - Starts 10 containers concurrently
+   - Stops 5 of them with exit code 0 and 5 with exit code 1 (concurrently)
+   - While stopping is happening, continuously list containers filtered by exit code 0 and exit code 1 from multiple goroutines (at least 5 goroutines doing listings)
+   - Print the results showing that all operations completed successfully without deadlock
+   - The program should complete within a reasonable time (a few seconds)
+
+## Example Output Format
+
+```
+Started container: <id> <name>
+Stopped container: <id> with exit code: <code>
+Listing containers with exit code 0: [<id1>, <id2>, ...]
+Listing containers with exit code 1: [<id3>, <id4>, ...]
+All operations completed successfully!
+```
+
+Your implementation should demonstrate that the system handles concurrent reads and writes correctly without hanging or crashing.

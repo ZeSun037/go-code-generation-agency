@@ -1,0 +1,50 @@
+# Cluster Status Monitor
+
+You are building a distributed system that monitors the status of multiple clusters. Your system needs to track whether all clusters are synchronized and ready to serve requests.
+
+## Requirements
+
+Implement a cluster monitoring system with the following components:
+
+### 1. Cluster Structure
+- Each cluster has a name and a controller that tracks its sync status
+- The controller has a `HasSynced()` method that returns whether the cluster has completed its initial synchronization
+
+### 2. ClusterMonitor
+Implement a `ClusterMonitor` that:
+- Maintains a registry of clusters (identified by name)
+- Allows adding new clusters dynamically via `AddCluster(name string, controller Controller)`
+- Allows removing clusters via `RemoveCluster(name string)`
+- Provides a method `AreClustersSynced(clusterNames []string) bool` that checks if:
+  - All specified clusters exist in the registry
+  - The number of clusters in the registry matches the number of specified clusters
+  - All specified clusters report as synced via their controller's `HasSynced()` method
+
+### 3. Controller Interface
+```go
+type Controller interface {
+    HasSynced() bool
+}
+```
+
+### 4. Concurrent Access
+Your implementation must be **thread-safe** and support:
+- Concurrent calls to `AddCluster` and `RemoveCluster`
+- Concurrent calls to `AreClustersSynced` while clusters are being added/removed
+- Concurrent calls to `AreClustersSynced` from multiple goroutines
+
+## Test Scenario
+
+Your program should demonstrate:
+1. Creating a monitor with several clusters
+2. Multiple goroutines concurrently checking if clusters are synced
+3. Concurrent addition and removal of clusters
+4. The system correctly reporting sync status without hanging or racing
+
+Simulate controllers that take varying amounts of time to sync (e.g., 10-100ms). Run at least 100 concurrent operations to verify correctness.
+
+## Success Criteria
+
+- The program runs to completion without deadlocks
+- All sync status checks return correct results
+- No race conditions (verify with `go run -race`)

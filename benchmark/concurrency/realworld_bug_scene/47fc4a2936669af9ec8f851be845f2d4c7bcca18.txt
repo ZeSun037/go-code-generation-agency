@@ -1,0 +1,54 @@
+# Streaming Client Connection Manager
+
+Implement a streaming client connection manager in Go that handles client streams with proper lifecycle management.
+
+## Requirements
+
+Your task is to build a system that simulates a streaming client that:
+
+1. **Creates client streams** that can be cancelled via context
+2. **Monitors transport errors** from the underlying connection
+3. **Handles stream cleanup** when either the context is cancelled or a transport error occurs
+
+## Specifications
+
+Implement the following components:
+
+### Transport
+- A `Transport` struct that represents an underlying network connection
+- It should have an `Error()` method that returns a channel which closes when the transport encounters an error
+- It should have a `Close()` method to simulate closing the connection
+
+### ClientStream
+- A `ClientStream` struct that represents an active streaming connection
+- It should accept a context for cancellation
+- It should be associated with a transport
+- It should have a method to perform cleanup when the stream is closed
+
+### Stream Manager
+- A function `NewClientStream(ctx context.Context, transport *Transport)` that:
+  - Creates a new client stream
+  - Starts a background goroutine to monitor for stream termination conditions
+  - Returns the created stream
+
+### Main Program
+Create a test program that demonstrates:
+1. Creating multiple client streams with different contexts
+2. Cancelling some streams via context cancellation
+3. Triggering transport errors on some streams
+4. Properly cleaning up all resources
+
+## Expected Behavior
+
+- When a context is cancelled, the stream should be cleaned up
+- When a transport error occurs, the stream should be cleaned up
+- No goroutines should leak after streams are terminated
+- The program should run for a few seconds, create/cancel several streams, and exit cleanly
+
+## Output
+
+Your program should print messages indicating:
+- When streams are created
+- When streams are cleaned up (and why: context cancelled vs transport error)
+- When the transport encounters errors
+- A final summary showing all goroutines have been properly terminated

@@ -1,0 +1,56 @@
+# Distributed Task Scheduler
+
+Implement a distributed task scheduler in Go that manages and executes tasks across multiple workers.
+
+## Requirements
+
+Your program should implement a task scheduler with the following components:
+
+### 1. Task Structure
+- Each task has a unique ID and a function to execute
+- Tasks should be able to run concurrently
+- Tasks may take varying amounts of time to complete
+
+### 2. Scheduler
+Implement a `Scheduler` that:
+- Accepts new tasks for execution
+- Maintains a pool of worker goroutines (configurable size, e.g., 5 workers)
+- Distributes tasks to available workers
+- Provides a method to stop the scheduler gracefully
+- Provides a method to get the count of currently running tasks
+
+### 3. Worker Pool
+- Workers should continuously process tasks from a queue
+- Each worker runs in its own goroutine
+- Workers should handle task execution and report completion
+
+### 4. Main Program
+Create a main program that:
+- Initializes a scheduler with a fixed number of workers
+- Submits at least 20 tasks with simulated work (e.g., sleep for random durations between 100ms-500ms)
+- Prints when each task starts and completes
+- Stops the scheduler after all tasks are submitted
+- Waits for all tasks to complete before exiting
+- Runs the entire workflow at least 3 times in a loop to demonstrate stability
+
+### 5. Expected Behavior
+- The program should run without hanging
+- All submitted tasks should complete
+- The program should exit cleanly after all iterations
+- No goroutines should be left running after the program completes
+
+## Example Output Format
+```
+Starting iteration 1
+Task 1 started
+Task 2 started
+Task 1 completed
+Task 3 started
+...
+Iteration 1 complete
+Starting iteration 2
+...
+All iterations complete
+```
+
+Implement this scheduler ensuring proper resource management and clean shutdown behavior.

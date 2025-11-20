@@ -1,0 +1,54 @@
+# Connection Pool Manager
+
+Implement a connection pool manager in Go that handles establishing connections to backend servers through a load balancer.
+
+## Requirements
+
+Your program should implement the following components:
+
+1. **LoadBalancer**: A component that provides server addresses through a notification channel
+   - Has a `Notify()` method that returns a read-only channel of address lists
+   - Can be closed, which closes the notification channel
+
+2. **ConnectionPool**: Manages connections to backend servers
+   - Has a `Start(doneSignal chan struct{})` method that:
+     - Listens for address updates from the load balancer
+     - Attempts to establish connections to the provided addresses
+     - Closes the `doneSignal` channel after the first successful connection
+   - The `doneSignal` parameter may be `nil` (in which case, no signal is needed)
+
+3. **Main program** that demonstrates:
+   - Creating a connection pool with a load balancer
+   - Starting the connection pool with a done signal channel
+   - Simulating a scenario where the load balancer closes before any addresses are provided
+   - Verifying that the done signal is properly handled with a timeout
+
+## Specifications
+
+- The load balancer should send address lists through its notification channel
+- Addresses can be represented as simple strings (e.g., "server1:8080")
+- Connection attempts can be simulated (don't need real network connections)
+- The program should include a test case that:
+  - Creates a connection pool
+  - Starts it with a done signal channel
+  - Closes the load balancer immediately (before sending any addresses)
+  - Waits up to 200ms for the done signal
+  - Reports success or failure based on whether the signal was received
+
+## Example Output
+
+Your program should print status messages and indicate whether the test passed or failed:
+
+```
+Starting connection pool...
+Load balancer closed
+Test PASSED: done signal received
+```
+
+or
+
+```
+Starting connection pool...
+Load balancer closed
+Test FAILED: done signal not received within timeout
+```

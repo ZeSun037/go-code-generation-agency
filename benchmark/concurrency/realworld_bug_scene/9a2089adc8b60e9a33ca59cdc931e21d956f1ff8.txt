@@ -1,0 +1,65 @@
+# Pod Status Manager
+
+Implement a concurrent pod status management system that handles status updates from multiple sources and synchronizes them with an API server.
+
+## Requirements
+
+Your task is to build a status manager that:
+
+1. **Manages Pod Status Updates**: Accept status updates for pods from multiple goroutines concurrently
+2. **Synchronizes with API Server**: Periodically sync cached statuses to a simulated API server
+3. **Handles Deletions**: Support marking pods as deleted and cleaning up their status
+4. **Concurrent Access**: Allow multiple goroutines to read and write pod statuses safely
+
+## Implementation Details
+
+### Data Structures
+
+- **Pod**: Represents a pod with a unique ID (UID), name, and status
+- **Status**: Contains a message string and a timestamp
+- **Manager**: Coordinates status updates and synchronization
+
+### Core Operations
+
+1. **SetPodStatus(podUID, status)**: Update the status for a given pod
+2. **GetPodStatus(podUID)**: Retrieve the current cached status for a pod
+3. **SyncBatch()**: Synchronize all pending status updates to the API server
+4. **DeletePod(podUID)**: Remove a pod from the status cache
+5. **Start()**: Begin background synchronization (every 2 seconds)
+
+### Simulation Requirements
+
+- Simulate an API server with a simple in-memory store that accepts status updates
+- The API server should have a configurable delay (e.g., 10-50ms) to simulate network latency
+- Create a channel-based update queue with a buffer size of 100
+
+### Test Scenario
+
+Your program should demonstrate:
+
+1. Starting the manager with background sync enabled
+2. Multiple goroutines (at least 5) concurrently updating statuses for different pods
+3. Some goroutines updating the same pod multiple times rapidly
+4. Reading pod statuses while updates are happening
+5. Deleting some pods while updates are in flight
+6. Graceful shutdown after 10 seconds, printing final statistics:
+   - Total updates received
+   - Total syncs to API server
+   - Number of pods in cache at shutdown
+
+### Expected Behavior
+
+- All status updates should be captured without data races
+- The system should handle high-frequency updates to the same pod
+- Status reads should never block writes for extended periods
+- The update channel should handle overflow gracefully when full
+- No goroutines should deadlock when the update channel is full
+
+## Output
+
+Print timestamped log messages for key events:
+- Status updates received
+- Sync operations started/completed
+- Pod deletions
+- Any errors or warnings
+- Final statistics

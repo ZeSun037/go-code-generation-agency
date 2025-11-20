@@ -1,0 +1,42 @@
+# Image Layer Downloader
+
+You are building a concurrent image layer downloader system similar to container registry pull operations. The system needs to download multiple layers of an image in parallel and process them.
+
+## Requirements
+
+Implement a Go program that simulates downloading and processing image layers with the following specifications:
+
+1. **Layer Download Simulation**: Create a function that simulates downloading a layer. It should:
+   - Accept a layer ID (string) and a download duration (time.Duration)
+   - Simulate the download by generating data chunks over time
+   - Return the downloaded data through some mechanism that allows streaming
+
+2. **Layer Processor**: Create a processor that:
+   - Receives the streaming data from downloads
+   - Processes each chunk (you can simulate this with a simple operation like counting bytes)
+   - Reports when processing is complete for each layer
+
+3. **Concurrent Downloads**: Implement a manager that:
+   - Downloads 5 different layers concurrently (layer IDs: "layer1" through "layer5")
+   - Each layer should take a random duration between 100-500ms to download
+   - Each layer should stream data in chunks (simulate at least 10 chunks per layer)
+   - Processes all downloaded layers
+
+4. **Cancellation Support**: The system should support cancellation:
+   - If a layer download fails (simulate random failures with 20% probability), cancel all ongoing downloads
+   - If all downloads succeed, ensure all resources are properly cleaned up
+
+5. **Monitoring**: The program should:
+   - Print when each layer starts downloading
+   - Print when each layer completes (successfully or with error)
+   - Print the total number of bytes processed for each layer
+   - Exit cleanly after all operations complete or after cancellation
+
+## Success Criteria
+
+- The program should run without hanging or deadlocking
+- All goroutines should terminate properly
+- No goroutine leaks should occur (the program should exit cleanly)
+- Proper error handling and resource cleanup should be demonstrated
+
+Run your program multiple times to ensure it handles both success and failure cases correctly.

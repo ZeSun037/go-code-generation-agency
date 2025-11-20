@@ -1,0 +1,55 @@
+# Distributed Log Replayer
+
+You are building a distributed log system that needs to replay entries from a write-ahead log (WAL) during startup and then continue processing new entries during normal operation.
+
+## Requirements
+
+Implement a log replayer system with the following components:
+
+1. **LogEntry** structure with:
+   - `Index`: a monotonically increasing uint64 identifier
+   - `Type`: either "normal" or "config"
+   - `Data`: string content
+
+2. **Replayer** that:
+   - Has a `commitC` channel that outputs processed log entries to clients
+   - Has a `stopC` channel to signal shutdown
+   - Loads historical entries from storage during initialization
+   - Processes entries in order by index
+   - Continues to accept and process new entries after replay completes
+
+3. **Behavior**:
+   - During startup, replay all historical entries from storage
+   - After replay completes, send a `nil` signal on `commitC` to indicate replay is finished and the system is ready for live operations
+   - After the nil signal, continue processing new incoming entries
+   - Both replayed and new entries should be sent to `commitC` in order
+   - Handle graceful shutdown via `stopC`
+
+## Implementation Task
+
+Write a Go program that:
+
+1. Simulates a storage system with 5 historical log entries (indices 1-5)
+2. Creates a Replayer that loads and processes these historical entries
+3. After replay, submits 3 new entries (indices 6-8) for processing
+4. A client goroutine reads from `commitC` and prints:
+   - Each entry's index and data
+   - A special message when it receives the nil signal indicating replay completion
+5. Demonstrates proper shutdown
+
+## Example Output
+
+```
+Replaying entry 1: historical data 1
+Replaying entry 2: historical data 2
+Replaying entry 3: historical data 3
+Replaying entry 4: historical data 4
+Replaying entry 5: historical data 5
+--- Replay complete, system ready ---
+Processing entry 6: new data 1
+Processing entry 7: new data 2
+Processing entry 8: new data 3
+Shutdown complete
+```
+
+The system should handle the coordination between replay completion and live processing without deadlocks or race conditions.

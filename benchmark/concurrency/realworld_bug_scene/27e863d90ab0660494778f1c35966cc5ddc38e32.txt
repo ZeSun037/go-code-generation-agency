@@ -1,0 +1,52 @@
+# Distributed Heartbeat System
+
+You are building a distributed system that manages multiple replicas of data across different nodes. The system needs to send periodic heartbeats between replicas to maintain cluster health and detect failures.
+
+## Requirements
+
+Implement a Go program that simulates a heartbeat management system with the following components:
+
+### 1. Replica Manager
+- Each replica has a unique ID and belongs to a range (group of replicas)
+- Replicas need to track which remote replicas are unreachable
+- Replicas have a `tick()` method that is called periodically to perform maintenance tasks
+- Replicas need to process and report unreachable remote replicas
+
+### 2. Heartbeat Coalescer
+- The system should coalesce (batch) multiple heartbeats destined for the same node to reduce network overhead
+- A background goroutine should periodically flush queued heartbeats to their destinations
+- Heartbeats should be sent every 100ms
+- Each heartbeat contains: source replica ID, destination replica ID, and range ID
+
+### 3. Transport Layer
+- Simulates sending heartbeats to remote nodes
+- Has a `Send()` method that can fail (returns false) for specific destinations to simulate network failures
+- When a send fails, the system should mark those remote replicas as unreachable
+
+### 4. Simulation Requirements
+Your program should:
+- Create at least 3 replicas across 2 different nodes
+- Generate heartbeats between replicas continuously
+- Coalesce heartbeats and send them in batches
+- Simulate random transport failures (10% failure rate)
+- Track and report unreachable replicas
+- Run for 5 seconds and print statistics:
+  - Total heartbeats generated
+  - Total heartbeats sent successfully
+  - Total heartbeats failed
+  - Number of times replicas were marked unreachable
+
+### 5. Concurrency Constraints
+- Multiple goroutines will be accessing shared data structures
+- The heartbeat coalescer runs in its own goroutine
+- Each replica's tick() method may be called concurrently
+- Heartbeat generation happens concurrently for multiple replicas
+- Ensure thread-safety for all shared state
+
+## Expected Output
+Print periodic status updates showing:
+- Heartbeats queued and sent
+- Any unreachable replicas detected
+- Final statistics after 5 seconds
+
+The program should run without deadlocks and handle concurrent access to shared resources correctly.

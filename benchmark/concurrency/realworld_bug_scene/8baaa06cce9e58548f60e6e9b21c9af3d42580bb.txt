@@ -1,0 +1,43 @@
+# Connection Pool Manager
+
+Implement a connection pool manager in Go that handles multiple server endpoints and maintains a single active connection at a time. The manager should support the following requirements:
+
+## Requirements
+
+1. **Connection Pool Manager** that:
+   - Accepts a list of server endpoint addresses during initialization
+   - Maintains at most one active "pinned" connection at any given time
+   - Provides a notification channel that sends the current list of available addresses to consumers
+
+2. **Connection Lifecycle Management**:
+   - Implement an `Up(addr string) func(error)` method that is called when a connection to an address is established
+   - The first successful connection should be "pinned" as the active connection
+   - The method should return a cleanup function that is called when the connection goes down
+   - When the pinned connection goes down, the manager should be ready to pin a new connection
+
+3. **Address Updates**:
+   - Implement `UpdateAddresses(addrs []string)` to dynamically update the list of available server addresses
+   - Implement `Notify() <-chan []string` that returns a channel for receiving address updates
+
+4. **Blocking Get**:
+   - Implement `WaitForReady(timeout time.Duration) error` that blocks until at least one connection is established or timeout occurs
+
+5. **Graceful Shutdown**:
+   - Implement `Close() error` that cleanly shuts down the manager
+   - Ensure Close() can be called multiple times safely
+   - Ensure all goroutines are properly terminated before Close() returns
+
+6. **Notification System**:
+   - When a connection is pinned, notify consumers with a single-element list containing only the pinned address
+   - When the pinned connection goes down, notify consumers with the full list of available addresses
+   - The notification channel should be properly managed during shutdown
+
+## Test Scenario
+
+Your implementation should handle rapid connection establishment and teardown without deadlocking. Create a test that:
+- Simulates multiple endpoints that accept and immediately close connections
+- Rapidly creates and closes the connection pool manager multiple times
+- Ensures that `Close()` completes within a reasonable timeout (e.g., 3 seconds)
+- Runs concurrent operations (like simulated RPC calls) while closing the manager
+
+The solution should be thread-safe and avoid race conditions or deadlocks when multiple goroutines are interacting with the manager simultaneously.

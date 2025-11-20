@@ -1,0 +1,70 @@
+# Programming Problem: Stream Manager with Concurrent Readers
+
+Implement a stream management system that handles multiple concurrent data streams. The system should support creating streams, reading from them, and properly closing them even when there are in-flight read operations.
+
+## Requirements
+
+Your task is to implement a `StreamManager` that manages multiple data streams with the following specifications:
+
+### Core Components
+
+1. **StreamManager**: Manages a collection of active streams
+   - `NewStream(id int) (*Stream, error)`: Creates and registers a new stream with the given ID
+   - `CloseStream(id int, err error)`: Closes a stream and removes it from active streams
+   - `Shutdown()`: Closes all active streams
+
+2. **Stream**: Represents an individual data stream
+   - `Read() (string, error)`: Blocks until data is available or the stream is closed with an error
+   - `Write(data string)`: Writes data to the stream (for testing purposes)
+
+### Behavior Requirements
+
+- Multiple goroutines should be able to call `Read()` on the same stream concurrently
+- When `CloseStream()` is called with an error, all in-flight `Read()` operations must receive that error and unblock
+- `Read()` should block if no data is available and the stream hasn't been closed
+- Once a stream is closed, it should be removed from the manager's active streams
+- The system should handle the case where `Read()` is called while `CloseStream()` is being executed
+
+### Test Scenario
+
+Your program should demonstrate the following scenario:
+
+1. Create a stream
+2. Start multiple goroutines that call `Read()` on the stream (simulating in-flight operations)
+3. Close the stream with a specific error
+4. Verify that all `Read()` operations receive the error and complete within a reasonable timeout (e.g., 2 seconds)
+5. Print success or failure messages
+
+### Expected Output
+
+The program should print messages indicating:
+- When streams are created
+- When read operations start
+- When read operations complete (with success or error)
+- When streams are closed
+- Overall test result (PASS/FAIL)
+
+### Example Structure
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+type Stream struct {
+    // Your implementation
+}
+
+type StreamManager struct {
+    // Your implementation
+}
+
+func main() {
+    // Demonstrate the concurrent stream closing scenario
+}
+```
+
+Ensure your implementation properly handles the concurrency challenges of closing streams while read operations are in progress.

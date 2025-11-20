@@ -1,0 +1,44 @@
+# Lease Information Fetcher
+
+Implement a concurrent lease information fetcher service in Go. The service should fetch lease details from a remote endpoint and handle potential errors gracefully.
+
+## Requirements
+
+Your task is to implement a function `FetchLeaseInfo` that:
+
+1. Takes a context, a lease ID (integer), and a URL (string) as parameters
+2. Makes an HTTP GET request to fetch lease information in a separate goroutine
+3. Returns the response body as a byte slice and any error that occurred
+4. Properly handles both HTTP request errors and response reading errors
+
+## Specifications
+
+- The function signature should be: `func FetchLeaseInfo(ctx context.Context, leaseID int, url string) ([]byte, error)`
+- Launch a goroutine to perform the HTTP request
+- The goroutine should:
+  - Create and execute an HTTP GET request to the provided URL
+  - If the request fails, report the error
+  - If the request succeeds, read the response body
+  - If reading the body fails, report that error as well
+  - Close the response body when done
+- The main function should wait for either:
+  - The goroutine to complete (successfully or with error)
+  - The context to be cancelled
+- Return appropriate results based on which condition occurs first
+
+## Test Scenarios
+
+Your implementation should handle:
+1. Successful HTTP requests that return valid data
+2. Failed HTTP requests (network errors, invalid URLs, etc.)
+3. Successful requests but failed body reads
+4. Context cancellation before the request completes
+
+## Notes
+
+- Use the standard `net/http` package
+- Ensure your implementation doesn't leak goroutines
+- Consider what happens if the caller doesn't wait for your goroutine to complete
+- Think about channel operations and blocking behavior
+
+Provide a complete, runnable Go program with the implementation and a `main` function that demonstrates at least two different scenarios.

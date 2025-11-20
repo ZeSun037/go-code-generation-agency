@@ -1,0 +1,44 @@
+# Device Manager Programming Problem
+
+Implement a device manager system in Go that handles device cleanup operations with concurrent access. The system should support the following functionality:
+
+## Requirements
+
+Create a `DeviceManager` struct that manages a collection of devices with the following features:
+
+1. **Device Tracking**: Keep track of active devices and devices marked for deletion
+2. **Deferred Deletion**: Support a mode where devices can be marked for deletion and cleaned up later
+3. **Cleanup Operation**: Implement a `CleanupDeletedDevices()` method that:
+   - Checks if there are any devices marked for deletion
+   - If there are deleted devices, processes and removes them
+   - If there are no deleted devices, returns immediately
+   - Should be safe for concurrent access
+
+4. **Concurrent Operations**: The manager should support:
+   - Adding new devices
+   - Marking devices for deletion
+   - Running cleanup operations
+   - Querying device status
+
+## Implementation Details
+
+Your program should include:
+
+- A `DeviceManager` struct with appropriate fields for tracking devices and deletion counts
+- Thread-safe methods for all operations
+- A `CleanupDeletedDevices()` method that handles the cleanup logic
+- A demonstration in `main()` that:
+  - Creates a device manager
+  - Spawns multiple goroutines that perform various operations (add devices, mark for deletion, query status)
+  - Periodically calls `CleanupDeletedDevices()` from different goroutines
+  - Runs for a few seconds to demonstrate concurrent access works correctly
+
+## Success Criteria
+
+Your program should:
+- Run without deadlocking
+- Handle concurrent access to the device manager safely
+- Successfully clean up deleted devices when they exist
+- Complete execution within a reasonable time (e.g., 10 seconds)
+
+Provide a complete, runnable Go program that demonstrates this device manager system working correctly under concurrent load.

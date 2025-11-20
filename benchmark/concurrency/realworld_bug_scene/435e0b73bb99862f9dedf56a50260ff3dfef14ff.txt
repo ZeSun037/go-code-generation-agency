@@ -1,0 +1,48 @@
+# Event Distribution System
+
+Implement a concurrent event distribution system in Go that allows multiple watchers to subscribe to and receive events from a central multiplexer (Mux).
+
+## Requirements
+
+Your system should support the following functionality:
+
+1. **Mux (Multiplexer)**: A central component that:
+   - Accepts events through a `Broadcast(event Event)` method
+   - Distributes events to all active watchers
+   - Allows creating new watchers through a `Watch()` method
+   - Manages watcher lifecycle
+
+2. **Watcher Interface**: Each watcher should:
+   - Provide a `ResultChan()` method that returns a read-only channel for receiving events
+   - Provide a `Stop()` method to unsubscribe from the Mux
+   - Be safe to stop multiple times
+
+3. **Event**: A simple struct containing:
+   - `Type` (string): the event type
+   - `Data` (interface{}): arbitrary event data
+
+## Implementation Details
+
+- The Mux should maintain a collection of active watchers
+- When an event is broadcast, it should be sent to all currently active watchers
+- Watchers should be able to stop receiving events at any time
+- The system must handle concurrent operations safely (multiple goroutines creating watchers, broadcasting events, and stopping watchers simultaneously)
+
+## Test Scenario
+
+Your program should demonstrate:
+1. Creating a Mux
+2. Starting multiple watchers (at least 3)
+3. Broadcasting several events
+4. Having some watchers stop while events are being broadcast
+5. Continuing to broadcast events after some watchers have stopped
+6. Properly cleaning up all resources
+
+Print received events from each watcher to demonstrate the system is working correctly.
+
+## Expected Behavior
+
+- All active watchers should receive all events broadcast while they are active
+- Stopped watchers should not receive new events
+- The system should not hang or deadlock under normal operation
+- Stopping a watcher multiple times should be safe

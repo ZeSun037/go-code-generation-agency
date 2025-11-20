@@ -1,0 +1,47 @@
+# Distributed Lock Manager Programming Problem
+
+Implement a distributed lock manager system in Go that allows multiple clients to acquire and release locks on named resources. The system should support the following requirements:
+
+## Requirements
+
+1. **Lock Acquisition**: Clients should be able to request a lock on a named resource (e.g., "resource-1"). If the lock is already held by another client, the requesting client should wait in a queue until the lock becomes available.
+
+2. **Session Management**: Each client should have a session with a unique session ID (you can use a simple counter or UUID). Sessions should persist across multiple lock operations.
+
+3. **Lock Release**: Clients should be able to explicitly release locks they hold.
+
+4. **Fair Queuing**: Locks should be granted in the order they were requested (FIFO).
+
+5. **Multiple Clients**: The system should handle multiple concurrent clients attempting to acquire locks on the same or different resources.
+
+## Implementation Details
+
+Your program should:
+
+- Create a lock manager that can handle multiple named locks
+- Simulate at least 5 concurrent clients attempting to acquire the same lock
+- Each client should:
+  - Create a session
+  - Attempt to acquire a lock
+  - Hold the lock briefly (simulate work with a small sleep)
+  - Release the lock
+- Demonstrate that only one client holds the lock at any given time
+- Print output showing which client acquires and releases the lock, in order
+
+## Test Scenario
+
+Include a test scenario where:
+1. Multiple clients compete for the same lock
+2. Verify that locks are acquired in order
+3. Verify mutual exclusion (only one client holds the lock at a time)
+4. Bonus: Simulate a scenario where the same session attempts to acquire the same lock multiple times
+
+## Expected Output
+
+Your program should produce output demonstrating:
+- The order in which clients request locks
+- The order in which clients acquire locks
+- That mutual exclusion is maintained
+- That all clients eventually acquire and release the lock
+
+You may use channels, mutexes, and goroutines to implement this system. The focus should be on correctness of the concurrent lock management logic.

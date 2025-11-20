@@ -1,0 +1,50 @@
+# Distributed Leader Election System
+
+Implement a distributed leader election system in Go that allows multiple participants to compete for leadership. The system should support the following functionality:
+
+## Requirements
+
+1. **Session Management**: Implement a `Session` type that represents a participant's connection with a unique identifier (lease ID). Each session should have:
+   - A unique lease ID
+   - A method to check if the session is still valid
+
+2. **Election**: Implement an `Election` type that manages the leader election process with these methods:
+   - `Campaign(ctx context.Context, value string) error`: Attempt to become the leader with the given value. This should block until the participant becomes the leader or the context is cancelled.
+   - `Resign(ctx context.Context) error`: Voluntarily step down from leadership
+   - `Leader(ctx context.Context) (string, error)`: Get the current leader's value
+   - `Observe(ctx context.Context) <-chan string`: Watch for leader changes
+
+3. **Storage Backend**: Implement a simple in-memory key-value store that supports:
+   - Putting a key-value pair with a lease ID
+   - Getting a value by key
+   - Deleting a key
+   - Watching for changes to keys with a given prefix
+   - Transaction support (compare-and-set operations)
+
+4. **Key Requirements**:
+   - Multiple participants should be able to campaign for the same election
+   - Only one participant should be the leader at a time
+   - When a leader resigns or their session expires, the next participant should become leader
+   - The same session should be able to campaign multiple times without issues
+   - Support context cancellation for all blocking operations
+
+## Test Scenario
+
+Your implementation should handle this scenario correctly:
+
+```go
+// Create two elections with the same prefix using the same session
+session := NewSession()
+election1 := NewElection(session, "my-election")
+election2 := NewElection(session, "my-election")
+
+// First campaign should succeed
+election1.Campaign(context.Background(), "value1")
+
+// Second campaign with same session should update the value, not deadlock
+election2.Campaign(context.Background(), "value2")
+
+// Observer should see "value2" as the current leader value
+```
+
+Implement a complete, runnable program that demonstrates this leader election system working correctly with at least 3 concurrent participants trying to become leader.
