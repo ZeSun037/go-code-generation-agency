@@ -329,6 +329,7 @@ class GoCodeSynthesisPipeline:
             # Analyze
             analyses = self.run_all_analyses(filepath)
             self.print_summary(analyses)
+            self.write_to_workspace(f"iter_{iteration}_analysis.txt", json.dumps(analyses, default=lambda o: o.__dict__, indent=2))
 
             # Check results
             all_passed = all(r.passed for results in analyses.values() for r in results)

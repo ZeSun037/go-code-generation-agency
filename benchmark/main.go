@@ -1,197 +1,194 @@
 package main
 
 import (
-	"crypto/md5"
+	"context"
 	"fmt"
 	"io"
-	"log"
-	"os"
-	"path/filepath"
+	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
 
-type WorkItem struct {
-	filePath string
-	attempt  int
+type WebScraper struct {
+	client      *http.Client
+	rateLimiter *time.Ticker
+	maxWorkers  int
+	semaphore   chan struct{}
+	mu          sync.Mutex
+	results     map[string]string
+	errors      map[string]error
 }
 
-type ProcessedFile struct {
-	path string
-	hash string
+func NewWebScraper(requestsPerSecond float64, maxWorkers int) *WebScraper {
+	interval := time.Duration(float64(time.Second) / requestsPerSecond)
+	return &WebScraper{
+		client:      &http.Client{Timeout: 10 * time.Second},
+		rateLimiter: time.NewTicker(interval),
+		maxWorkers:  maxWorkers,
+		semaphore:   make(chan struct{}, maxWorkers),
+		results:     make(map[string]string),
+		errors:      make(map[string]error),
+	}
 }
 
-type StateStore struct {
-	mu        sync.RWMutex
-	processed map[string]bool
-	failed    map[string]int
+func (ws *WebScraper) Close() {
+	ws.rateLimiter.Stop()
 }
 
-func (s *StateStore) MarkProcessed(filePath string) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.processed[filePath] = true
-	delete(s.failed, filePath)
-}
+func (ws *WebScraper) FetchURL(ctx context.Context, url string) (string, error) {
+	select {
+	case <-ws.rateLimiter.C:
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
 
-func (s *StateStore) MarkFailed(filePath string) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.failed[filePath]++
-}
+	select {
+	case ws.semaphore <- struct{}{}:
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
+	defer func() { <-ws.semaphore }()
 
-func (s *StateStore) IsProcessed(filePath string) bool {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return s.processed[filePath]
-}
-
-func (s *StateStore) GetFailureCount(filePath string) int {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return s.failed[filePath]
-}
-
-func (s *StateStore) GetProcessedCount() int {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return len(s.processed)
-}
-
-func processFile(filePath string) (string, error) {
-	file, err := os.Open(filePath)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	hash := md5.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create request for %s: %w", url, err)
 	}
 
-	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+
+	resp, err := ws.client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch %s: %w", url, err)
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			fmt.Printf("warning: failed to close response body: %v\n", err)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("got status code %d for %s", resp.StatusCode, url)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body for %s: %w", url, err)
+	}
+
+	return string(body), nil
 }
 
-func worker(id int, workChan <-chan WorkItem, stateStore *StateStore, resultsChan chan<- ProcessedFile, wg *sync.WaitGroup) {
-	defer wg.Done()
+func (ws *WebScraper) ScrapeURLs(ctx context.Context, urls []string) error {
+	var wg sync.WaitGroup
 
-	for work := range workChan {
-		if stateStore.IsProcessed(work.filePath) {
-			continue
-		}
+	for _, url := range urls {
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
 
-		if work.attempt > 3 {
-			log.Printf("Worker %d: Max retries exceeded for %s\n", id, work.filePath)
-			stateStore.MarkProcessed(work.filePath)
-			continue
-		}
-
-		hash, err := processFile(work.filePath)
-		if err != nil {
-			log.Printf("Worker %d: Error processing %s (attempt %d): %v\n", id, work.filePath, work.attempt, err)
-			stateStore.MarkFailed(work.filePath)
-
-			if work.attempt < 3 {
-				go func(work WorkItem) {
-					time.Sleep(time.Duration(work.attempt*100) * time.Millisecond)
-					workChan <- WorkItem{filePath: work.filePath, attempt: work.attempt + 1}
-				}(work)
+			content, err := ws.FetchURL(ctx, u)
+			ws.mu.Lock()
+			if err != nil {
+				ws.errors[u] = err
+			} else {
+				ws.results[u] = content
 			}
-			continue
-		}
-
-		stateStore.MarkProcessed(work.filePath)
-		resultsChan <- ProcessedFile{path: work.filePath, hash: hash}
+			ws.mu.Unlock()
+		}(url)
 	}
+
+	wg.Wait()
+	return nil
 }
 
-func generateTestFiles(count int, dir string) ([]string, error) {
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return nil, err
+func (ws *WebScraper) GetResults() (map[string]string, map[string]error) {
+	ws.mu.Lock()
+	defer ws.mu.Unlock()
+
+	resultsCopy := make(map[string]string, len(ws.results))
+	for k, v := range ws.results {
+		resultsCopy[k] = v
 	}
 
-	files := make([]string, count)
-	for i := 0; i < count; i++ {
-		filePath := filepath.Join(dir, fmt.Sprintf("file_%d.txt", i))
-		content := []byte(fmt.Sprintf("File %d content with some data %d\n", i, time.Now().UnixNano()))
-		if err := os.WriteFile(filePath, content, 0644); err != nil {
-			return nil, err
-		}
-		files[i] = filePath
+	errorsCopy := make(map[string]error, len(ws.errors))
+	for k, v := range ws.errors {
+		errorsCopy[k] = v
 	}
-	return files, nil
+
+	return resultsCopy, errorsCopy
+}
+
+func extractTextFromHTML(html string) string {
+	text := strings.ReplaceAll(html, "<", "")
+	text = strings.ReplaceAll(text, ">", "")
+	text = strings.ReplaceAll(text, "<!--", "")
+	text = strings.ReplaceAll(text, "-->", "")
+
+	textLines := strings.Split(text, "\n")
+	relevantLines := make([]string, 0)
+
+	for _, line := range textLines {
+		trimmed := strings.TrimSpace(line)
+		if len(trimmed) > 20 && len(trimmed) < 500 {
+			relevantLines = append(relevantLines, trimmed)
+		}
+	}
+
+	if len(relevantLines) > 5 {
+		relevantLines = relevantLines[:5]
+	}
+
+	summary := strings.Join(relevantLines, " ")
+	if len(summary) > 200 {
+		summary = summary[:200]
+	}
+
+	return summary
 }
 
 func main() {
-	const (
-		maxGoroutines = 50
-		fileCount     = 10000
-		testDir       = "./test_files"
-	)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
-	log.Println("Generating test files...")
-	files, err := generateTestFiles(fileCount, testDir)
-	if err != nil {
-		log.Fatalf("Failed to generate test files: %v\n", err)
-	}
-	defer os.RemoveAll(testDir)
+	scraper := NewWebScraper(2.0, 3)
+	defer scraper.Close()
 
-	log.Printf("Generated %d test files\n", len(files))
-
-	stateStore := &StateStore{
-		processed: make(map[string]bool),
-		failed:    make(map[string]int),
+	urls := []string{
+		"https://www.example.com",
+		"https://www.wikipedia.org",
+		"https://www.github.com",
 	}
 
-	workChan := make(chan WorkItem, maxGoroutines*2)
-	resultsChan := make(chan ProcessedFile, maxGoroutines)
+	fmt.Println("Starting concurrent web scraper with rate limiting...")
+	fmt.Printf("Scraping %d URLs with 2 requests/second and 3 concurrent workers\n", len(urls))
 
-	var wg sync.WaitGroup
-
-	for i := 0; i < maxGoroutines; i++ {
-		wg.Add(1)
-		go worker(i, workChan, stateStore, resultsChan, &wg)
+	if err := scraper.ScrapeURLs(ctx, urls); err != nil {
+		fmt.Printf("Error during scraping: %v\n", err)
+		return
 	}
 
-	go func() {
-		for _, filePath := range files {
-			workChan <- WorkItem{filePath: filePath, attempt: 0}
+	results, errors := scraper.GetResults()
+
+	fmt.Println("=== Scraping Results ===")
+	for url, content := range results {
+		fmt.Printf("URL: %s\n", url)
+		fmt.Printf("Content length: %d bytes\n", len(content))
+
+		summary := extractTextFromHTML(content)
+		fmt.Printf("Extracted Summary: %s\n", summary)
+		fmt.Println()
+	}
+
+	if len(errors) > 0 {
+		fmt.Println("=== Errors ===")
+		for url, err := range errors {
+			fmt.Printf("URL: %s\n", url)
+			fmt.Printf("Error: %v\n", err)
+			fmt.Println()
 		}
-	}()
-
-	var resultWg sync.WaitGroup
-	resultWg.Add(1)
-	go func() {
-		defer resultWg.Done()
-		processedCount := 0
-		for result := range resultsChan {
-			processedCount++
-			if processedCount%1000 == 0 {
-				log.Printf("Processed %d files (hash: %s)\n", processedCount, result.hash[:8])
-			}
-		}
-	}()
-
-	go func() {
-		ticker := time.NewTicker(2 * time.Second)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			count := stateStore.GetProcessedCount()
-			log.Printf("Progress: %d/%d files processed (%.1f%%)\n", count, fileCount, float64(count)*100/float64(fileCount))
-		}
-	}()
-
-	wg.Wait()
-	close(workChan)
-	close(resultsChan)
-	resultWg.Wait()
-
-	finalCount := stateStore.GetProcessedCount()
-	log.Printf("Processing complete: %d/%d files processed\n", finalCount, fileCount)
-
-	if finalCount != fileCount {
-		log.Printf("Warning: Not all files were processed\n")
 	}
+
+	fmt.Printf("Successfully scraped: %d URLs\n", len(results))
+	fmt.Printf("Failed: %d URLs\n", len(errors))
 }
