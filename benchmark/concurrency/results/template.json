@@ -1,0 +1,24 @@
+{
+    "task": "the task file name",
+    "provider": "model provider name (gemini etc.)",
+    "model": "model name",
+    "rounds": [
+        {
+            "code": "code generated this round",
+            "passed": false, 
+            "errors": [
+                {
+                    "verifier": "which verifier outputs the error",
+                    "error": "the error string"
+                }
+            ]
+        },
+        {
+            "code": "code generated this round",
+            "passed": true, 
+            "errors": [
+            ]
+        }
+    ],
+    "passed": true 
+}

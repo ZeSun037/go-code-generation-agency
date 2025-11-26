@@ -34,7 +34,7 @@ class LLMBackend(ABC):
         pass
 
 class AnthropicBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "claude-3-5-sonnet-20240620"):
+    def __init__(self, api_key: str, model: str = "claude-3-haiku-20240307"):
         import anthropic
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model
@@ -330,7 +330,7 @@ def get_backend(provider: str, model: str) -> LLMBackend:
     if provider == "anthropic":
         key = os.environ.get("ANTHROPIC_API_KEY")
         if not key: raise ValueError("ANTHROPIC_API_KEY not set")
-        return AnthropicBackend(key, model or "claude-3-5-sonnet-20240620")
+        return AnthropicBackend(key, model or "claude-3-haiku-20240307")
     
     elif provider == "gemini":
         key = os.environ.get("GEMINI_API_KEY")
