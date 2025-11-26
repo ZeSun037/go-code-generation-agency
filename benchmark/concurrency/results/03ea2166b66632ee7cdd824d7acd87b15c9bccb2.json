@@ -1,0 +1,39 @@
+{
+    "task": "03ea2166b66632ee7cdd824d7acd87b15c9bccb2.txt",
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"math/rand\"\n    \"sync\"\n)\n\ntype container struct {\n    id       string\n    name     string\n    running  bool\n    exitCode int\n}\n\ntype containerManager struct {\n    mu        sync.RWMutex\n    containers map[string]*container\n}\n\nfunc newContainerManager() *containerManager {\n    return &containerManager{\n        containers: make(map[string]*container),\n    }\n}\n\nfunc (cm *containerManager) StartContainer(name string) {\n    cm.mu.Lock()\n    defer cm.mu.Unlock()\n\n    id := fmt.Sprintf(\"id-%d\", len(cm.containers)+1)\n    c := &container{\n        id:       id,\n        name:     name,\n        running:  true,\n        exitCode: -1,\n    }\n    cm.containers[id] = c\n    fmt.Printf(\"Started container: %s %s\\n\", id, name)\n}\n\nfunc (cm *containerManager) StopContainer(id string, exitCode int) {\n    cm.mu.Lock()\n    defer cm.mu.Unlock()\n\n    c, ok := cm.containers[id]\n    if !ok {\n        return\n    }\n\n    c.running = false\n    c.exitCode = exitCode\n    fmt.Printf(\"Stopped container: %s with exit code: %d\\n\", id, exitCode)\n}\n\nfunc (cm *containerManager) ListContainers(filterExitCode *int) []*container {\n    cm.mu.RLock()\n    defer cm.mu.RUnlock()\n\n    var result []*container\n    for _, c := range cm.containers {\n        if filterExitCode == nil || c.exitCode == *filterExitCode {\n            result = append(result, c)\n        }\n    }\n    return result\n}\n\nfunc main() {\n    cm := newContainerManager()\n\n    // Start 10 containers concurrently\n    var wg sync.WaitGroup\n    for i := 0; i < 10; i++ {\n        wg.Add(1)\n        go func() {\n            defer wg.Done()\n            cm.StartContainer(fmt.Sprintf(\"container-%d\", i+1))\n        }()\n    }\n    wg.Wait()\n\n    // Stop 5 containers with exit code 0 and 5 with exit code 1 concurrently\n    wg.Add(10)\n    for i := 0; i < 5; i++ {\n        go func() {\n            defer wg.Done()\n            cm.StopContainer(fmt.Sprintf(\"id-%d\", i+1), 0)\n        }()\n        go func() {\n            defer wg.Done()\n            cm.StopContainer(fmt.Sprintf(\"id-%d\", i+6), 1)\n        }()\n    }\n    wg.Wait()\n\n    // List containers with exit code 0 and 1 concurrently\n    wg.Add(10)\n    for i := 0; i < 5; i++ {\n        go func() {\n            defer wg.Done()\n            exitCode0 := 0\n            fmt.Println(\"Listing containers with exit code 0:\", cm.ListContainers(&exitCode0))\n        }()\n        go func() {\n            defer wg.Done()\n            exitCode1 := 1\n            fmt.Println(\"Listing containers with exit code 1:\", cm.ListContainers(&exitCode1))\n        }()\n    }\n    wg.Wait()\n\n    fmt.Println(\"All operations completed successfully!\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go build -race",
+                    "error": "# command-line-arguments\n./main.go:5:5: \"math/rand\" imported and not used"
+                },
+                {
+                    "verifier": "go vet",
+                    "error": "# command-line-arguments\n# [command-line-arguments]\nvet: ./main.go:5:5: \"math/rand\" imported and not used"
+                },
+                {
+                    "verifier": "errcheck",
+                    "error": "error: failed to check packages: errors while loading package command-line-arguments: [-: # command-line-arguments\n./main.go:5:5: \"math/rand\" imported and not used /tmp/go_synthesis_supzxo2a/main.go:5:5: \"math/rand\" imported and not used]"
+                },
+                {
+                    "verifier": "go-errorlint",
+                    "error": "-: # command-line-arguments\n./main.go:5:5: \"math/rand\" imported and not used\n/tmp/go_synthesis_supzxo2a/main.go:5:5: \"math/rand\" imported and not used\nerrorlint: analysis skipped due to errors in package"
+                },
+                {
+                    "verifier": "staticcheck",
+                    "error": "-: # command-line-arguments\n./main.go:5:5: \"math/rand\" imported and not used (compile)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\ntype container struct {\n    id       string\n    name     string\n    running  bool\n    exitCode int\n}\n\ntype containerManager struct {\n    mu        sync.RWMutex\n    containers map[string]*container\n}\n\nfunc newContainerManager() *containerManager {\n    return &containerManager{\n        containers: make(map[string]*container),\n    }\n}\n\nfunc (cm *containerManager) StartContainer(name string) {\n    cm.mu.Lock()\n    defer cm.mu.Unlock()\n\n    id := fmt.Sprintf(\"id-%d\", len(cm.containers)+1)\n    c := &container{\n        id:       id,\n        name:     name,\n        running:  true,\n        exitCode: -1,\n    }\n    cm.containers[id] = c\n    fmt.Printf(\"Started container: %s %s\\n\", id, name)\n}\n\nfunc (cm *containerManager) StopContainer(id string, exitCode int) {\n    cm.mu.Lock()\n    defer cm.mu.Unlock()\n\n    c, ok := cm.containers[id]\n    if !ok {\n        return\n    }\n\n    c.running = false\n    c.exitCode = exitCode\n    fmt.Printf(\"Stopped container: %s with exit code: %d\\n\", id, exitCode)\n}\n\nfunc (cm *containerManager) ListContainers(filterExitCode *int) []*container {\n    cm.mu.RLock()\n    defer cm.mu.RUnlock()\n\n    var result []*container\n    for _, c := range cm.containers {\n        if filterExitCode == nil || c.exitCode == *filterExitCode {\n            result = append(result, c)\n        }\n    }\n    return result\n}\n\nfunc main() {\n    cm := newContainerManager()\n\n    // Start 10 containers concurrently\n    var wg sync.WaitGroup\n    for i := 0; i < 10; i++ {\n        wg.Add(1)\n        go func() {\n            defer wg.Done()\n            cm.StartContainer(fmt.Sprintf(\"container-%d\", i+1))\n        }()\n    }\n    wg.Wait()\n\n    // Stop 5 containers with exit code 0 and 5 with exit code 1 concurrently\n    wg.Add(10)\n    for i := 0; i < 5; i++ {\n        go func() {\n            defer wg.Done()\n            cm.StopContainer(fmt.Sprintf(\"id-%d\", i+1), 0)\n        }()\n        go func() {\n            defer wg.Done()\n            cm.StopContainer(fmt.Sprintf(\"id-%d\", i+6), 1)\n        }()\n    }\n    wg.Wait()\n\n    // List containers with exit code 0 and 1 concurrently\n    wg.Add(10)\n    for i := 0; i < 5; i++ {\n        go func() {\n            defer wg.Done()\n            exitCode0 := 0\n            fmt.Println(\"Listing containers with exit code 0:\", cm.ListContainers(&exitCode0))\n        }()\n        go func() {\n            defer wg.Done()\n            exitCode1 := 1\n            fmt.Println(\"Listing containers with exit code 1:\", cm.ListContainers(&exitCode1))\n        }()\n    }\n    wg.Wait()\n\n    fmt.Println(\"All operations completed successfully!\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

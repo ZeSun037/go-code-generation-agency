@@ -1,0 +1,23 @@
+{
+    "task": "04e2deeb287f7d60372ed853a75acfff3668cedc.txt",
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"math/rand\"\n    \"sync\"\n    \"time\"\n)\n\ntype ZoneInfo struct {\n    FailureDomain string\n    Region        string\n}\n\nfunc fetchFailureDomain() (string, error) {\n    time.Sleep(100 * time.Millisecond)\n    if rand.Intn(100) < 30 {\n        return \"\", fmt.Errorf(\"remote service failure\")\n    }\n    return fmt.Sprintf(\"zone-%d\", rand.Intn(5)+1), nil\n}\n\nfunc GetZone() (ZoneInfo, error) {\n    var (\n        once sync.Once\n        zone ZoneInfo\n        err  error\n    )\n\n    once.Do(func() {\n        zone.FailureDomain, err = fetchFailureDomain()\n        if err != nil {\n            return\n        }\n        zone.Region = \"us-west\"\n    })\n\n    return zone, err\n}\n\nfunc main() {\n    rand.Seed(time.Now().UnixNano())\n\n    var wg sync.WaitGroup\n    wg.Add(10)\n\n    for i := 0; i < 10; i++ {\n        go func() {\n            defer wg.Done()\n            for j := 0; j < 3; j++ {\n                zone, err := GetZone()\n                if err != nil {\n                    fmt.Printf(\"Error getting zone: %v\\n\", err)\n                } else {\n                    fmt.Printf(\"Zone: %+v\\n\", zone)\n                }\n            }\n        }()\n    }\n\n    wg.Wait()\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:42:5: rand.Seed has been deprecated since Go 1.20 and an alternative has been available since Go 1.0: As of Go 1.20 there is no reason to call Seed with a random value. Programs that call Seed with a known value to get a specific sequence of results should use New(NewSource(seed)) to obtain a local random generator. (SA1019)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math/rand\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype ZoneInfo struct {\n\tFailureDomain string\n\tRegion        string\n}\n\nfunc fetchFailureDomain() (string, error) {\n\ttime.Sleep(100 * time.Millisecond)\n\tif rand.Intn(100) < 30 {\n\t\treturn \"\", fmt.Errorf(\"remote service failure\")\n\t}\n\treturn fmt.Sprintf(\"zone-%d\", rand.Intn(5)+1), nil\n}\n\nfunc GetZone() (ZoneInfo, error) {\n\tvar (\n\t\tonce sync.Once\n\t\tzone ZoneInfo\n\t\terr  error\n\t)\n\n\tonce.Do(func() {\n\t\tzone.FailureDomain, err = fetchFailureDomain()\n\t\tif err != nil {\n\t\t\treturn\n\t\t}\n\t\tzone.Region = \"us-west\"\n\t})\n\n\treturn zone, err\n}\n\nfunc main() {\n\trand.New(rand.NewSource(time.Now().UnixNano()))\n\n\tvar wg sync.WaitGroup\n\twg.Add(10)\n\n\tfor i := 0; i < 10; i++ {\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tfor j := 0; j < 3; j++ {\n\t\t\t\tzone, err := GetZone()\n\t\t\t\tif err != nil {\n\t\t\t\t\tfmt.Printf(\"Error getting zone: %v\\n\", err)\n\t\t\t\t} else {\n\t\t\t\t\tfmt.Printf(\"Zone: %+v\\n\", zone)\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\t}\n\n\twg.Wait()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

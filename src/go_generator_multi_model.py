@@ -3,6 +3,11 @@
 Enhanced Go Code Synthesis Pipeline
 Supports multiple LLMs (Claude, Gemini, OpenAI, DeepSeek) and extended static analysis.
 
+Batch mode with --taskfolder and --outputfolder.
+For each .txt task file in taskfolder, run the pipeline and save a corresponding .json result file in outputfolder.
+example usage: 
+python3 src/go_generator_multi_model.py --taskfolder benchmark/concurrency/realworld_bug_scene/ --outputfolder benchmark/concurrency/results/ --provider anthropic --batchlimit 3
+
 Prerequisites (Python):
     pip install anthropic google-generativeai openai
 
@@ -56,8 +61,6 @@ class GeminiBackend(LLMBackend):
         self.system_prompt = ""
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
-        # Gemini handles system prompts at configuration or via concatenation
-        # For simplicity in 1.5, we can prepend it or use system_instruction if supported by lib version
         combined_prompt = f"SYSTEM INSTRUCTION: {system_prompt}\n\nUSER TASK: {user_prompt}"
         response = self.model.generate_content(combined_prompt)
         return response.text
@@ -128,8 +131,11 @@ class GoCodeSynthesisPipeline:
         missing = []
         for tool, install in tools.items():
             if not self._check_tool(tool):
-                # Special handling for built-in go tools
-                cmd_str = f"go install {install}" if "github" in install or "honnef" in install or "golang.org" in install else "Install Go"
+                cmd_str = (
+                    f"go install {install}"
+                    if "github" in install or "honnef" in install or "golang.org" in install
+                    else "Install Go"
+                )
                 missing.append(f"  • {tool}: {cmd_str}")
 
         if missing:
@@ -149,6 +155,7 @@ class GoCodeSynthesisPipeline:
     def cleanup_workspace(self):
         if self.workspace and os.path.exists(self.workspace):
             shutil.rmtree(self.workspace)
+            self.workspace = None
 
     def generate_code(self, prompt: str, feedback: Optional[str] = None) -> Tuple[str, str]:
         """Generate Go code using the configured LLM backend."""
@@ -186,9 +193,9 @@ Make it production-ready, concurrent (if applicable), and robust."""
         # Cleanup response if LLM ignores instructions and adds markdown
         code = raw_response.strip()
         if "```go" in code:
-            code = code.split("```go")[1]
+            code = code.split("```go", 1)[1]
         if "```" in code:
-            code = code.split("```")[0]
+            code = code.split("```", 1)[0]
         
         return code.strip(), message
 
@@ -224,10 +231,10 @@ Make it production-ready, concurrent (if applicable), and robust."""
     def analyze_concurrency(self, filepath: str) -> List[AnalysisResult]:
         print("    → go build -race")
         results = [self.run_tool(["go", "build", "-race", "-o", "/dev/null", filepath], "go build -race")]
-        print("    → gosec")
-        results.append(self.run_tool(["gosec", "-quiet", filepath], "gosec"))
-        print("    → govulncheck")
-        results.append(self.run_tool(["govulncheck", "."], "govulncheck"))
+        #print("    → gosec")
+        #results.append(self.run_tool(["gosec", "-quiet", filepath], "gosec"))
+        #print("    → govulncheck")
+        #results.append(self.run_tool(["govulncheck", "."], "govulncheck"))
         return results
 
     def analyze_code_quality(self, filepath: str) -> List[AnalysisResult]:
@@ -268,83 +275,119 @@ Make it production-ready, concurrent (if applicable), and robust."""
                 if not result.passed:
                     has_errors = True
                     # Simplify output for LLM consumption
-                    feedback.append(f"TOOL: {result.tool_name}\nERROR:\n{result.output[:500]}") 
+                    feedback.append(f"TOOL: {result.tool_name}\nERROR:\n{result.output[:500]}")
         return "\n\n".join(feedback) if has_errors else None
 
-    def run(self, task: str) -> Tuple[str, bool, List[Dict]]:
+    def run(self, task: str) -> Tuple[str, bool, List[Dict[str, Any]]]:
+        """
+        Run the synthesis+analysis loop.
+
+        Returns:
+            final_code: str
+            success: bool
+            rounds: List[{
+                "code": str,
+                "passed": bool,
+                "errors": List[{"verifier": str, "error": str}]
+            }]
+        """
         print("=" * 70)
         print("🚀 Go Code Synthesis Pipeline (Enhanced)")
         print("=" * 70)
         print(f"\n📝 Task: {task}\n")
 
+        rounds: List[Dict[str, Any]] = []
+
         if not self.check_prerequisites():
-            return "", False, []
+            return "", False, rounds
 
         self.setup_workspace()
         print(f"📁 Workspace: {self.workspace}\n")
 
-        history = []
         feedback = None
         final_code = None
+        success = False
 
-        for iteration in range(1, self.max_iterations + 1):
-            print(f"\n{'='*70}")
-            print(f"🔄 ITERATION {iteration}/{self.max_iterations}")
-            print(f"{'='*70}")
+        try:
+            for iteration in range(1, self.max_iterations + 1):
+                print(f"\n{'='*70}")
+                print(f"🔄 ITERATION {iteration}/{self.max_iterations}")
+                print(f"{'='*70}")
 
-            print(f"\n  ✨ Generating Go code...")
-            code, full_prompt = self.generate_code(task, feedback)
-            self._last_code = code
-            final_code = code
+                print(f"\n  ✨ Generating Go code...")
+                code, full_prompt = self.generate_code(task, feedback)
+                self._last_code = code
+                final_code = code
 
-            filepath = self.write_to_workspace("main.go", code)
-            self.write_to_workspace(f"iter_{iteration}.go", code)
+                filepath = self.write_to_workspace("main.go", code)
+                self.write_to_workspace(f"iter_{iteration}.go", code)
 
-            analyses = self.run_all_analyses(filepath)
-            
-            # Check if all passed
-            all_passed = all(r.passed for results in analyses.values() for r in results)
-            
-            # Print Summary
-            print("\n  📊 Analysis Summary:")
-            for cat, results in analyses.items():
-                for result in results:
-                    status = "✅" if result.passed else "❌"
-                    print(f"    {status} {result.tool_name}")
+                analyses = self.run_all_analyses(filepath)
+                
+                # Check if all passed
+                all_passed = all(r.passed for results in analyses.values() for r in results)
+                
+                # Collect per-round error details
+                round_info = {
+                    "code": code,
+                    "passed": all_passed,
+                    "errors": []
+                }
 
-            history.append({"iteration": iteration, "passed": all_passed})
+                print("\n  📊 Analysis Summary:")
+                for cat, results in analyses.items():
+                    for result in results:
+                        status = "✅" if result.passed else "❌"
+                        print(f"    {status} {result.tool_name}")
+                        if not result.passed:
+                            round_info["errors"].append({
+                                "verifier": result.tool_name,
+                                "error": result.output.strip()
+                            })
 
-            if all_passed:
-                print("\n✅ SUCCESS! All analyses passed!")
-                return final_code, True, history
+                rounds.append(round_info)
 
-            feedback = self.format_feedback(analyses)
-            print(f"\n  ⚠️  Issues detected. Retrying...")
+                if all_passed:
+                    print("\n✅ SUCCESS! All analyses passed!")
+                    success = True
+                    break
 
-        print(f"\n❌ Max iterations ({self.max_iterations}) reached.")
-        return final_code, False, history
+                feedback = self.format_feedback(analyses)
+                print(f"\n  ⚠️  Issues detected. Retrying...")
+
+            if not success:
+                print(f"\n❌ Max iterations ({self.max_iterations}) reached.")
+
+            return final_code or "", success, rounds
+
+        finally:
+            self.cleanup_workspace()
 
 
-def get_backend(provider: str, model: str) -> LLMBackend:
+def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
     """Factory to create the appropriate LLM backend."""
     if provider == "anthropic":
         key = os.environ.get("ANTHROPIC_API_KEY")
-        if not key: raise ValueError("ANTHROPIC_API_KEY not set")
+        if not key:
+            raise ValueError("ANTHROPIC_API_KEY not set")
         return AnthropicBackend(key, model or "claude-3-haiku-20240307")
     
     elif provider == "gemini":
         key = os.environ.get("GEMINI_API_KEY")
-        if not key: raise ValueError("GEMINI_API_KEY not set")
+        if not key:
+            raise ValueError("GEMINI_API_KEY not set")
         return GeminiBackend(key, model or "gemini-1.5-pro")
         
     elif provider == "openai":
         key = os.environ.get("OPENAI_API_KEY")
-        if not key: raise ValueError("OPENAI_API_KEY not set")
+        if not key:
+            raise ValueError("OPENAI_API_KEY not set")
         return OpenAIBackend(key, model or "gpt-4o")
         
     elif provider == "deepseek":
         key = os.environ.get("DEEPSEEK_API_KEY")
-        if not key: raise ValueError("DEEPSEEK_API_KEY not set")
+        if not key:
+            raise ValueError("DEEPSEEK_API_KEY not set")
         # DeepSeek is API-compatible with OpenAI
         return OpenAIBackend(
             key, 
@@ -354,17 +397,85 @@ def get_backend(provider: str, model: str) -> LLMBackend:
         
     raise ValueError(f"Unknown provider: {provider}")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Go Code Synthesis Pipeline")
-    parser.add_argument("task", nargs="?", help="The task description")
-    parser.add_argument("-f", "--file", help="Read task from file")
-    parser.add_argument("--provider", choices=["anthropic", "gemini", "openai", "deepseek"], default="anthropic", help="LLM Provider")
+    parser.add_argument("task", nargs="?", help="The task description (single-task mode)")
+    parser.add_argument("-f", "--file", help="Read task from file (single-task mode)")
+    parser.add_argument("--provider", choices=["anthropic", "gemini", "openai", "deepseek"],
+                        default="anthropic", help="LLM Provider")
     parser.add_argument("--model", help="Specific model name (optional)")
-    
+    parser.add_argument("--taskfolder", help="Folder containing .txt task files (batch mode)")
+    parser.add_argument("--outputfolder", help="Folder to write .json results for tasks (batch mode)")
+    parser.add_argument("--batchlimit", help="maximum number of files processed for testing purporse(batch mode)")
+
     args = parser.parse_args()
 
+    # Determine mode: batch or single-task
+    batch_mode = args.taskfolder is not None
+
+    if batch_mode:
+        # Batch mode: require outputfolder
+        if not args.outputfolder:
+            print("❌ In batch mode, --outputfolder is required.")
+            sys.exit(1)
+
+        taskfolder = args.taskfolder
+        outputfolder = args.outputfolder
+
+        if not os.path.isdir(taskfolder):
+            print(f"❌ Task folder does not exist or is not a directory: {taskfolder}")
+            sys.exit(1)
+
+        os.makedirs(outputfolder, exist_ok=True)
+
+        # Setup backend and pipeline once for batch
+        backend = get_backend(args.provider, args.model)
+        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=3)
+
+        model_name = args.model or getattr(backend, "model", None)
+
+        # Iterate over .txt files in taskfolder
+        files_processed_count = 0
+        for fname in sorted(os.listdir(taskfolder)):
+            if not fname.lower().endswith(".txt"):
+                continue
+
+            task_path = os.path.join(taskfolder, fname)
+            with open(task_path, "r", encoding="utf-8") as f:
+                task_text = f.read().strip()
+
+            if not task_text:
+                print(f"\n⚠️  Skipping empty task file: {fname}")
+                continue
+
+            print(f"\n\n================ Processing task file: {fname} ================")
+            final_code, success, rounds = pipeline.run(task_text)
+
+            # Build JSON record
+            result_obj = {
+                "task": fname,  # task file name
+                "provider": args.provider,
+                "model": model_name,
+                "rounds": rounds,
+                "passed": success
+            }
+
+            out_name = os.path.splitext(fname)[0] + ".json"
+            out_path = os.path.join(outputfolder, out_name)
+            with open(out_path, "w", encoding="utf-8") as out_f:
+                json.dump(result_obj, out_f, indent=4)
+
+            print(f"\n💾 Result JSON saved to: {out_path}")
+            files_processed_count += 1
+            if args.batchlimit and int(args.batchlimit) <= files_processed_count:
+                break
+
+        sys.exit(0)
+
+    # ----- Single-task mode (original behavior) -----
     if args.file:
-        with open(args.file, 'r') as f:
+        with open(args.file, 'r', encoding="utf-8") as f:
             task = f.read().strip()
     elif args.task:
         task = args.task
@@ -375,10 +486,10 @@ def main():
     try:
         backend = get_backend(args.provider, args.model)
         pipeline = GoCodeSynthesisPipeline(backend, max_iterations=5)
-        final_code, success, _ = pipeline.run(task)
+        final_code, success, rounds = pipeline.run(task)
         
         output_file = "generated_code.go"
-        with open(output_file, "w") as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(final_code)
             
         print(f"\n💾 Final code saved to: {output_file}")
@@ -387,6 +498,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

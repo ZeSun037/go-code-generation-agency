@@ -1,0 +1,13 @@
+{
+    "task": "010a127314a935d8d038f8dd4559fc5b249813e4.txt",
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\ntype ResourceUpdate struct {\n\tResourceType string\n\tIdentifier   string\n\tUsage        float64\n}\n\ntype ResourceMonitor struct {\n\thighPriorityQueue chan ResourceUpdate\n\tlowPriorityQueue  chan ResourceUpdate\n\tconfiguredTypes   map[string]bool\n\tmu                sync.Mutex\n\twg                sync.WaitGroup\n\tshutdown          chan struct{}\n}\n\nfunc NewResourceMonitor() *ResourceMonitor {\n\treturn &ResourceMonitor{\n\t\thighPriorityQueue: make(chan ResourceUpdate, 1000),\n\t\tlowPriorityQueue:  make(chan ResourceUpdate, 1000),\n\t\tconfiguredTypes:   make(map[string]bool),\n\t\tshutdown:          make(chan struct{}),\n\t}\n}\n\nfunc (m *ResourceMonitor) Reconfigure(types []string) {\n\tm.mu.Lock()\n\tdefer m.mu.Unlock()\n\n\tnewTypes := make(map[string]bool)\n\tfor _, t := range types {\n\t\tnewTypes[t] = true\n\t}\n\n\tm.configuredTypes = newTypes\n}\n\nfunc (m *ResourceMonitor) worker(wQueue, rQueue chan ResourceUpdate, id int) {\n\tdefer m.wg.Done()\n\n\tfor {\n\t\tselect {\n\t\tcase update := <-wQueue:\n\t\t\tif m.configuredTypes[update.ResourceType] {\n\t\t\t\t// Process update\n\t\t\t}\n\t\tcase <-m.shutdown:\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc (m *ResourceMonitor) Start() {\n\tfor i := 0; i < 5; i++ {\n\t\tm.wg.Add(1)\n\t\tgo m.worker(m.highPriorityQueue, m.lowPriorityQueue, i)\n\t}\n\n\tfor i := 0; i < 5; i++ {\n\t\tm.wg.Add(1)\n\t\tgo m.worker(m.lowPriorityQueue, m.highPriorityQueue, i+5)\n\t}\n}\n\nfunc (m *ResourceMonitor) Shutdown() {\n\tclose(m.shutdown)\n\tm.wg.Wait()\n}\n\nfunc main() {\n\tmonitor := NewResourceMonitor()\n\tmonitor.Start()\n\n\t// Submit various resource updates to both queues\n\tmonitor.highPriorityQueue <- ResourceUpdate{ResourceType: \"CPU\", Identifier: \"host1\", Usage: 0.8}\n\tmonitor.lowPriorityQueue <- ResourceUpdate{ResourceType: \"Memory\", Identifier: \"host1\", Usage: 0.6}\n\n\t// Reconfigure the system\n\tmonitor.Reconfigure([]string{\"CPU\", \"Memory\", \"Disk\"})\n\n\t// Continue processing updates after reconfiguration\n\tmonitor.highPriorityQueue <- ResourceUpdate{ResourceType: \"CPU\", Identifier: \"host2\", Usage: 0.7}\n\tmonitor.lowPriorityQueue <- ResourceUpdate{ResourceType: \"Disk\", Identifier: \"host2\", Usage: 0.4}\n\n\t// Shutdown the system\n\tmonitor.Shutdown()\n\tfmt.Println(\"Resource monitor shut down.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}
