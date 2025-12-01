@@ -30,8 +30,11 @@ import argparse
 from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from tqdm import tqdm
 
 # --- LLM Backend Abstraction ---
+
+verbose = True
 
 class LLMBackend(ABC):
     @abstractmethod
@@ -39,7 +42,7 @@ class LLMBackend(ABC):
         pass
 
 class AnthropicBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "claude-3-haiku-20240307"):
+    def __init__(self, api_key: str, model: str = "claude-haiku-4-5"):
         import anthropic
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model
@@ -206,7 +209,8 @@ Make it production-ready, concurrent (if applicable), and robust."""
         return filepath
 
     def run_go_mod_tidy(self):
-        print("\n  🔧 Running go mod tidy...")
+        if verbose:
+            print("\n  🔧 Running go mod tidy...")
         result = self.run_tool(["go", "mod", "tidy"], "go mod tidy")
         if not result.passed:
             print(f"  ⚠️ go mod tidy failed: {result.output}")
@@ -229,40 +233,47 @@ Make it production-ready, concurrent (if applicable), and robust."""
     # --- Analysis Categories ---
 
     def analyze_concurrency(self, filepath: str) -> List[AnalysisResult]:
-        print("    → go build -race")
+        if verbose:
+            print("    → go build -race")
         results = [self.run_tool(["go", "build", "-race", "-o", "/dev/null", filepath], "go build -race")]
-        #print("    → gosec")
-        #results.append(self.run_tool(["gosec", "-quiet", filepath], "gosec"))
-        #print("    → govulncheck")
-        #results.append(self.run_tool(["govulncheck", "."], "govulncheck"))
+        if verbose:
+            print("    → gosec")
+        results.append(self.run_tool(["gosec", "."], "gosec"))
+        if verbose:
+            print("    → govulncheck")
+        results.append(self.run_tool(["govulncheck", "."], "govulncheck"))
         return results
 
-    def analyze_code_quality(self, filepath: str) -> List[AnalysisResult]:
-        print("    → go vet")
-        results = [self.run_tool(["go", "vet", filepath], "go vet")]
-        print("    → revive")
-        results.append(self.run_tool(["revive", filepath], "revive"))
-        print("    → ineffassign")
-        results.append(self.run_tool(["ineffassign", filepath], "ineffassign"))
-        return results
+    # def analyze_code_quality(self, filepath: str) -> List[AnalysisResult]:
+    #     print("    → go vet")
+    #     results = [self.run_tool(["go", "vet", filepath], "go vet")]
+    #     print("    → revive")
+    #     results.append(self.run_tool(["revive", filepath], "revive"))
+    #     print("    → ineffassign")
+    #     results.append(self.run_tool(["ineffassign", filepath], "ineffassign"))
+    #     return results
 
     def analyze_error_handling(self, filepath: str) -> List[AnalysisResult]:
-        print("    → errcheck")
+        if verbose:
+            print("    → errcheck")
         results = [self.run_tool(["errcheck", filepath], "errcheck")]
-        print("    → go-errorlint")
+        if verbose:
+            print("    → go-errorlint")
         results.append(self.run_tool(["go-errorlint", filepath], "go-errorlint"))
         return results
 
     def analyze_performance(self, filepath: str) -> List[AnalysisResult]:
-        print("    → staticcheck")
+        if verbose:
+            print("    → staticcheck")
         return [self.run_tool(["staticcheck", filepath], "staticcheck")]
 
     def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
         self.run_go_mod_tidy()
-        print("\n  🔍 Running Analysis Tools...")
+        if verbose:
+            print("\n  🔍 Running Analysis Tools...")
         return {
             "concurrency_security": self.analyze_concurrency(filepath),
-            "quality_correctness": self.analyze_code_quality(filepath),
+            # "quality_correctness": self.analyze_code_quality(filepath),
             "error_handling": self.analyze_error_handling(filepath),
             "performance": self.analyze_performance(filepath),
         }
@@ -291,10 +302,11 @@ Make it production-ready, concurrent (if applicable), and robust."""
                 "errors": List[{"verifier": str, "error": str}]
             }]
         """
-        print("=" * 70)
-        print("🚀 Go Code Synthesis Pipeline (Enhanced)")
-        print("=" * 70)
-        print(f"\n📝 Task: {task}\n")
+        if verbose:
+            print("=" * 70)
+            print("🚀 Go Code Synthesis Pipeline (Enhanced)")
+            print("=" * 70)
+            print(f"\n📝 Task: {task}\n")
 
         rounds: List[Dict[str, Any]] = []
 
@@ -302,7 +314,8 @@ Make it production-ready, concurrent (if applicable), and robust."""
             return "", False, rounds
 
         self.setup_workspace()
-        print(f"📁 Workspace: {self.workspace}\n")
+        if verbose:
+            print(f"📁 Workspace: {self.workspace}\n")
 
         feedback = None
         final_code = None
@@ -310,17 +323,18 @@ Make it production-ready, concurrent (if applicable), and robust."""
 
         try:
             for iteration in range(1, self.max_iterations + 1):
-                print(f"\n{'='*70}")
-                print(f"🔄 ITERATION {iteration}/{self.max_iterations}")
-                print(f"{'='*70}")
+                if verbose:
+                    print(f"\n{'='*70}")
+                    print(f"🔄 ITERATION {iteration}/{self.max_iterations}")
+                    print(f"{'='*70}")
 
-                print(f"\n  ✨ Generating Go code...")
+                    print(f"\n  ✨ Generating Go code...")
                 code, full_prompt = self.generate_code(task, feedback)
                 self._last_code = code
                 final_code = code
 
                 filepath = self.write_to_workspace("main.go", code)
-                self.write_to_workspace(f"iter_{iteration}.go", code)
+                # self.write_to_workspace(f"iter_{iteration}.go", code)
 
                 analyses = self.run_all_analyses(filepath)
                 
@@ -333,12 +347,13 @@ Make it production-ready, concurrent (if applicable), and robust."""
                     "passed": all_passed,
                     "errors": []
                 }
-
-                print("\n  📊 Analysis Summary:")
+                if verbose:
+                    print("\n  📊 Analysis Summary:")
                 for cat, results in analyses.items():
                     for result in results:
                         status = "✅" if result.passed else "❌"
-                        print(f"    {status} {result.tool_name}")
+                        if verbose:
+                            print(f"    {status} {result.tool_name}")
                         if not result.passed:
                             round_info["errors"].append({
                                 "verifier": result.tool_name,
@@ -348,14 +363,16 @@ Make it production-ready, concurrent (if applicable), and robust."""
                 rounds.append(round_info)
 
                 if all_passed:
-                    print("\n✅ SUCCESS! All analyses passed!")
+                    if verbose:
+                        print("\n✅ SUCCESS! All analyses passed!")
                     success = True
                     break
 
                 feedback = self.format_feedback(analyses)
-                print(f"\n  ⚠️  Issues detected. Retrying...")
+                if verbose:
+                    print(f"\n  ⚠️  Issues detected. Retrying...")
 
-            if not success:
+            if not success and verbose:
                 print(f"\n❌ Max iterations ({self.max_iterations}) reached.")
 
             return final_code or "", success, rounds
@@ -370,7 +387,7 @@ def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
         key = os.environ.get("ANTHROPIC_API_KEY")
         if not key:
             raise ValueError("ANTHROPIC_API_KEY not set")
-        return AnthropicBackend(key, model or "claude-3-haiku-20240307")
+        return AnthropicBackend(key, model or "claude-haiku-4-5")
     
     elif provider == "gemini":
         key = os.environ.get("GEMINI_API_KEY")
@@ -415,6 +432,7 @@ def main():
     batch_mode = args.taskfolder is not None
 
     if batch_mode:
+        verbose = False
         # Batch mode: require outputfolder
         if not args.outputfolder:
             print("❌ In batch mode, --outputfolder is required.")
@@ -434,10 +452,21 @@ def main():
         pipeline = GoCodeSynthesisPipeline(backend, max_iterations=3)
 
         model_name = args.model or getattr(backend, "model", None)
+        task_files = [f for f in sorted(os.listdir(taskfolder)) if f.lower().endswith(".txt")]
+
+        if args.batchlimit:
+            try:
+                limit = int(args.batchlimit)
+                task_files = task_files[:limit]
+            except ValueError:
+                pass
+
+        total = len(task_files)
+
+        print(f"📂 Found {total} task files. Starting batch processing...")
 
         # Iterate over .txt files in taskfolder
-        files_processed_count = 0
-        for fname in sorted(os.listdir(taskfolder)):
+        for fname in tqdm(task_files, desc="Processing tasks", unit="task"):
             if not fname.lower().endswith(".txt"):
                 continue
 
@@ -448,8 +477,8 @@ def main():
             if not task_text:
                 print(f"\n⚠️  Skipping empty task file: {fname}")
                 continue
-
-            print(f"\n\n================ Processing task file: {fname} ================")
+            if verbose:
+                print(f"\n\n================ Processing task file: {fname} ================")
             final_code, success, rounds = pipeline.run(task_text)
 
             # Build JSON record
@@ -465,11 +494,9 @@ def main():
             out_path = os.path.join(outputfolder, out_name)
             with open(out_path, "w", encoding="utf-8") as out_f:
                 json.dump(result_obj, out_f, indent=4)
-
-            print(f"\n💾 Result JSON saved to: {out_path}")
+            if verbose:
+                print(f"\n💾 Result JSON saved to: {out_path}")
             files_processed_count += 1
-            if args.batchlimit and int(args.batchlimit) <= files_processed_count:
-                break
 
         sys.exit(0)
 
