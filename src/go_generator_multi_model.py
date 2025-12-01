@@ -46,6 +46,7 @@ class AnthropicBackend(LLMBackend):
         import anthropic
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model
+        self.model_name = model
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         response = self.client.messages.create(
@@ -57,10 +58,11 @@ class AnthropicBackend(LLMBackend):
         return response.content[0].text
 
 class GeminiBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "gemini-pro"):
+    def __init__(self, api_key: str, model: str = "gemini-2.5-flash"):
         import google.generativeai as genai
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model)
+        self.model_name = model
         self.system_prompt = ""
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
@@ -73,6 +75,7 @@ class OpenAIBackend(LLMBackend):
         from openai import OpenAI
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model = model
+        self.model_name = model
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         response = self.client.chat.completions.create(
@@ -393,7 +396,7 @@ def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
         key = os.environ.get("GEMINI_API_KEY")
         if not key:
             raise ValueError("GEMINI_API_KEY not set")
-        return GeminiBackend(key, model or "gemini-pro")
+        return GeminiBackend(key, model or "gemini-2.5-flash")
         
     elif provider == "openai":
         key = os.environ.get("OPENAI_API_KEY")
@@ -452,7 +455,7 @@ def main():
         backend = get_backend(args.provider, args.model)
         pipeline = GoCodeSynthesisPipeline(backend, max_iterations=3)
 
-        model_name = args.model or getattr(backend, "model", None)
+        model_name = args.model or getattr(backend, "model_name", None)
         task_files = [f for f in sorted(os.listdir(taskfolder)) if f.lower().endswith(".txt")]
 
         if args.batchlimit:
