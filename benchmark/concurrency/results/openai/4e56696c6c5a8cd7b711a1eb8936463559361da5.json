@@ -1,0 +1,13 @@
+{
+    "task": "4e56696c6c5a8cd7b711a1eb8936463559361da5.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype LoadBalancer struct {\n\taddresses chan []string\n\tclosed    bool\n\tmu        sync.Mutex\n}\n\nfunc NewLoadBalancer() *LoadBalancer {\n\treturn &LoadBalancer{\n\t\taddresses: make(chan []string),\n\t}\n}\n\nfunc (lb *LoadBalancer) Notify() <-chan []string {\n\treturn lb.addresses\n}\n\nfunc (lb *LoadBalancer) Close() {\n\tlb.mu.Lock()\n\tdefer lb.mu.Unlock()\n\tif !lb.closed {\n\t\tlb.closed = true\n\t\tclose(lb.addresses)\n\t}\n}\n\ntype ConnectionPool struct {\n\tloadBalancer *LoadBalancer\n}\n\nfunc NewConnectionPool(lb *LoadBalancer) *ConnectionPool {\n\treturn &ConnectionPool{loadBalancer: lb}\n}\n\nfunc (cp *ConnectionPool) Start(doneSignal chan struct{}) {\n\tfmt.Println(\"Starting connection pool...\")\n\n\tgo func() {\n\t\tfor addresses := range cp.loadBalancer.Notify() {\n\t\t\tfor _, addr := range addresses {\n\t\t\t\tif cp.establishConnection(addr) {\n\t\t\t\t\tif doneSignal != nil {\n\t\t\t\t\t\tclose(doneSignal)\n\t\t\t\t\t}\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tif doneSignal != nil {\n\t\t\tclose(doneSignal)\n\t\t}\n\t}()\n}\n\nfunc (cp *ConnectionPool) establishConnection(address string) bool {\n\t// Simulate a successful connection attempt; return true to indicate success\n\tfmt.Printf(\"Attempting to connect to %s...\\n\", address)\n\ttime.Sleep(50 * time.Millisecond) // Simulating some delay\n\treturn true\n}\n\nfunc main() {\n\tlb := NewLoadBalancer()\n\tcp := NewConnectionPool(lb)\n\n\tdoneSignal := make(chan struct{})\n\tgo cp.Start(doneSignal)\n\n\t// Close the load balancer immediately\n\ttime.Sleep(100 * time.Millisecond)\n\tlb.Close()\n\tfmt.Println(\"Load balancer closed\")\n\n\t// Test for done signal reception\n\tselect {\n\tcase <-doneSignal:\n\t\tfmt.Println(\"Test PASSED: done signal received\")\n\tcase <-time.After(200 * time.Millisecond):\n\t\tfmt.Println(\"Test FAILED: done signal not received within timeout\")\n\t}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

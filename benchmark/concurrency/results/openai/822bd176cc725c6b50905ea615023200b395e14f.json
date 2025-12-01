@@ -1,0 +1,13 @@
+{
+    "task": "822bd176cc725c6b50905ea615023200b395e14f.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"log\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc ProcessDataBatch(ctx context.Context, items []int, maxWorkers int) ([]int, error) {\n\tresults := make([]int, 0, len(items))\n\tresultsCh := make(chan int)\n\tworkCh := make(chan int, len(items))\n\tvar wg sync.WaitGroup\n\n\t// Start processing workers\n\tfor i := 0; i < maxWorkers; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tfor {\n\t\t\t\tselect {\n\t\t\t\tcase item := <-workCh:\n\t\t\t\t\ttime.Sleep(10 * time.Millisecond) // Simulate work\n\t\t\t\t\tresultsCh <- item * 2\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\t}\n\n\t// Feed work items into the work channel\n\tgo func() {\n\t\tfor _, item := range items {\n\t\t\tselect {\n\t\t\tcase workCh <- item:\n\t\t\tcase <-ctx.Done():\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\t\tclose(workCh)\n\t}()\n\n\t// Collect results\n\tgo func() {\n\t\tfor result := range resultsCh {\n\t\t\tresults = append(results, result)\n\t\t}\n\t}()\n\n\t// Wait for all workers to finish\n\twg.Wait()\n\tclose(resultsCh)\n\n\treturn results, nil\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\titems := make([]int, 100)\n\tfor i := range items {\n\t\titems[i] = i\n\t}\n\n\tresults, err := ProcessDataBatch(ctx, items, 5)\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\tfmt.Printf(\"Processed %d items\\n\", len(results))\n\n\t// Test case for context cancellation\n\tctx, cancel = context.WithCancel(context.Background())\n\n\tgo func() {\n\t\ttime.Sleep(100 * time.Millisecond)\n\t\tcancel() // Cancel while processing\n\t}()\n\n\titems = make([]int, 1000)\n\tfor i := range items {\n\t\titems[i] = i\n\t}\n\n\tresults, err = ProcessDataBatch(ctx, items, 5)\n\tif err != nil {\n\t\tlog.Printf(\"Processing cancelled: %v\", err)\n\t} else {\n\t\tfmt.Printf(\"Processed %d items\\n\", len(results))\n\t}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

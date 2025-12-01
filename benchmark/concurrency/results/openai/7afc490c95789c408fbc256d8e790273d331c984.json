@@ -1,0 +1,13 @@
+{
+    "task": "7afc490c95789c408fbc256d8e790273d331c984.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype TaskCoordinator struct {\n\tmu              sync.Mutex\n\ttasksProcessed  int\n\tisRunning       bool\n\tquit            chan struct{}\n}\n\ntype Status struct {\n\tTasksProcessed int\n\tIsRunning      bool\n\tCurrentState   string\n}\n\nfunc NewTaskCoordinator() *TaskCoordinator {\n\treturn &TaskCoordinator{\n\t\ttasksProcessed: 0,\n\t\tisRunning:      false,\n\t\tquit:          make(chan struct{}),\n\t}\n}\n\nfunc (tc *TaskCoordinator) Start() {\n\ttc.mu.Lock()\n\ttc.isRunning = true\n\ttc.mu.Unlock()\n\n\tgo func() {\n\t\tfor {\n\t\t\tselect {\n\t\t\tcase <-tc.quit:\n\t\t\t\treturn\n\t\t\tdefault:\n\t\t\t\ttc.mu.Lock()\n\t\t\t\ttc.tasksProcessed++\n\t\t\t\ttc.mu.Unlock()\n\t\t\t\ttime.Sleep(100 * time.Millisecond) // Simulate task processing\n\t\t\t}\n\t\t}\n\t}()\n}\n\nfunc (tc *TaskCoordinator) Stop() {\n\tclose(tc.quit)\n\ttc.mu.Lock()\n\ttc.isRunning = false\n\ttc.mu.Unlock()\n}\n\nfunc (tc *TaskCoordinator) Status() Status {\n\ttc.mu.Lock()\n\tdefer tc.mu.Unlock()\n\treturn Status{\n\t\tTasksProcessed: tc.tasksProcessed,\n\t\tIsRunning:      tc.isRunning,\n\t\tCurrentState:   func() string {\n\t\t\tif tc.isRunning {\n\t\t\t\treturn \"processing\"\n\t\t\t}\n\t\t\treturn \"stopped\"\n\t\t}(),\n\t}\n}\n\nfunc main() {\n\tcoordinator := NewTaskCoordinator()\n\tcoordinator.Start()\n\n\tvar wg sync.WaitGroup\n\tnumGoroutines := 3\n\n\tfor i := 1; i <= numGoroutines; i++ {\n\t\twg.Add(1)\n\t\tgo func(goroutineID int) {\n\t\t\tdefer wg.Done()\n\t\t\tfor j := 0; j < 5; j++ {\n\t\t\t\tstatus := coordinator.Status()\n\t\t\t\tfmt.Printf(\"Goroutine %d: Status{TasksProcessed: %d, IsRunning: %t, CurrentState: \\\"%s\\\"}\\n\", goroutineID, status.TasksProcessed, status.IsRunning, status.CurrentState)\n\t\t\t\ttime.Sleep(200 * time.Millisecond) // Delay before next status check\n\t\t\t}\n\t\t}(i)\n\t}\n\n\ttime.Sleep(2 * time.Second) // Allow some time for processing\n\tcoordinator.Stop()\n\twg.Wait()\n\n\tfmt.Println(\"Coordinator stopped\")\n\tfor i := 1; i <= numGoroutines; i++ {\n\t\tstatus := coordinator.Status()\n\t\tfmt.Printf(\"Goroutine %d: Status{TasksProcessed: %d, IsRunning: %t, CurrentState: \\\"%s\\\"}\\n\", i, status.TasksProcessed, status.IsRunning, status.CurrentState)\n\t}\n\n\tfmt.Println(\"Program completed successfully\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

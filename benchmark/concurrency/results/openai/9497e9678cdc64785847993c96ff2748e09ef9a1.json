@@ -1,0 +1,23 @@
+{
+    "task": "9497e9678cdc64785847993c96ff2748e09ef9a1.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype LockManager struct {\n\tmu       sync.Mutex\n\tlocks    map[string]*Lock\n\twaitList map[string]chan struct{}\n\tnextID   int\n}\n\ntype Lock struct {\n\tisLocked bool\n\tleaseID  string\n}\n\nfunc NewLockManager() *LockManager {\n\treturn &LockManager{\n\t\tlocks:    make(map[string]*Lock),\n\t\twaitList: make(map[string]chan struct{}),\n\t}\n}\n\nfunc (lm *LockManager) Lock(prefix string, leaseID string) {\n\tlm.mu.Lock()\n\tif _, exists := lm.locks[prefix]; exists && lm.locks[prefix].isLocked {\n\t\tif _, ok := lm.waitList[prefix]; !ok {\n\t\t\tlm.waitList[prefix] = make(chan struct{})\n\t\t}\n\t\tlm.mu.Unlock()\n\t\t<-lm.waitList[prefix]\n\t\tlm.mu.Lock()\n\t}\n\tlm.locks[prefix] = &Lock{isLocked: true, leaseID: leaseID}\n\tlm.mu.Unlock()\n}\n\nfunc (lm *LockManager) Unlock(prefix string, leaseID string) {\n\tlm.mu.Lock()\n\tif lock, exists := lm.locks[prefix]; exists && lock.leaseID == leaseID {\n\t\tlock.isLocked = false\n\t\tdelete(lm.locks, prefix)\n\t\tclose(lm.waitList[prefix])\n\t\tdelete(lm.waitList, prefix)\n\t}\n\tlm.mu.Unlock()\n}\n\nfunc (lm *LockManager) simulateClient(prefix string, lmID int) {\n\tleaseID := fmt.Sprintf(\"%d\", lmID)\n\n\tfmt.Printf(\"Client %d attempting to acquire lock on prefix '%s'...\\n\", lmID, prefix)\n\tlm.Lock(prefix, leaseID)\n\tfmt.Printf(\"Client %d acquired lock on prefix '%s'\\n\", lmID, prefix)\n\n\ttime.Sleep(2 * time.Second) // hold the lock for 2 seconds\n\n\tlm.Unlock(prefix, leaseID)\n\tfmt.Printf(\"Client %d released lock on prefix '%s'\\n\", lmID, prefix)\n}\n\nfunc main() {\n\tlockManager := NewLockManager()\n\n\t// Initialize a lock on \"testa\" to simulate existing key\n\tlockManager.Lock(\"testa\", \"1\")\n\n\t// Simulate multiple clients\n\tfor i := 2; i <= 4; i++ {\n\t\tgo lockManager.simulateClient(\"test\", i) // All clients attempt to acquire lock on \"test\"\n\t}\n\n\t// Wait for clients to finish\n\ttime.Sleep(8 * time.Second)\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:13:2: field nextID is unused (U1000)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype LockManager struct {\n\tmu       sync.Mutex\n\tlocks    map[string]*Lock\n\twaitList map[string]chan struct{}\n}\n\ntype Lock struct {\n\tisLocked bool\n\tleaseID  string\n}\n\nfunc NewLockManager() *LockManager {\n\treturn &LockManager{\n\t\tlocks:    make(map[string]*Lock),\n\t\twaitList: make(map[string]chan struct{}),\n\t}\n}\n\nfunc (lm *LockManager) Lock(prefix string, leaseID string) {\n\tlm.mu.Lock()\n\tif lock, exists := lm.locks[prefix]; exists && lock.isLocked {\n\t\tif _, ok := lm.waitList[prefix]; !ok {\n\t\t\tlm.waitList[prefix] = make(chan struct{})\n\t\t}\n\t\tlm.mu.Unlock()\n\t\t<-lm.waitList[prefix]\n\t\tlm.mu.Lock()\n\t}\n\tlm.locks[prefix] = &Lock{isLocked: true, leaseID: leaseID}\n\tlm.mu.Unlock()\n}\n\nfunc (lm *LockManager) Unlock(prefix string, leaseID string) {\n\tlm.mu.Lock()\n\tif lock, exists := lm.locks[prefix]; exists && lock.leaseID == leaseID {\n\t\tlock.isLocked = false\n\t\tdelete(lm.locks, prefix)\n\t\tclose(lm.waitList[prefix])\n\t\tdelete(lm.waitList, prefix)\n\t}\n\tlm.mu.Unlock()\n}\n\nfunc (lm *LockManager) simulateClient(prefix string, lmID int) {\n\tleaseID := fmt.Sprintf(\"%d\", lmID)\n\n\tfmt.Printf(\"Client %d attempting to acquire lock on prefix '%s'...\\n\", lmID, prefix)\n\tlm.Lock(prefix, leaseID)\n\tfmt.Printf(\"Client %d acquired lock on prefix '%s'\\n\", lmID, prefix)\n\n\ttime.Sleep(2 * time.Second) // hold the lock for 2 seconds\n\n\tlm.Unlock(prefix, leaseID)\n\tfmt.Printf(\"Client %d released lock on prefix '%s'\\n\", lmID, prefix)\n}\n\nfunc main() {\n\tlockManager := NewLockManager()\n\n\t// Initialize a lock on \"testa\" to simulate existing key\n\tlockManager.Lock(\"testa\", \"1\")\n\n\t// Simulate multiple clients\n\tfor i := 2; i <= 4; i++ {\n\t\tgo lockManager.simulateClient(\"test\", i) // All clients attempt to acquire lock on \"test\"\n\t}\n\n\t// Wait for clients to finish\n\ttime.Sleep(8 * time.Second)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

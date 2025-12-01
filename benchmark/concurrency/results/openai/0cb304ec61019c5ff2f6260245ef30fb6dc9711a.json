@@ -1,0 +1,13 @@
+{
+    "task": "0cb304ec61019c5ff2f6260245ef30fb6dc9711a.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype LogEntry struct {\n\tIndex uint64\n\tType  string\n\tData  string\n}\n\ntype Replayer struct {\n\tcommitC chan *LogEntry\n\tstopC   chan struct{}\n\twg      sync.WaitGroup\n}\n\nfunc NewReplayer() *Replayer {\n\treturn &Replayer{\n\t\tcommitC: make(chan *LogEntry),\n\t\tstopC:   make(chan struct{}),\n\t}\n}\n\nfunc (r *Replayer) LoadHistoricalEntries() {\n\thistoricalEntries := []LogEntry{\n\t\t{Index: 1, Type: \"normal\", Data: \"historical data 1\"},\n\t\t{Index: 2, Type: \"normal\", Data: \"historical data 2\"},\n\t\t{Index: 3, Type: \"normal\", Data: \"historical data 3\"},\n\t\t{Index: 4, Type: \"normal\", Data: \"historical data 4\"},\n\t\t{Index: 5, Type: \"normal\", Data: \"historical data 5\"},\n\t}\n\n\tfor _, entry := range historicalEntries {\n\t\tfmt.Printf(\"Replaying entry %d: %s\\n\", entry.Index, entry.Data)\n\t\tr.commitC <- &entry\n\t\ttime.Sleep(500 * time.Millisecond) // Simulate processing time\n\t}\n\n\tr.commitC <- nil // Signal completion of replay\n\tfmt.Println(\"--- Replay complete, system ready ---\")\n}\n\nfunc (r *Replayer) ProcessNewEntries() {\n\tnewEntries := []LogEntry{\n\t\t{Index: 6, Type: \"normal\", Data: \"new data 1\"},\n\t\t{Index: 7, Type: \"normal\", Data: \"new data 2\"},\n\t\t{Index: 8, Type: \"normal\", Data: \"new data 3\"},\n\t}\n\n\tfor _, entry := range newEntries {\n\t\tr.wg.Add(1)\n\t\tgo func(entry LogEntry) {\n\t\t\tdefer r.wg.Done()\n\t\t\t<-time.After(500 * time.Millisecond) // Simulate processing delay\n\t\t\tfmt.Printf(\"Processing entry %d: %s\\n\", entry.Index, entry.Data)\n\t\t\tr.commitC <- &entry\n\t\t}(entry)\n\t}\n\n\tr.wg.Wait()\n\tclose(r.commitC) // Close commitC when done processing new entries\n}\n\nfunc (r *Replayer) Stop() {\n\tclose(r.stopC)\n\tr.wg.Wait()\n\tfmt.Println(\"Shutdown complete\")\n}\n\nfunc main() {\n\treplayer := NewReplayer()\n\n\tgo replayer.LoadHistoricalEntries()\n\n\tgo func() {\n\t\tfor entry := range replayer.commitC {\n\t\t\tif entry == nil {\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\treplayer.ProcessNewEntries()\n\t}()\n\n\ttime.Sleep(8 * time.Second) // Give time for processing before shutdown\n\treplayer.Stop()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

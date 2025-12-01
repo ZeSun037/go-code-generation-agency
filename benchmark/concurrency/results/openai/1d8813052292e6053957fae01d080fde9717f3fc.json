@@ -1,0 +1,13 @@
+{
+    "task": "1d8813052292e6053957fae01d080fde9717f3fc.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nvar ErrConnectionClosed = errors.New(\"connection closed\")\n\ntype KVClient struct {\n\tmu      sync.Mutex\n\tclosed  bool\n}\n\nfunc NewKVClient() *KVClient {\n\treturn &KVClient{}\n}\n\nfunc (c *KVClient) Get(key string) (string, error) {\n\tc.mu.Lock()\n\tif c.closed {\n\t\tc.mu.Unlock()\n\t\treturn \"\", ErrConnectionClosed\n\t}\n\tc.mu.Unlock()\n\n\t// Simulate network delay\n\ttime.Sleep(100 * time.Millisecond)\n\n\t// Return mock data\n\treturn \"mockValue\", nil\n}\n\nfunc (c *KVClient) Close() error {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\tif c.closed {\n\t\treturn nil\n\t}\n\tc.closed = true\n\t// Simulate cleanup\n\ttime.Sleep(50 * time.Millisecond)\n\treturn nil\n}\n\nfunc main() {\n\tclient := NewKVClient()\n\tdone := make(chan struct{})\n\t\n\tgo func() {\n\t\tdefer close(done)\n\t\tvalue, err := client.Get(\"someKey\")\n\t\tif err != nil {\n\t\t\tfmt.Println(\"Get operation completed with error:\", err)\n\t\t\treturn\n\t\t}\n\t\tfmt.Println(\"Get operation completed with value:\", value)\n\t}()\n\n\ttime.Sleep(10 * time.Millisecond) // Wait for goroutine to start\n\terr := client.Close()\n\tif err != nil {\n\t\tfmt.Println(\"Close operation completed with error:\", err)\n\t} else {\n\t\tfmt.Println(\"Close operation completed\")\n\t}\n\n\tselect {\n\tcase <-done:\n\t\t// Test completed successfully\n\t\tfmt.Println(\"Test completed in time\")\n\t\tfmt.Println(\"SUCCESS\")\n\tcase <-time.After(3 * time.Second):\n\t\tfmt.Println(\"Test timed out or deadlocked\")\n\t\tfmt.Println(\"FAILURE\")\n\t}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

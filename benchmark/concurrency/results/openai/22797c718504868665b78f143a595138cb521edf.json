@@ -1,0 +1,13 @@
+{
+    "task": "22797c718504868665b78f143a595138cb521edf.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype LockManager struct {\n\tmu      sync.Mutex\n\tlocks   map[string]*Lock\n\tcondVar *sync.Cond\n}\n\ntype Lock struct {\n\tname      string\n\tholding   string\n\twaitQueue []chan string\n}\n\nfunc NewLockManager() *LockManager {\n\tlm := &LockManager{\n\t\tlocks: make(map[string]*Lock),\n\t}\n\tlm.condVar = sync.NewCond(&lm.mu)\n\treturn lm\n}\n\nfunc (lm *LockManager) AcquireLock(resource string, clientID string) {\n\tlm.mu.Lock()\n\tlock, exists := lm.locks[resource]\n\tif !exists {\n\t\tlock = &Lock{name: resource}\n\t\tlm.locks[resource] = lock\n\t}\n\tif lock.holding != \"\" {\n\t\t// Create a channel to wait for this lock\n\t\twaitChan := make(chan string)\n\t\tlock.waitQueue = append(lock.waitQueue, waitChan)\n\t\tlm.mu.Unlock()\n\n\t\t// Wait for the signal from the lock manager\n\t\tclientID = <-waitChan\n\t\tlm.mu.Lock()\n\t}\n\tlock.holding = clientID\n\tfmt.Printf(\"Client %s has acquired the lock on %s\\n\", clientID, resource)\n\tlm.mu.Unlock()\n}\n\nfunc (lm *LockManager) ReleaseLock(resource string, clientID string) {\n\tlm.mu.Lock()\n\tif lock, exists := lm.locks[resource]; exists && lock.holding == clientID {\n\t\tfmt.Printf(\"Client %s is releasing the lock on %s\\n\", clientID, resource)\n\t\tlock.holding = \"\"\n\n\t\t// Notify the next client in the queue\n\t\tif len(lock.waitQueue) > 0 {\n\t\t\twaitChan := lock.waitQueue[0]\n\t\t\tlock.waitQueue = lock.waitQueue[1:]\n\t\t\tclose(waitChan)\n\t\t}\n\t}\n\tlm.mu.Unlock()\n}\n\nfunc client(lm *LockManager, clientID string) {\n\tresource := \"resource-1\"\n\tlm.AcquireLock(resource, clientID)\n\ttime.Sleep(time.Second) // Simulate work\n\tlm.ReleaseLock(resource, clientID)\n}\n\nfunc main() {\n\tlm := NewLockManager()\n\tvar wg sync.WaitGroup\n\n\tfor i := 1; i <= 5; i++ {\n\t\twg.Add(1)\n\t\tgo func(id int) {\n\t\t\tdefer wg.Done()\n\t\t\tclientID := fmt.Sprintf(\"Client-%d\", id)\n\t\t\tclient(lm, clientID)\n\t\t}(i)\n\t}\n\n\twg.Wait()\n\n\t// Testing the same session acquiring the lock multiple times\n\tsessionID := \"Session-1\"\n\tlm.AcquireLock(\"resource-1\", sessionID)\n\ttime.Sleep(time.Second)\n\tlm.ReleaseLock(\"resource-1\", sessionID)\n\tlm.AcquireLock(\"resource-1\", sessionID)\n\ttime.Sleep(time.Second)\n\tlm.ReleaseLock(\"resource-1\", sessionID)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

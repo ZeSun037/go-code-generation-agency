@@ -1,0 +1,43 @@
+{
+    "task": "37addf0a50ccba51630368c6ed09eb08166d6f48.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Container struct {\n\tID          string\n\tnetworks    map[string]struct{}\n\tmu          sync.RWMutex\n}\n\nfunc NewContainer(id string) *Container {\n\treturn &Container{\n\t\tID:       id,\n\t\tnetworks: make(map[string]struct{}),\n\t}\n}\n\nfunc (c *Container) ConnectToNetwork(networkName string) {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\tc.networks[networkName] = struct{}{}\n\tc.CheckpointTo(networkName)\n}\n\nfunc (c *Container) DisconnectFromNetwork(networkName string) {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\tdelete(c.networks, networkName)\n\tc.CheckpointTo(networkName)\n}\n\nfunc (c *Container) CheckpointTo(storage string) {\n\ttime.Sleep(100 * time.Millisecond) // Simulate checkpointing time\n\tfmt.Printf(\"Container %s state saved to %s\\n\", c.ID, storage)\n}\n\ntype NetworkManager struct {\n\tcontainers map[string]*Container\n\tmu         sync.Mutex\n}\n\nfunc NewNetworkManager() *NetworkManager {\n\treturn &NetworkManager{\n\t\tcontainers: make(map[string]*Container),\n\t}\n}\n\nfunc (nm *NetworkManager) CreateContainer(id string) *Container {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tcontainer := NewContainer(id)\n\tnm.containers[id] = container\n\treturn container\n}\n\nfunc (nm *NetworkManager) ConnectToNetwork(containerID, networkName string) {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tif container, exists := nm.containers[containerID]; exists {\n\t\tcontainer.ConnectToNetwork(networkName)\n\t}\n}\n\nfunc (nm *NetworkManager) DisconnectFromNetwork(containerID, networkName string) {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tif container, exists := nm.containers[containerID]; exists {\n\t\tcontainer.DisconnectFromNetwork(networkName)\n\t}\n}\n\nfunc main() {\n\tdaemon := NewNetworkManager()\n\tcontainers := []*Container{\n\t\tdaemon.CreateContainer(\"container1\"),\n\t\tdaemon.CreateContainer(\"container2\"),\n\t\tdaemon.CreateContainer(\"container3\"),\n\t}\n\n\tvar wg sync.WaitGroup\n\tconst operations = 10\n\n\tfor i := 0; i < operations; i++ {\n\t\twg.Add(3)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.ConnectToNetwork(\"container1\", \"network1\")\n\t\t}()\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.ConnectToNetwork(\"container2\", \"network2\")\n\t\t}()\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.DisconnectFromNetwork(\"container1\", \"network1\")\n\t\t}()\n\t}\n\n\twg.Wait()\n\tfmt.Println(\"All operations completed successfully\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go build -race",
+                    "error": "# command-line-arguments\n./main.go:78:2: declared and not used: containers"
+                },
+                {
+                    "verifier": "gosec",
+                    "error": "Results:\n\nGolang errors in file: []:\n\n  > [line 0 : column 0] - # command-line-arguments\n./main.go:78:2: declared and not used: containers\n\n\nGolang errors in file: [/tmp/go_synthesis_tgjnoz4q/main.go]:\n\n  > [line 78 : column 2] - declared and not used: containers\n\n\n\n\u001b[1;36mSummary:\u001b[0m\n  Gosec  : dev\n  Files  : 1\n  Lines  : 105\n  Nosec  : 0\n  Issues : \u001b[1;32m0\u001b[0m\n\n[gosec] 2025/12/01 13:13:42 Including rules: default\n[gosec] 2025/12/01 13:13:42 Excluding rules: default\n[gosec] 2025/12/01 13:13:42 Including analyzers: default\n[gosec] 2025/12/01 13:13:42 Excluding analyzers: default\n[gosec] 2025/12/01 13:13:42 Import directory: /tmp/go_synthesis_tgjnoz4q\n[gosec] 2025/12/01 13:13:42 Checking package: main\n[gosec] 2025/12/01 13:13:42 Checking file: /tmp/go_synthesis_tgjnoz4q/main.go"
+                },
+                {
+                    "verifier": "govulncheck",
+                    "error": "govulncheck: loading packages: \nThere are errors with the provided package patterns:\n\n/tmp/go_synthesis_tgjnoz4q/main.go:78:2: declared and not used: containers\n\nFor details on package patterns, see https://pkg.go.dev/cmd/go#hdr-Package_lists_and_patterns."
+                },
+                {
+                    "verifier": "errcheck",
+                    "error": "error: failed to check packages: errors while loading package command-line-arguments: [-: # command-line-arguments\n./main.go:78:2: declared and not used: containers /tmp/go_synthesis_tgjnoz4q/main.go:78:2: declared and not used: containers]"
+                },
+                {
+                    "verifier": "go-errorlint",
+                    "error": "-: # command-line-arguments\n./main.go:78:2: declared and not used: containers\n/tmp/go_synthesis_tgjnoz4q/main.go:78:2: declared and not used: containers\nerrorlint: analysis skipped due to errors in package"
+                },
+                {
+                    "verifier": "staticcheck",
+                    "error": "-: # command-line-arguments\n./main.go:78:2: declared and not used: containers (compile)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Container struct {\n\tID       string\n\tnetworks map[string]struct{}\n\tmu       sync.RWMutex\n}\n\nfunc NewContainer(id string) *Container {\n\treturn &Container{\n\t\tID:       id,\n\t\tnetworks: make(map[string]struct{}),\n\t}\n}\n\nfunc (c *Container) ConnectToNetwork(networkName string) {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\tc.networks[networkName] = struct{}{}\n\tc.CheckpointTo(networkName)\n}\n\nfunc (c *Container) DisconnectFromNetwork(networkName string) {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\tdelete(c.networks, networkName)\n\tc.CheckpointTo(networkName)\n}\n\nfunc (c *Container) CheckpointTo(storage string) {\n\ttime.Sleep(100 * time.Millisecond) // Simulate checkpointing time\n\tfmt.Printf(\"Container %s state saved to %s\\n\", c.ID, storage)\n}\n\ntype NetworkManager struct {\n\tcontainers map[string]*Container\n\tmu         sync.Mutex\n}\n\nfunc NewNetworkManager() *NetworkManager {\n\treturn &NetworkManager{\n\t\tcontainers: make(map[string]*Container),\n\t}\n}\n\nfunc (nm *NetworkManager) CreateContainer(id string) *Container {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tcontainer := NewContainer(id)\n\tnm.containers[id] = container\n\treturn container\n}\n\nfunc (nm *NetworkManager) ConnectToNetwork(containerID, networkName string) {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tif container, exists := nm.containers[containerID]; exists {\n\t\tcontainer.ConnectToNetwork(networkName)\n\t}\n}\n\nfunc (nm *NetworkManager) DisconnectFromNetwork(containerID, networkName string) {\n\tnm.mu.Lock()\n\tdefer nm.mu.Unlock()\n\tif container, exists := nm.containers[containerID]; exists {\n\t\tcontainer.DisconnectFromNetwork(networkName)\n\t}\n}\n\nfunc main() {\n\tdaemon := NewNetworkManager()\n\tdaemon.CreateContainer(\"container1\")\n\tdaemon.CreateContainer(\"container2\")\n\tdaemon.CreateContainer(\"container3\")\n\n\tvar wg sync.WaitGroup\n\tconst operations = 10\n\n\tfor i := 0; i < operations; i++ {\n\t\twg.Add(3)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.ConnectToNetwork(\"container1\", \"network1\")\n\t\t}()\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.ConnectToNetwork(\"container2\", \"network2\")\n\t\t}()\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tdaemon.DisconnectFromNetwork(\"container1\", \"network1\")\n\t\t}()\n\t}\n\n\twg.Wait()\n\tfmt.Println(\"All operations completed successfully\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

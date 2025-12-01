@@ -1,0 +1,43 @@
+{
+    "task": "5a547ed72c09faf4050739d54caea1d51f4d276d.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Service struct {\n\tname   string\n\trunning bool\n\twg     sync.WaitGroup\n}\n\nfunc NewService(name string) *Service {\n\treturn &Service{name: name}\n}\n\nfunc (s *Service) Start() {\n\ts.running = true\n\ts.wg.Add(1)\n\tgo func() {\n\t\tdefer s.wg.Done()\n\t\tfmt.Printf(\"%s started\\n\", s.name)\n\t\tfor s.running {\n\t\t\ttime.Sleep(10 * time.Millisecond) // Simulating work\n\t\t}\n\t\tfmt.Printf(\"%s is cleaning up...\\n\", s.name)\n\t\ttime.Sleep(100 * time.Millisecond) // Simulating cleanup\n\t\tfmt.Printf(\"%s has stopped\\n\", s.name)\n\t}()\n}\n\nfunc (s *Service) Stop() {\n\ts.running = false\n\ts.wg.Wait()\n}\n\ntype ServerManager struct {\n\tservices map[string]*Service\n\tmu       sync.Mutex\n\tstopped  bool\n\twg       sync.WaitGroup\n}\n\nfunc NewServerManager() *ServerManager {\n\treturn &ServerManager{\n\t\tservices: make(map[string]*Service),\n\t}\n}\n\nfunc (sm *ServerManager) Start(serviceName string) error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\tif sm.stopped {\n\t\treturn fmt.Errorf(\"cannot start service; already stopped\")\n\t}\n\tservice := NewService(serviceName)\n\tservice.Start()\n\tsm.services[serviceName] = service\n\treturn nil\n}\n\nfunc (sm *ServerManager) GracefulStop() {\n\tsm.mu.Lock()\n\tif sm.stopped {\n\t\tsm.mu.Unlock()\n\t\treturn\n\t}\n\tsm.stopped = true\n\tsm.mu.Unlock()\n\n\t// Use WaitGroup to wait for all services to terminate\n\tsm.wg.Add(len(sm.services))\n\tfor name, service := range sm.services {\n\t\tgo func(s *Service) {\n\t\t\tdefer sm.wg.Done()\n\t\t\ts.Stop()\n\t\t}(service)\n\t}\n\t\n\tfmt.Println(\"GracefulStop called from goroutine\")\n\tsm.wg.Wait()\n\tfmt.Println(\"All services have stopped.\")\n}\n\nfunc (sm *ServerManager) IsRunning() bool {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\treturn len(sm.services) > 0\n}\n\nfunc main() {\n\tmanager := NewServerManager()\n\n\t// Start multiple services\n\tfor i := 1; i <= 3; i++ {\n\t\tserviceName := fmt.Sprintf(\"Service-%d\", i)\n\t\tmanager.Start(serviceName)\n\t}\n\n\t// Simulate concurrent calls to GracefulStop\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 3; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tmanager.GracefulStop()\n\t\t}()\n\t}\n\twg.Wait() // Wait for all goroutines to finish\n\tfmt.Println(\"Final confirmation: all services are stopped.\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go build -race",
+                    "error": "# command-line-arguments\n./main.go:75:6: declared and not used: name"
+                },
+                {
+                    "verifier": "gosec",
+                    "error": "Results:\n\nGolang errors in file: []:\n\n  > [line 0 : column 0] - # command-line-arguments\n./main.go:75:6: declared and not used: name\n\n\nGolang errors in file: [/tmp/go_synthesis_wqbjodnc/main.go]:\n\n  > [line 75 : column 6] - declared and not used: name\n\n\n\n[\u001b[37;40m/tmp/go_synthesis_wqbjodnc/main.go:99\u001b[0m] - G104 (CWE-703): Errors unhandled (Confidence: HIGH, Severity: LOW)\n    98: \t\tserviceName := fmt.Sprintf(\"Service-%d\", i)\n  > 99: \t\tmanager.Start(serviceName)\n    100: \t}\n\nAutofix: \n\n\u001b[1;36mSummary:\u001b[0m\n  Gosec  : dev\n  Files  : 1\n  Lines  : 113\n  Nosec  : 0\n  Issues : \u001b[1;31m1\u001b[0m\n\n[gosec] 2025/12/01 13:18:20 Including rules: default\n[gosec] 2025/12/01 13:18:20 Excluding rules: default\n[gosec] 2025/12/01 13:18:20 Including analyzers: default\n[gosec] 2025/12/01 13:18:20 Excluding analyzers: default\n[gosec] 2025/12/01 13:18:20 Import directory: /tmp/go_synthesis_wqbjodnc\n[gosec] 2025/12/01 13:18:20 Checking package: main\n[gosec] 2025/12/01 13:18:20 Checking file: /tmp/go_synthesis_wqbjodnc/main.go"
+                },
+                {
+                    "verifier": "govulncheck",
+                    "error": "govulncheck: loading packages: \nThere are errors with the provided package patterns:\n\n/tmp/go_synthesis_wqbjodnc/main.go:75:6: declared and not used: name\n\nFor details on package patterns, see https://pkg.go.dev/cmd/go#hdr-Package_lists_and_patterns."
+                },
+                {
+                    "verifier": "errcheck",
+                    "error": "error: failed to check packages: errors while loading package command-line-arguments: [-: # command-line-arguments\n./main.go:75:6: declared and not used: name /tmp/go_synthesis_wqbjodnc/main.go:75:6: declared and not used: name]"
+                },
+                {
+                    "verifier": "go-errorlint",
+                    "error": "-: # command-line-arguments\n./main.go:75:6: declared and not used: name\n/tmp/go_synthesis_wqbjodnc/main.go:75:6: declared and not used: name\nerrorlint: analysis skipped due to errors in package"
+                },
+                {
+                    "verifier": "staticcheck",
+                    "error": "-: # command-line-arguments\n./main.go:75:6: declared and not used: name (compile)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Service struct {\n\tname   string\n\trunning bool\n\twg     sync.WaitGroup\n}\n\nfunc NewService(name string) *Service {\n\treturn &Service{name: name}\n}\n\nfunc (s *Service) Start() {\n\ts.running = true\n\ts.wg.Add(1)\n\tgo func() {\n\t\tdefer s.wg.Done()\n\t\tfmt.Printf(\"%s started\\n\", s.name)\n\t\tfor s.running {\n\t\t\ttime.Sleep(10 * time.Millisecond) // Simulating work\n\t\t}\n\t\tfmt.Printf(\"%s is cleaning up...\\n\", s.name)\n\t\ttime.Sleep(100 * time.Millisecond) // Simulating cleanup\n\t\tfmt.Printf(\"%s has stopped\\n\", s.name)\n\t}()\n}\n\nfunc (s *Service) Stop() {\n\ts.running = false\n\ts.wg.Wait()\n}\n\ntype ServerManager struct {\n\tservices map[string]*Service\n\tmu       sync.Mutex\n\tstopped  bool\n\twg       sync.WaitGroup\n}\n\nfunc NewServerManager() *ServerManager {\n\treturn &ServerManager{\n\t\tservices: make(map[string]*Service),\n\t}\n}\n\nfunc (sm *ServerManager) Start(serviceName string) error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\tif sm.stopped {\n\t\treturn fmt.Errorf(\"cannot start service; already stopped\")\n\t}\n\tservice := NewService(serviceName)\n\tservice.Start()\n\tsm.services[serviceName] = service\n\treturn nil\n}\n\nfunc (sm *ServerManager) GracefulStop() {\n\tsm.mu.Lock()\n\tif sm.stopped {\n\t\tsm.mu.Unlock()\n\t\treturn\n\t}\n\tsm.stopped = true\n\tsm.mu.Unlock()\n\n\t// Use WaitGroup to wait for all services to terminate\n\tsm.wg.Add(len(sm.services))\n\tfor _, service := range sm.services {\n\t\tgo func(s *Service) {\n\t\t\tdefer sm.wg.Done()\n\t\t\ts.Stop()\n\t\t}(service)\n\t}\n\t\n\tfmt.Println(\"GracefulStop called from goroutine\")\n\tsm.wg.Wait()\n\tfmt.Println(\"All services have stopped.\")\n}\n\nfunc (sm *ServerManager) IsRunning() bool {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\treturn len(sm.services) > 0\n}\n\nfunc main() {\n\tmanager := NewServerManager()\n\n\t// Start multiple services\n\tfor i := 1; i <= 3; i++ {\n\t\tserviceName := fmt.Sprintf(\"Service-%d\", i)\n\t\tif err := manager.Start(serviceName); err != nil {\n\t\t\tfmt.Println(err)\n\t\t}\n\t}\n\n\t// Simulate concurrent calls to GracefulStop\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 3; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tmanager.GracefulStop()\n\t\t}()\n\t}\n\twg.Wait() // Wait for all goroutines to finish\n\tfmt.Println(\"Final confirmation: all services are stopped.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

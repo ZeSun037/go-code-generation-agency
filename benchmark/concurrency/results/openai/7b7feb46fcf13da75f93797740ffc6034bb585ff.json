@@ -1,0 +1,27 @@
+{
+    "task": "7b7feb46fcf13da75f93797740ffc6034bb585ff.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"io/ioutil\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc FetchLeaseInfo(ctx context.Context, leaseID int, url string) ([]byte, error) {\n\tresultChan := make(chan []byte)\n\terrChan := make(chan error)\n\n\tgo func() {\n\t\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\n\t\tresp, err := http.DefaultClient.Do(req)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\t\tdefer resp.Body.Close()\n\n\t\tif resp.StatusCode != http.StatusOK {\n\t\t\terrChan <- fmt.Errorf(\"received non-200 response: %d\", resp.StatusCode)\n\t\t\treturn\n\t\t}\n\n\t\tbody, err := ioutil.ReadAll(resp.Body)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\t\tresultChan <- body\n\t}()\n\n\tselect {\n\tcase result := <-resultChan:\n\t\treturn result, nil\n\tcase err := <-errChan:\n\t\treturn nil, err\n\tcase <-ctx.Done():\n\t\treturn nil, ctx.Err()\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\turl := \"https://httpbin.org/get\" // Example URL for demonstration\n\tleaseID := 123\n\n\t// Successful Fetch\n\tdata, err := FetchLeaseInfo(ctx, leaseID, url)\n\tif err != nil {\n\t\tfmt.Printf(\"Error fetching lease information: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"Fetched lease information: %s\\n\", data)\n\t}\n\n\t// Simulating a long wait that exceeds the context timeout\n\tctx, cancel = context.WithTimeout(context.Background(), 1*time.Second)\n\tdefer cancel()\n\n\tdata, err = FetchLeaseInfo(ctx, leaseID, \"https://httpbin.org/delay/3\") // This will exceed the timeout\n\tif err != nil {\n\t\tfmt.Printf(\"Error fetching lease information: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"Fetched lease information: %s\\n\", data)\n\t}\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "errcheck",
+                    "error": "main.go:27:24:\tdefer resp.Body.Close()"
+                },
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:6:2: \"io/ioutil\" has been deprecated since Go 1.19: As of Go 1.16, the same functionality is now provided by package [io] or package [os], and those implementations should be preferred in new code. See the specific function documentation for details.  (SA1019)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc FetchLeaseInfo(ctx context.Context, leaseID int, url string) ([]byte, error) {\n\tresultChan := make(chan []byte)\n\terrChan := make(chan error)\n\n\tgo func() {\n\t\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\n\t\tresp, err := http.DefaultClient.Do(req)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\t\tdefer func() {\n\t\t\t_ = resp.Body.Close()\n\t\t}()\n\n\t\tif resp.StatusCode != http.StatusOK {\n\t\t\terrChan <- fmt.Errorf(\"received non-200 response: %d\", resp.StatusCode)\n\t\t\treturn\n\t\t}\n\n\t\tbody, err := io.ReadAll(resp.Body)\n\t\tif err != nil {\n\t\t\terrChan <- err\n\t\t\treturn\n\t\t}\n\t\tresultChan <- body\n\t}()\n\n\tselect {\n\tcase result := <-resultChan:\n\t\treturn result, nil\n\tcase err := <-errChan:\n\t\treturn nil, err\n\tcase <-ctx.Done():\n\t\treturn nil, ctx.Err()\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\turl := \"https://httpbin.org/get\" // Example URL for demonstration\n\tleaseID := 123\n\n\t// Successful Fetch\n\tdata, err := FetchLeaseInfo(ctx, leaseID, url)\n\tif err != nil {\n\t\tfmt.Printf(\"Error fetching lease information: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"Fetched lease information: %s\\n\", data)\n\t}\n\n\t// Simulating a long wait that exceeds the context timeout\n\tctx, cancel = context.WithTimeout(context.Background(), 1*time.Second)\n\tdefer cancel()\n\n\tdata, err = FetchLeaseInfo(ctx, leaseID, \"https://httpbin.org/delay/3\") // This will exceed the timeout\n\tif err != nil {\n\t\tfmt.Printf(\"Error fetching lease information: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"Fetched lease information: %s\\n\", data)\n\t}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

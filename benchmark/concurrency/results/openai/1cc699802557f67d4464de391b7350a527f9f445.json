@@ -1,0 +1,13 @@
+{
+    "task": "1cc699802557f67d4464de391b7350a527f9f445.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"time\"\n)\n\ntype NodeManager struct {\n\tmu      sync.Mutex\n\tclosed  int32\n\tcounter int32\n\twg      sync.WaitGroup\n}\n\nfunc (nm *NodeManager) bootstrap() {\n\tfor {\n\t\tnm.mu.Lock()\n\t\tif atomic.LoadInt32(&nm.closed) == 1 {\n\t\t\tnm.mu.Unlock()\n\t\t\tbreak\n\t\t}\n\t\tnm.mu.Unlock()\n\n\t\tfmt.Println(\"Discovering and connecting to bootstrap nodes...\")\n\t\ttime.Sleep(5 * time.Second)\n\t}\n\tnm.wg.Done()\n}\n\nfunc (nm *NodeManager) manage() {\n\tfor {\n\t\tnm.mu.Lock()\n\t\tif atomic.LoadInt32(&nm.closed) == 1 && atomic.LoadInt32(&nm.counter) == 0 {\n\t\t\tnm.mu.Unlock()\n\t\t\tbreak\n\t\t}\n\t\tnm.mu.Unlock()\n\n\t\tif atomic.LoadInt32(&nm.counter) > 0 {\n\t\t\tatomic.AddInt32(&nm.counter, -1)\n\t\t\tfmt.Println(\"Managing peer connections, remaining:\", atomic.LoadInt32(&nm.counter))\n\t\t} else {\n\t\t\tatomic.StoreInt32(&nm.closed, 1)\n\t\t}\n\t\ttime.Sleep(3 * time.Second)\n\t}\n\tnm.wg.Done()\n}\n\nfunc (nm *NodeManager) Shutdown() {\n\tnm.mu.Lock()\n\tatomic.StoreInt32(&nm.closed, 1)\n\tnm.mu.Unlock()\n\tnm.wg.Wait()\n}\n\nfunc main() {\n\tnm := &NodeManager{}\n\tatomic.StoreInt32(&nm.counter, 5) // Assume we start with 5 connections\n\n\tnm.wg.Add(2)\n\tgo nm.bootstrap()\n\tgo nm.manage()\n\n\ttime.Sleep(10 * time.Second)\n\tnm.Shutdown()\n\tfmt.Println(\"Shutdown complete\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

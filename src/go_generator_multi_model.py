@@ -462,11 +462,16 @@ def main():
     parser.add_argument("--taskfolder", help="Folder containing .txt task files (batch mode)")
     parser.add_argument("--outputfolder", help="Folder to write .json results for tasks (batch mode)")
     parser.add_argument("--batchlimit", help="maximum number of files processed for testing purporse(batch mode)")
+    parser.add_argument("--maxiter", help="maximum number of iterations per task")
 
     args = parser.parse_args()
 
     # Determine mode: batch or single-task
     batch_mode = args.taskfolder is not None
+
+    max_iter = args.maxiter or "3"
+    max_iter = int(max_iter)
+
     global verbose
 
     if batch_mode:
@@ -478,6 +483,7 @@ def main():
 
         taskfolder = args.taskfolder
         outputfolder = os.path.join(args.outputfolder, args.provider)
+        num_results_in_output_folder = len([f for f in os.listdir(outputfolder) if os.path.isfile(os.path.join(outputfolder, f))])
 
         if not os.path.isdir(taskfolder):
             print(f"❌ Task folder does not exist or is not a directory: {taskfolder}")
@@ -487,7 +493,7 @@ def main():
 
         # Setup backend and pipeline once for batch
         backend = get_backend(args.provider, args.model)
-        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=3)
+        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=max_iter)
 
         model_name = args.model or getattr(backend, "model_name", None)
         task_files = [f for f in sorted(os.listdir(taskfolder)) if f.lower().endswith(".txt")]
@@ -498,6 +504,9 @@ def main():
                 task_files = task_files[:limit]
             except ValueError:
                 pass
+
+        #skip task files already processed
+        task_files=task_files[num_results_in_output_folder:]
 
         total = len(task_files)
 
@@ -549,7 +558,7 @@ def main():
 
     try:
         backend = get_backend(args.provider, args.model)
-        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=5)
+        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=max_iter)
         final_code, success, rounds = pipeline.run(task)
         
         output_file = "generated_code.go"

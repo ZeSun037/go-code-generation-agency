@@ -1,0 +1,13 @@
+{
+    "task": "262ed2bd6d1c8cbaa14b43c3815d2e01e4f65ca8.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Stream struct {\n\tmessages chan string\n\twg       sync.WaitGroup\n}\n\nfunc NewStream() *Stream {\n\treturn &Stream{\n\t\tmessages: make(chan string),\n\t}\n}\n\nfunc (s *Stream) Send(message string) {\n\ts.messages <- message\n}\n\nfunc (s *Stream) Receive() {\n\tfor msg := range s.messages {\n\t\tresponse := fmt.Sprintf(\"echo: [%s]\", msg)\n\t\tfmt.Println(response)\n\t}\n\ts.wg.Done()\n}\n\nfunc Server(stream *Stream) {\n\tfor i := 1; i <= 10; i++ {\n\t\tmessage := fmt.Sprintf(\"message-%d\", i)\n\t\tstream.Send(message)\n\t\ttime.Sleep(100 * time.Millisecond) // Simulate processing delay\n\t}\n\tclose(stream.messages)\n}\n\nfunc Client(stream *Stream) {\n\tstream.wg.Add(1)\n\tgo stream.Receive()\n\t\n\tServer(stream)\n\n\tstream.wg.Wait()\n}\n\nfunc main() {\n\tstream := NewStream()\n\tClient(stream)\n\tfmt.Println(\"All messages have been successfully exchanged.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

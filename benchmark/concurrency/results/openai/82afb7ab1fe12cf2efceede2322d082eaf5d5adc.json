@@ -1,0 +1,27 @@
+{
+    "task": "82afb7ab1fe12cf2efceede2322d082eaf5d5adc.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype StreamManager struct {\n\tresetChan chan int\n\tcloseChan chan struct{}\n\tmu        sync.Mutex\n\trunning   bool\n}\n\nfunc NewStreamManager() *StreamManager {\n\tsm := &StreamManager{\n\t\tresetChan: make(chan int, 10),\n\t\tcloseChan: make(chan struct{}),\n\t\trunning:   true,\n\t}\n\tgo sm.processResets()\n\treturn sm\n}\n\nfunc (sm *StreamManager) Write(streamID int, data []byte) error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\n\tif !sm.running {\n\t\treturn fmt.Errorf(\"stream manager is closed\")\n\t}\n\n\t// Simulate a condition for creating a reset (for testing purposes)\n\tif len(data)%5 == 0 {\n\t\tsm.resetChan <- streamID\n\t}\n\n\tfmt.Printf(\"Writing to stream %d: %s\\n\", streamID, string(data))\n\treturn nil\n}\n\nfunc (sm *StreamManager) Close() error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\n\tsm.running = false\n\tclose(sm.resetChan)\n\tclose(sm.closeChan)\n\treturn nil\n}\n\nfunc (sm *StreamManager) processResets() {\n\tfor {\n\t\tselect {\n\t\tcase streamID, ok := <-sm.resetChan:\n\t\t\tif !ok {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tfmt.Printf(\"Resetting stream %d\\n\", streamID)\n\t\tcase <-sm.closeChan:\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc main() {\n\tmanager := NewStreamManager()\n\tvar wg sync.WaitGroup\n\n\tfor i := 0; i < 20; i++ {\n\t\twg.Add(1)\n\t\tgo func(streamID int) {\n\t\t\tdefer wg.Done()\n\t\t\tfor j := 0; j < 5; j++ {\n\t\t\t\tdata := []byte(fmt.Sprintf(\"data %d from goroutine %d\", j, streamID))\n\t\t\t\tif err := manager.Write(streamID, data); err != nil {\n\t\t\t\t\tfmt.Println(\"Error writing:\", err)\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\ttime.Sleep(100 * time.Millisecond)\n\t\t\t}\n\t\t}(i)\n\t}\n\n\ttime.Sleep(2 * time.Second)\n\tmanager.Close()\n\n\twg.Wait()\n\tfmt.Println(\"All goroutines finished successfully.\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "gosec",
+                    "error": "Results:\n\n\n[\u001b[37;40m/tmp/go_synthesis_nje_dks6/main.go:87\u001b[0m] - G104 (CWE-703): Errors unhandled (Confidence: HIGH, Severity: LOW)\n    86: \ttime.Sleep(2 * time.Second)\n  > 87: \tmanager.Close()\n    88: \n\nAutofix: \n\n\u001b[1;36mSummary:\u001b[0m\n  Gosec  : dev\n  Files  : 1\n  Lines  : 91\n  Nosec  : 0\n  Issues : \u001b[1;31m1\u001b[0m\n\n[gosec] 2025/12/01 13:24:18 Including rules: default\n[gosec] 2025/12/01 13:24:18 Excluding rules: default\n[gosec] 2025/12/01 13:24:18 Including analyzers: default\n[gosec] 2025/12/01 13:24:18 Excluding analyzers: default\n[gosec] 2025/12/01 13:24:18 Import directory: /tmp/go_synthesis_nje_dks6\n[gosec] 2025/12/01 13:24:18 Checking package: main\n[gosec] 2025/12/01 13:24:18 Checking file: /tmp/go_synthesis_nje_dks6/main.go"
+                },
+                {
+                    "verifier": "errcheck",
+                    "error": "main.go:87:15:\tmanager.Close()"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype StreamManager struct {\n\tresetChan chan int\n\tcloseChan chan struct{}\n\tmu        sync.Mutex\n\trunning   bool\n}\n\nfunc NewStreamManager() *StreamManager {\n\tsm := &StreamManager{\n\t\tresetChan: make(chan int, 10),\n\t\tcloseChan: make(chan struct{}),\n\t\trunning:   true,\n\t}\n\tgo sm.processResets()\n\treturn sm\n}\n\nfunc (sm *StreamManager) Write(streamID int, data []byte) error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\n\tif !sm.running {\n\t\treturn fmt.Errorf(\"stream manager is closed\")\n\t}\n\n\tif len(data)%5 == 0 {\n\t\tsm.resetChan <- streamID\n\t}\n\n\tfmt.Printf(\"Writing to stream %d: %s\\n\", streamID, string(data))\n\treturn nil\n}\n\nfunc (sm *StreamManager) Close() error {\n\tsm.mu.Lock()\n\tdefer sm.mu.Unlock()\n\n\tsm.running = false\n\tclose(sm.resetChan)\n\tclose(sm.closeChan)\n\treturn nil\n}\n\nfunc (sm *StreamManager) processResets() {\n\tfor {\n\t\tselect {\n\t\tcase streamID, ok := <-sm.resetChan:\n\t\t\tif !ok {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tfmt.Printf(\"Resetting stream %d\\n\", streamID)\n\t\tcase <-sm.closeChan:\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc main() {\n\tmanager := NewStreamManager()\n\tvar wg sync.WaitGroup\n\n\tfor i := 0; i < 20; i++ {\n\t\twg.Add(1)\n\t\tgo func(streamID int) {\n\t\t\tdefer wg.Done()\n\t\t\tfor j := 0; j < 5; j++ {\n\t\t\t\tdata := []byte(fmt.Sprintf(\"data %d from goroutine %d\", j, streamID))\n\t\t\t\tif err := manager.Write(streamID, data); err != nil {\n\t\t\t\t\tfmt.Println(\"Error writing:\", err)\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\ttime.Sleep(100 * time.Millisecond)\n\t\t\t}\n\t\t}(i)\n\t}\n\n\ttime.Sleep(2 * time.Second)\n\tif err := manager.Close(); err != nil {\n\t\tfmt.Println(\"Error closing manager:\", err)\n\t}\n\n\twg.Wait()\n\tfmt.Println(\"All goroutines finished successfully.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

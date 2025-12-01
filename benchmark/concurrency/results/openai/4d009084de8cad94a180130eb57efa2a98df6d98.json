@@ -1,0 +1,13 @@
+{
+    "task": "4d009084de8cad94a180130eb57efa2a98df6d98.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype Plugin struct {\n\tname   string\n\tactive bool\n\texit   chan struct{}\n\twg     sync.WaitGroup\n}\n\nfunc (p *Plugin) Start() {\n\tp.wg.Add(1)\n\tgo func() {\n\t\tdefer p.wg.Done()\n\t\tfor {\n\t\t\tselect {\n\t\t\tcase <-p.exit:\n\t\t\t\tfmt.Printf(\"Plugin %s shutting down.\\n\", p.name)\n\t\t\t\treturn\n\t\t\tdefault:\n\t\t\t\tfmt.Printf(\"Plugin %s is active.\\n\", p.name)\n\t\t\t\ttime.Sleep(1 * time.Second) \n\t\t\t}\n\t\t}\n\t}()\n}\n\nfunc (p *Plugin) Stop() {\n\tclose(p.exit)\n\tp.wg.Wait()\n\tp.active = false\n}\n\ntype PluginManager struct {\n\tplugins map[string]*Plugin\n\tmu      sync.Mutex\n}\n\nfunc NewPluginManager() *PluginManager {\n\treturn &PluginManager{\n\t\tplugins: make(map[string]*Plugin),\n\t}\n}\n\nfunc (pm *PluginManager) Register(name string) {\n\tpm.mu.Lock()\n\tdefer pm.mu.Unlock()\n\tif _, exists := pm.plugins[name]; !exists {\n\t\tpm.plugins[name] = &Plugin{name: name, active: false, exit: make(chan struct{})}\n\t}\n}\n\nfunc (pm *PluginManager) Activate(name string) {\n\tpm.mu.Lock()\n\tdefer pm.mu.Unlock()\n\tif plugin, exists := pm.plugins[name]; exists && !plugin.active {\n\t\tplugin.active = true\n\t\tplugin.Start()\n\t}\n}\n\nfunc (pm *PluginManager) Deactivate(name string) {\n\tpm.mu.Lock()\n\tdefer pm.mu.Unlock()\n\tif plugin, exists := pm.plugins[name]; exists && plugin.active {\n\t\tplugin.Stop()\n\t}\n}\n\nfunc (pm *PluginManager) Shutdown() {\n\tpm.mu.Lock()\n\tdefer pm.mu.Unlock()\n\tfor _, plugin := range pm.plugins {\n\t\tif plugin.active {\n\t\t\tplugin.Stop()\n\t\t}\n\t}\n}\n\nfunc main() {\n\tmanager := NewPluginManager()\n\tmanager.Register(\"plugin1\")\n\tmanager.Register(\"plugin2\")\n\n\tmanager.Activate(\"plugin1\")\n\tmanager.Activate(\"plugin2\")\n\n\ttime.Sleep(5 * time.Second)\n\n\tmanager.Shutdown()\n\tfmt.Println(\"All plugins have been shut down.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "484b3ebb4ab56d3decc8240d599718bdbefcf7eb.txt",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype QuotaPool struct {\n\tmu      sync.Mutex\n\tcapacity int\n\tused     int\n\tcond     *sync.Cond\n}\n\nfunc NewQuotaPool(capacity int) *QuotaPool {\n\tpool := &QuotaPool{\n\t\tcapacity: capacity,\n\t}\n\tpool.cond = sync.NewCond(&pool.mu)\n\treturn pool\n}\n\nfunc (qp *QuotaPool) Acquire(size int) bool {\n\tqp.mu.Lock()\n\tdefer qp.mu.Unlock()\n\tfor qp.used+size > qp.capacity {\n\t\tqp.cond.Wait()\n\t}\n\tqp.used += size\n\treturn true\n}\n\nfunc (qp *QuotaPool) Release(size int) {\n\tqp.mu.Lock()\n\tdefer qp.mu.Unlock()\n\tqp.used -= size\n\tqp.cond.Signal()\n}\n\ntype MessageSender struct {\n\ttransportQuota *QuotaPool\n\tstreamQuota    *QuotaPool\n\tmaxMessageSize int\n}\n\nfunc NewMessageSender(transportCap, streamCap, maxMessageSize int) *MessageSender {\n\treturn &MessageSender{\n\t\ttransportQuota: NewQuotaPool(transportCap),\n\t\tstreamQuota:    NewQuotaPool(streamCap),\n\t\tmaxMessageSize: maxMessageSize,\n\t}\n}\n\nfunc (ms *MessageSender) Send(messageSize int) error {\n\tif messageSize > ms.maxMessageSize {\n\t\treturn fmt.Errorf(\"message too large: %d bytes\", messageSize)\n\t}\n\n\tif !ms.transportQuota.Acquire(messageSize) {\n\t\treturn fmt.Errorf(\"failed to acquire transport quota\")\n\t}\n\tdefer ms.transportQuota.Release(messageSize)\n\n\tif !ms.streamQuota.Acquire(messageSize) {\n\t\treturn fmt.Errorf(\"failed to acquire stream quota\")\n\t}\n\tdefer ms.streamQuota.Release(messageSize)\n\n\t// Simulate sending the message\n\ttime.Sleep(10 * time.Millisecond)\n\n\treturn nil\n}\n\nfunc worker(ms *MessageSender, wg *sync.WaitGroup, goroutineID int) {\n\tdefer wg.Done()\n\tfor i := 0; i < 100; i++ {\n\t\terr := ms.Send(10240) // Sending messages of size 10KB\n\t\tif err != nil {\n\t\t\tfmt.Printf(\"Goroutine %d: %v\\n\", goroutineID, err)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tconst transportCap = 65536\n\tconst streamCap = 65536\n\tconst maxMessageSize = 1024\n\n\tmessageSender := NewMessageSender(transportCap, streamCap, maxMessageSize)\n\tvar wg sync.WaitGroup\n\n\tfor i := 0; i < 10; i++ {\n\t\twg.Add(1)\n\t\tgo worker(messageSender, &wg, i)\n\t}\n\n\twg.Wait()\n\tfmt.Println(\"All sends completed successfully\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}
