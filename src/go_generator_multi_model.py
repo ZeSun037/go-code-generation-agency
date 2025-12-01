@@ -57,7 +57,7 @@ class AnthropicBackend(LLMBackend):
         return response.content[0].text
 
 class GeminiBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "gemini-1.5-pro"):
+    def __init__(self, api_key: str, model: str = "gemini-pro"):
         import google.generativeai as genai
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model)
@@ -393,7 +393,7 @@ def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
         key = os.environ.get("GEMINI_API_KEY")
         if not key:
             raise ValueError("GEMINI_API_KEY not set")
-        return GeminiBackend(key, model or "gemini-1.5-pro")
+        return GeminiBackend(key, model or "gemini-pro")
         
     elif provider == "openai":
         key = os.environ.get("OPENAI_API_KEY")
@@ -430,6 +430,7 @@ def main():
 
     # Determine mode: batch or single-task
     batch_mode = args.taskfolder is not None
+    global verbose
 
     if batch_mode:
         verbose = False
@@ -439,7 +440,7 @@ def main():
             sys.exit(1)
 
         taskfolder = args.taskfolder
-        outputfolder = args.outputfolder
+        outputfolder = os.path.join(args.outputfolder, args.provider)
 
         if not os.path.isdir(taskfolder):
             print(f"❌ Task folder does not exist or is not a directory: {taskfolder}")
@@ -496,7 +497,6 @@ def main():
                 json.dump(result_obj, out_f, indent=4)
             if verbose:
                 print(f"\n💾 Result JSON saved to: {out_path}")
-            files_processed_count += 1
 
         sys.exit(0)
 
