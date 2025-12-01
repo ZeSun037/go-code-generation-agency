@@ -42,7 +42,7 @@ class LLMBackend(ABC):
         pass
 
 class AnthropicBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "claude-haiku-4-5"):
+    def __init__(self, api_key: str, model: str):
         import anthropic
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model
@@ -58,7 +58,7 @@ class AnthropicBackend(LLMBackend):
         return response.content[0].text
 
 class GeminiBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash"):
+    def __init__(self, api_key: str, model: str):
         import google.generativeai as genai
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model)
@@ -70,23 +70,58 @@ class GeminiBackend(LLMBackend):
         response = self.model.generate_content(combined_prompt)
         return response.text
 
-class OpenAIBackend(LLMBackend):
-    def __init__(self, api_key: str, model: str = "gpt-4o", base_url: Optional[str] = None):
-        from openai import OpenAI
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
+class DeepseekBackend(LLMBackend):
+    def __init__(self, key:str, model: str):
+        from azure.ai.inference import ChatCompletionsClient
+        from azure.core.credentials import AzureKeyCredential
+        endpoint = "https://models.github.ai/inference"
         self.model = model
         self.model_name = model
+        token = key  
+        self.client = ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=AzureKeyCredential(token),
+        )
+
+    def generate(self, system_prompt: str, user_prompt: str) -> str:
+        from azure.ai.inference.models import SystemMessage, UserMessage
+        response = self.client.complete(
+            messages=[
+                SystemMessage(system_prompt),
+                UserMessage(user_prompt),
+            ],
+            model=self.model
+        )
+
+        return response.choices[0].message.content
+        
+class OpenAIBackend(LLMBackend):
+    def __init__(self, key:str, model: str):
+        from openai import OpenAI
+        endpoint = "https://models.github.ai/inference"
+        self.model = model
+        self.model_name = model
+        self.client = OpenAI(
+            base_url=endpoint,
+            api_key=key,
+        )
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         response = self.client.chat.completions.create(
-            model=self.model,
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ]
+                {
+                    "role": "developer",
+                    "content": system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt,
+                }
+            ],
+            model=self.model
         )
-        return response.choices[0].message.content
 
+        return response.choices[0].message.content
 # --- Analysis Data Structures ---
 
 @dataclass
@@ -399,20 +434,19 @@ def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
         return GeminiBackend(key, model or "gemini-2.5-flash")
         
     elif provider == "openai":
-        key = os.environ.get("OPENAI_API_KEY")
+        key = os.environ.get("GITHUB_TOKEN")
         if not key:
-            raise ValueError("OPENAI_API_KEY not set")
-        return OpenAIBackend(key, model or "gpt-4o")
+            raise ValueError("GITHUB_TOKEN not set")
+        return OpenAIBackend(key, model or "openai/gpt-4o-mini")
         
     elif provider == "deepseek":
-        key = os.environ.get("DEEPSEEK_API_KEY")
+        key = os.environ.get("GITHUB_TOKEN")
         if not key:
-            raise ValueError("DEEPSEEK_API_KEY not set")
+            raise ValueError("GITHUB_TOKEN not set")
         # DeepSeek is API-compatible with OpenAI
-        return OpenAIBackend(
+        return DeepseekBackend(
             key, 
-            model or "deepseek-coder", 
-            base_url="https://api.deepseek.com"
+            model or "deepseek/DeepSeek-V3-0324", 
         )
         
     raise ValueError(f"Unknown provider: {provider}")
