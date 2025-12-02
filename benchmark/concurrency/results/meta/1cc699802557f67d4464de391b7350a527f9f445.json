@@ -1,0 +1,38 @@
+{
+    "task": "1cc699802557f67d4464de391b7350a527f9f445.txt",
+    "provider": "meta",
+    "model": "meta/Llama-4-Scout-17B-16E-Instruct",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n    \"time\"\n)\n\n// NodeManager manages outgoing connections to peer nodes in a distributed system.\ntype NodeManager struct {\n    mu       sync.Mutex\n    closed   bool\n    connCount int\n    wg       sync.WaitGroup\n}\n\n// NewNodeManager returns a new NodeManager instance.\nfunc NewNodeManager() *NodeManager {\n    return &NodeManager{connCount: 10} // Initial connection count\n}\n\n// bootstrap periodically discovers and connects to seed nodes.\nfunc (nm *NodeManager) bootstrap() {\n    ticker := time.NewTicker(5 * time.Second)\n    defer ticker.Stop()\n    for {\n        select {\n        case <-ticker.C:\n            nm.mu.Lock()\n            if nm.closed {\n                nm.mu.Unlock()\n                return\n            }\n            nm.mu.Unlock()\n            fmt.Println(\"Bootstrap: Discovering and connecting to seed nodes...\")\n        }\n    }\n}\n\n// manage maintains connections to peer nodes.\nfunc (nm *NodeManager) manage() {\n    ticker := time.NewTicker(3 * time.Second)\n    defer ticker.Stop()\n    for {\n        select {\n        case <-ticker.C:\n            nm.mu.Lock()\n            if nm.closed && nm.connCount <= 0 {\n                nm.mu.Unlock()\n                return\n            }\n            if nm.connCount > 0 {\n                nm.connCount--\n                fmt.Printf(\"Manage: Connection count = %d\\n\", nm.connCount)\n            }\n            nm.mu.Unlock()\n        }\n    }\n}\n\n// Start starts the background goroutines.\nfunc (nm *NodeManager) Start() {\n    nm.wg.Add(2)\n    go func() {\n        defer nm.wg.Done()\n        nm.bootstrap()\n    }()\n    go func() {\n        defer nm.wg.Done()\n        nm.manage()\n    }()\n}\n\n// Shutdown marks the manager as closed and waits for both goroutines to complete.\nfunc (nm *NodeManager) Shutdown() {\n    nm.mu.Lock()\n    nm.closed = true\n    nm.mu.Unlock()\n    nm.wg.Wait()\n}\n\nfunc main() {\n    nm := NewNodeManager()\n    nm.Start()\n    time.Sleep(10 * time.Second)\n    nm.Shutdown()\n    fmt.Println(\"Shutdown complete\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:26:5: should use for range instead of for { select {} } (S1000)\nmain.go:44:5: should use for range instead of for { select {} } (S1000)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n    \"time\"\n)\n\n// NodeManager manages outgoing connections to peer nodes in a distributed system.\ntype NodeManager struct {\n    mu       sync.Mutex\n    closed   bool\n    connCount int\n    wg       sync.WaitGroup\n}\n\n// NewNodeManager returns a new NodeManager instance.\nfunc NewNodeManager() *NodeManager {\n    return &NodeManager{connCount: 10} // Initial connection count\n}\n\n// bootstrap periodically discovers and connects to seed nodes.\nfunc (nm *NodeManager) bootstrap() {\n    ticker := time.NewTicker(5 * time.Second)\n    defer func() {\n        ticker.Stop()\n        nm.wg.Done()\n    }()\n    for {\n        select {\n        case <-ticker.C:\n            nm.mu.Lock()\n            if nm.closed {\n                nm.mu.Unlock()\n                return\n            }\n            nm.mu.Unlock()\n            fmt.Println(\"Bootstrap: Discovering and connecting to seed nodes...\")\n        }\n    }\n}\n\n// manage maintains connections to peer nodes.\nfunc (nm *NodeManager) manage() {\n    ticker := time.NewTicker(3 * time.Second)\n    defer func() {\n        ticker.Stop()\n        nm.wg.Done()\n    }()\n    for {\n        <-ticker.C\n        nm.mu.Lock()\n        if nm.closed && nm.connCount <= 0 {\n            nm.mu.Unlock()\n            return\n        }\n        if nm.connCount > 0 {\n            nm.connCount--\n            fmt.Printf(\"Manage: Connection count = %d\\n\", nm.connCount)\n        }\n        nm.mu.Unlock()\n    }\n}\n\n// Start starts the background goroutines.\nfunc (nm *NodeManager) Start() {\n    nm.wg.Add(2)\n    go nm.bootstrap()\n    go nm.manage()\n}\n\n// Shutdown marks the manager as closed and waits for both goroutines to complete.\nfunc (nm *NodeManager) Shutdown() {\n    nm.mu.Lock()\n    nm.closed = true\n    nm.mu.Unlock()\n    nm.wg.Wait()\n}\n\nfunc main() {\n    nm := NewNodeManager()\n    nm.Start()\n    time.Sleep(10 * time.Second)\n    nm.Shutdown()\n    fmt.Println(\"Shutdown complete\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:29:5: should use for range instead of for { select {} } (S1000)"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n    \"time\"\n)\n\n// NodeManager manages outgoing connections to peer nodes in a distributed system.\ntype NodeManager struct {\n    mu       sync.Mutex\n    closed   bool\n    connCount int\n    wg       sync.WaitGroup\n}\n\n// NewNodeManager returns a new NodeManager instance.\nfunc NewNodeManager() *NodeManager {\n    return &NodeManager{connCount: 10} // Initial connection count\n}\n\n// bootstrap periodically discovers and connects to seed nodes.\nfunc (nm *NodeManager) bootstrap() {\n    ticker := time.NewTicker(5 * time.Second)\n    defer func() {\n        ticker.Stop()\n        nm.wg.Done()\n    }()\n    for {\n        select {\n        case <-ticker.C:\n            nm.mu.Lock()\n            if nm.closed {\n                nm.mu.Unlock()\n                return\n            }\n            nm.mu.Unlock()\n            fmt.Println(\"Bootstrap: Discovering and connecting to seed nodes...\")\n        }\n    }\n}\n\n// manage maintains connections to peer nodes.\nfunc (nm *NodeManager) manage() {\n    ticker := time.NewTicker(3 * time.Second)\n    defer func() {\n        ticker.Stop()\n        nm.wg.Done()\n    }()\n    for {\n        <-ticker.C\n        nm.mu.Lock()\n        if nm.closed && nm.connCount <= 0 {\n            nm.mu.Unlock()\n            return\n        }\n        if nm.connCount > 0 {\n            nm.connCount--\n            fmt.Printf(\"Manage: Connection count = %d\\n\", nm.connCount)\n        }\n        nm.mu.Unlock()\n    }\n}\n\n// Start starts the background goroutines.\nfunc (nm *NodeManager) Start() {\n    nm.wg.Add(2)\n    go nm.bootstrap()\n    go nm.manage()\n}\n\n// Shutdown marks the manager as closed and waits for both goroutines to complete.\nfunc (nm *NodeManager) Shutdown() {\n    nm.mu.Lock()\n    nm.closed = true\n    nm.mu.Unlock()\n    nm.wg.Wait()\n}\n\nfunc main() {\n    nm := NewNodeManager()\n    nm.Start()\n    time.Sleep(10 * time.Second)\n    nm.Shutdown()\n    fmt.Println(\"Shutdown complete\")\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "staticcheck",
+                    "error": "main.go:29:5: should use for range instead of for { select {} } (S1000)"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

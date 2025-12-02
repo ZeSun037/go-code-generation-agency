@@ -1,0 +1,13 @@
+{
+    "task": "262ed2bd6d1c8cbaa14b43c3815d2e01e4f65ca8.txt",
+    "provider": "meta",
+    "model": "meta/Llama-4-Scout-17B-16E-Instruct",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\n// Stream represents a bidirectional communication channel.\ntype Stream struct {\n    send chan string\n    recv chan string\n}\n\n// NewStream creates a new bidirectional stream.\nfunc NewStream() *Stream {\n    return &Stream{\n        send: make(chan string),\n        recv: make(chan string),\n    }\n}\n\n// Send sends a message through the stream.\nfunc (s *Stream) Send(msg string) {\n    s.send <- msg\n}\n\n// Receive receives a message from the stream.\nfunc (s *Stream) Receive() string {\n    return <-s.recv\n}\n\n// Close closes the stream.\nfunc (s *Stream) Close() {\n    close(s.send)\n    close(s.recv)\n}\n\n// Server represents a server that communicates with a client through a stream.\ntype Server struct {\n    stream *Stream\n}\n\n// NewServer creates a new server.\nfunc NewServer(stream *Stream) *Server {\n    return &Server{stream: stream}\n}\n\n// Run starts the server and processes incoming messages.\nfunc (s *Server) Run() {\n    for msg := range s.stream.send {\n        response := fmt.Sprintf(\"echo: %s\", msg)\n        s.stream.recv <- response\n    }\n}\n\n// Client represents a client that communicates with a server through a stream.\ntype Client struct {\n    stream *Stream\n    wg     sync.WaitGroup\n}\n\n// NewClient creates a new client.\nfunc NewClient(stream *Stream) *Client {\n    return &Client{stream: stream}\n}\n\n// Run starts the client, sends messages, and receives responses.\nfunc (c *Client) Run(numMsgs int) {\n    c.wg.Add(2)\n    go func() {\n        defer c.wg.Done()\n        for i := 1; i <= numMsgs; i++ {\n            msg := fmt.Sprintf(\"message-%d\", i)\n            fmt.Printf(\"Client sending: %s\\n\", msg)\n            c.stream.Send(msg)\n        }\n        c.stream.Close()\n    }()\n\n    go func() {\n        defer c.wg.Done()\n        for msg := range c.stream.recv {\n            fmt.Printf(\"Client received: %s\\n\", msg)\n        }\n    }()\n    c.wg.Wait()\n}\n\nfunc main() {\n    stream := NewStream()\n\n    server := NewServer(stream)\n    go server.Run()\n\n    client := NewClient(stream)\n    client.Run(10)\n\n    fmt.Println(\"All messages have been successfully exchanged.\")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

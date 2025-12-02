@@ -6,7 +6,7 @@ Supports multiple LLMs (Claude, Gemini, OpenAI, DeepSeek) and extended static an
 Batch mode with --taskfolder and --outputfolder.
 For each .txt task file in taskfolder, run the pipeline and save a corresponding .json result file in outputfolder.
 example usage: 
-python3 src/go_generator_multi_model.py --taskfolder benchmark/concurrency/realworld_bug_scene/ --outputfolder benchmark/concurrency/results/ --provider anthropic --batchlimit 3
+python3 src/go_generator_multi_model.py --taskfolder benchmark/concurrency/realworld_bug_scene/ --outputfolder benchmark/concurrency/results/ --provider deepseek --batchlimit 3
 
 Prerequisites (Python):
     pip install anthropic google-generativeai openai
@@ -70,7 +70,7 @@ class GeminiBackend(LLMBackend):
         response = self.model.generate_content(combined_prompt)
         return response.text
 
-class DeepseekBackend(LLMBackend):
+class AzureBackend(LLMBackend):
     def __init__(self, key:str, model: str):
         from azure.ai.inference import ChatCompletionsClient
         from azure.core.credentials import AzureKeyCredential
@@ -90,6 +90,7 @@ class DeepseekBackend(LLMBackend):
                 SystemMessage(system_prompt),
                 UserMessage(user_prompt),
             ],
+            max_tokens=4000,
             model=self.model
         )
 
@@ -443,10 +444,18 @@ def get_backend(provider: str, model: Optional[str]) -> LLMBackend:
         key = os.environ.get("GITHUB_TOKEN")
         if not key:
             raise ValueError("GITHUB_TOKEN not set")
-        # DeepSeek is API-compatible with OpenAI
-        return DeepseekBackend(
+        return AzureBackend(
             key, 
-            model or "deepseek/DeepSeek-V3-0324", 
+            model or "deepseek/DeepSeek-R1-0528", 
+        )
+    
+    elif provider == "meta":
+        key = os.environ.get("GITHUB_TOKEN")
+        if not key:
+            raise ValueError("GITHUB_TOKEN not set")
+        return AzureBackend(
+            key, 
+            model or "meta/Llama-4-Scout-17B-16E-Instruct", 
         )
         
     raise ValueError(f"Unknown provider: {provider}")
@@ -456,7 +465,7 @@ def main():
     parser = argparse.ArgumentParser(description="Go Code Synthesis Pipeline")
     parser.add_argument("task", nargs="?", help="The task description (single-task mode)")
     parser.add_argument("-f", "--file", help="Read task from file (single-task mode)")
-    parser.add_argument("--provider", choices=["anthropic", "gemini", "openai", "deepseek"],
+    parser.add_argument("--provider", choices=["anthropic", "gemini", "openai", "deepseek", "meta"],
                         default="anthropic", help="LLM Provider")
     parser.add_argument("--model", help="Specific model name (optional)")
     parser.add_argument("--taskfolder", help="Folder containing .txt task files (batch mode)")
