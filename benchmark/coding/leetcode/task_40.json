@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/39",
+  "prompt": "import (\n\t\"math\"\n)\n\n// PrimeFib returns n-th number that is a Fibonacci number and it's also prime.\n// >>> PrimeFib(1)\n// 2\n// >>> PrimeFib(2)\n// 3\n// >>> PrimeFib(3)\n// 5\n// >>> PrimeFib(4)\n// 13\n// >>> PrimeFib(5)\n// 89\nfunc PrimeFib(n int) int {\n",
+  "import": "import (\n\t\"math\"\n)",
+  "docstring": "// PrimeFib returns n-th number that is a Fibonacci number and it's also prime.\n// >>> PrimeFib(1)\n// 2\n// >>> PrimeFib(2)\n// 3\n// >>> PrimeFib(3)\n// 5\n// >>> PrimeFib(4)\n// 13\n// >>> PrimeFib(5)\n// 89\n",
+  "declaration": "\nfunc PrimeFib(n int) int {\n",
+  "canonical_solution": "    isPrime := func(p int) bool {\n\t\tif p < 2 {\n\t\t\treturn false\n\t\t}\n\t\tfor i := 2; i < int(math.Min(math.Sqrt(float64(p))+1, float64(p-1))); i++ {\n\t\t\tif p%i == 0 {\n\t\t\t\treturn false\n\t\t\t}\n\t\t}\n\t\treturn true\n\t}\n\tf := []int{0, 1}\n\tfor {\n\t\tf = append(f, f[len(f)-1]+f[len(f)-2])\n\t\tif isPrime(f[len(f)-1]) {\n\t\t\tn -= 1\n\t\t}\n\t\tif n == 0 {\n\t\t\treturn f[len(f)-1]\n\t\t}\n\t}\n}\n\n",
+  "test": "func TestPrimeFib(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, PrimeFib(1))\n    assert.Equal(3, PrimeFib(2))\n    assert.Equal(5, PrimeFib(3))\n    assert.Equal(13, PrimeFib(4))\n    assert.Equal(89, PrimeFib(5))\n    assert.Equal(233, PrimeFib(6))\n    assert.Equal(1597, PrimeFib(7))\n    assert.Equal(28657, PrimeFib(8))\n    assert.Equal(514229, PrimeFib(9))\n    assert.Equal(433494437, PrimeFib(10))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestPrimeFib(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, PrimeFib(1))\n    assert.Equal(3, PrimeFib(2))\n    assert.Equal(5, PrimeFib(3))\n    assert.Equal(13, PrimeFib(4))\n    assert.Equal(89, PrimeFib(5))\n}\n"
+}

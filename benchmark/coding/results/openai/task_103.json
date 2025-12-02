@@ -1,0 +1,13 @@
+{
+    "task": "task_103.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc ChooseNum(x, y int) int {\n    if x > y {\n        return -1\n    }\n\n    // Adjust x to be the closest even number less than or equal to y\n    if y%2 != 0 {\n        y--\n    }\n\n    // If x is odd, adjust it to the next even number\n    if x%2 != 0 {\n        x++\n    }\n\n    if x > y {\n        return -1\n    }\n\n    return y\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

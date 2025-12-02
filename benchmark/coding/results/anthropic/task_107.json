@@ -1,0 +1,13 @@
+{
+    "task": "task_107.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc F(n int) []int {\n\tresult := make([]int, n)\n\t\n\tfor i := 1; i <= n; i++ {\n\t\tif i%2 == 0 {\n\t\t\t// i is even: calculate factorial\n\t\t\tfact := 1\n\t\t\tfor j := 1; j <= i; j++ {\n\t\t\t\tfact *= j\n\t\t\t}\n\t\t\tresult[i-1] = fact\n\t\t} else {\n\t\t\t// i is odd: calculate sum from 1 to i\n\t\t\tsum := 0\n\t\t\tfor j := 1; j <= i; j++ {\n\t\t\t\tsum += j\n\t\t\t}\n\t\t\tresult[i-1] = sum\n\t\t}\n\t}\n\t\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

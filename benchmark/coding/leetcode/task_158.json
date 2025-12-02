@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/157",
+  "prompt": "\n// Given the lengths of the three sides of a triangle. Return true if the three\n// sides form a right-angled triangle, false otherwise.\n// A right-angled triangle is a triangle in which one angle is right angle or\n// 90 degree.\n// Example:\n// RightAngleTriangle(3, 4, 5) == true\n// RightAngleTriangle(1, 2, 3) == false\nfunc RightAngleTriangle(a, b, c int) bool {\n",
+  "import": "",
+  "docstring": "// Given the lengths of the three sides of a triangle. Return true if the three\n// sides form a right-angled triangle, false otherwise.\n// A right-angled triangle is a triangle in which one angle is right angle or\n// 90 degree.\n// Example:\n// RightAngleTriangle(3, 4, 5) == true\n// RightAngleTriangle(1, 2, 3) == false\n",
+  "declaration": "\nfunc RightAngleTriangle(a, b, c int) bool {\n",
+  "canonical_solution": "    return a*a == b*b + c*c || b*b == a*a + c*c || c*c == a*a + b*b\n}\n\n",
+  "test": "func TestRightAngleTriangle(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, RightAngleTriangle(3, 4, 5))\n    assert.Equal(false, RightAngleTriangle(1, 2, 3))\n    assert.Equal(true, RightAngleTriangle(10, 6, 8))\n    assert.Equal(false, RightAngleTriangle(2, 2, 2))\n    assert.Equal(true, RightAngleTriangle(7, 24, 25))\n    assert.Equal(false, RightAngleTriangle(10, 5, 7))\n    assert.Equal(true, RightAngleTriangle(5, 12, 13))\n    assert.Equal(true, RightAngleTriangle(15, 8, 17))\n    assert.Equal(true, RightAngleTriangle(48, 55, 73))\n    assert.Equal(false, RightAngleTriangle(1, 1, 1))\n    assert.Equal(false, RightAngleTriangle(2, 2, 10))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestRightAngleTriangle(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, RightAngleTriangle(3, 4, 5))\n    assert.Equal(false, RightAngleTriangle(1, 2, 3))\n}\n"
+}

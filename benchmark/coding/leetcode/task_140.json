@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/139",
+  "prompt": "\n// The Brazilian factorial is defined as:\n// brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n// where n > 0\n// \n// For example:\n// >>> SpecialFactorial(4)\n// 288\n// \n// The function will receive an integer as input and should return the special\n// factorial of this integer.\nfunc SpecialFactorial(n int) int {\n",
+  "import": "",
+  "docstring": "// The Brazilian factorial is defined as:\n// brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n// where n > 0\n// \n// For example:\n// >>> SpecialFactorial(4)\n// 288\n// \n// The function will receive an integer as input and should return the special\n// factorial of this integer.\n",
+  "declaration": "\nfunc SpecialFactorial(n int) int {\n",
+  "canonical_solution": "    fact_i := 1\n    special_fact := 1\n    for i := 1; i <= n; i++ {\n        fact_i *= i\n        special_fact *= fact_i\n    }\n    return special_fact\n}\n\n",
+  "test": "func TestSpecialFactorial(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(288, SpecialFactorial(4))\n    assert.Equal(34560, SpecialFactorial(5))\n    assert.Equal(125411328000, SpecialFactorial(7))\n    assert.Equal(1, SpecialFactorial(1))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestSpecialFactorial(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(288, SpecialFactorial(4))\n}\n"
+}

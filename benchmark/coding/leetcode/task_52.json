@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/51",
+  "prompt": "import (\n    \"regexp\"\n)\n\n// RemoveVowels is a function that takes string and returns string without vowels.\n// >>> RemoveVowels('')\n// ''\n// >>> RemoveVowels(\"abcdef\\nghijklm\")\n// 'bcdf\\nghjklm'\n// >>> RemoveVowels('abcdef')\n// 'bcdf'\n// >>> RemoveVowels('aaaaa')\n// ''\n// >>> RemoveVowels('aaBAA')\n// 'B'\n// >>> RemoveVowels('zbcd')\n// 'zbcd'\nfunc RemoveVowels(text string) string {\n",
+  "import": "import (\n    \"regexp\"\n)",
+  "docstring": "// RemoveVowels is a function that takes string and returns string without vowels.\n// >>> RemoveVowels('')\n// ''\n// >>> RemoveVowels(\"abcdef\\nghijklm\")\n// 'bcdf\\nghjklm'\n// >>> RemoveVowels('abcdef')\n// 'bcdf'\n// >>> RemoveVowels('aaaaa')\n// ''\n// >>> RemoveVowels('aaBAA')\n// 'B'\n// >>> RemoveVowels('zbcd')\n// 'zbcd'\n",
+  "declaration": "\nfunc RemoveVowels(text string) string {\n    ",
+  "canonical_solution": "    var re = regexp.MustCompile(\"[aeiouAEIOU]\")\n\ttext = re.ReplaceAllString(text, \"\")\n\treturn text\n}\n\n",
+  "test": "func TestRemoveVowels(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"\", RemoveVowels(\"\"))\n    assert.Equal(\"bcdf\\nghjklm\", RemoveVowels(\"abcdef\\nghijklm\"))\n    assert.Equal(\"fdcb\", RemoveVowels(\"fedcba\"))\n    assert.Equal(\"\", RemoveVowels(\"eeeee\"))\n    assert.Equal(\"cB\", RemoveVowels(\"acBAA\"))\n    assert.Equal(\"cB\", RemoveVowels(\"EcBOO\"))\n    assert.Equal(\"ybcd\", RemoveVowels(\"ybcd\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestRemoveVowels(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"\", RemoveVowels(\"\"))\n    assert.Equal(\"bcdf\\nghjklm\", RemoveVowels(\"abcdef\\nghijklm\"))\n    assert.Equal(\"bcdf\", RemoveVowels(\"abcdef\"))\n    assert.Equal(\"\", RemoveVowels(\"aaaaa\"))\n    assert.Equal(\"B\", RemoveVowels(\"aaBAA\"))\n    assert.Equal(\"zbcd\", RemoveVowels(\"zbcd\"))\n}\n"
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_12.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// Input are two strings a and b consisting only of 1s and 0s.\n// Perform binary XOR on these inputs and return result also as a string.\n// >>> StringXor(\"010\", \"110\")\n// \"100\"\nfunc StringXor(a string, b string) string {\n\tresult := \"\"\n\tfor i := 0; i < len(a); i++ {\n\t\t// XOR operation: 0 XOR 0 = 0, 0 XOR 1 = 1, 1 XOR 0 = 1, 1 XOR 1 = 0\n\t\tif a[i] == b[i] {\n\t\t\tresult += \"0\"\n\t\t} else {\n\t\t\tresult += \"1\"\n\t\t}\n\t}\n\treturn result\n}\n\nfunc main() {\n\tfmt.Println(StringXor(\"010\", \"110\"))\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

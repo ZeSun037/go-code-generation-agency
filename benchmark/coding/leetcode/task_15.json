@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/14",
+  "prompt": "\n// Return list of all prefixes from shortest to longest of the input string\n// >>> AllPrefixes('abc')\n// ['a', 'ab', 'abc']\nfunc AllPrefixes(str string) []string{\n",
+  "import": "",
+  "docstring": "// Return list of all prefixes from shortest to longest of the input string\n// >>> AllPrefixes('abc')\n// ['a', 'ab', 'abc']\n",
+  "declaration": "\nfunc AllPrefixes(str string) []string{\n",
+  "canonical_solution": "    prefixes := make([]string, 0, len(str))\n\tfor i := 0; i < len(str); i++ {\n\t\tprefixes = append(prefixes, str[:i+1])\n\t}\n\treturn prefixes\n}\n\n",
+  "test": "func TestAllPrefixes(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{}, AllPrefixes(\"\"))\n    assert.Equal([]string{\"a\", \"as\", \"asd\", \"asdf\", \"asdfg\", \"asdfgh\"}, AllPrefixes(\"asdfgh\"))\n    assert.Equal([]string{\"W\", \"WW\", \"WWW\"}, AllPrefixes(\"WWW\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestAllPrefixes(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{\"a\", \"ab\", \"abc\"}, AllPrefixes(\"abc\"))\n}\n"
+}

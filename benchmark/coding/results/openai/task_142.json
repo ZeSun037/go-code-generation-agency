@@ -1,0 +1,13 @@
+{
+    "task": "task_142.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n    \"unicode\"\n)\n\nfunc FileNameCheck(file_name string) string {\n    // Split the filename into name and extension\n    parts := strings.Split(file_name, \".\")\n    \n    // There should be exactly one dot\n    if len(parts) != 2 {\n        return \"No\"\n    }\n    \n    name, ext := parts[0], parts[1]\n    \n    // The name should not be empty and should start with a letter\n    if len(name) == 0 || !unicode.IsLetter(rune(name[0])) {\n        return \"No\"\n    }\n    \n    // Count digits in the name\n    digitCount := 0\n    for _, ch := range name {\n        if unicode.IsDigit(ch) {\n            digitCount++\n        }\n    }\n    \n    // There should not be more than three digits\n    if digitCount > 3 {\n        return \"No\"\n    }\n    \n    // Check extension for allowed values\n    allowedExtensions := map[string]bool{\n        \"txt\": true,\n        \"exe\": true,\n        \"dll\": true,\n    }\n    \n    if !allowedExtensions[strings.ToLower(ext)] {\n        return \"No\"\n    }\n    \n    // Valid filename\n    return \"Yes\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

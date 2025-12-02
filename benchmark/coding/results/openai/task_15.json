@@ -1,0 +1,13 @@
+{
+    "task": "task_15.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc AllPrefixes(str string) []string {\n    var prefixes []string\n    for i := 1; i <= len(str); i++ {\n        prefixes = append(prefixes, str[:i])\n    }\n    return prefixes\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

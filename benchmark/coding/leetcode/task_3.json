@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/2",
+  "prompt": "import (\n    \"math\"\n)\n\n// Given a positive floating point number, it can be decomposed into\n// and integer part (largest integer smaller than given number) and decimals\n// (leftover part always smaller than 1).\n// \n// Return the decimal part of the number.\n// >>> TruncateNumber(3.5)\n// 0.5\nfunc TruncateNumber(number float64) float64 {\n",
+  "import": "import (\n    \"math\"\n)\n",
+  "docstring": "// Given a positive floating point number, it can be decomposed into\n// and integer part (largest integer smaller than given number) and decimals\n// (leftover part always smaller than 1).\n// \n// Return the decimal part of the number.\n// >>> TruncateNumber(3.5)\n// 0.5\n",
+  "declaration": "\nfunc TruncateNumber(number float64) float64 {\n",
+  "canonical_solution": "    return math.Mod(number,1)\n}\n\n",
+  "test": "func TestTruncateNumber(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0.5, TruncateNumber(3.5))\n    assert.Equal(true, math.Abs(TruncateNumber(1.33)-0.33) < 1e-6)\n    assert.Equal(true, math.Abs(TruncateNumber(123.456)-0.456) < 1e-6)\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestTruncateNumber(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0.5, TruncateNumber(3.5))\n}\n"
+}

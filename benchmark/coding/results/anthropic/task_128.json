@@ -1,0 +1,38 @@
+{
+    "task": "task_128.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\t// Find the intersection interval\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\t\n\t// Check if there's an intersection\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\t\n\t// Calculate the length of the intersection\n\tlength := end - start + 1\n\t\n\t// Check if the length is a prime number\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc isPrime(n int) bool {\n\t// Prime numbers are natural numbers greater than 1\n\tif n <= 1 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\t\n\t// Check odd divisors up to sqrt(n)\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIntersection (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_n2knju66/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: \"NO\"\n        \t            \tactual  : \"YES\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-NO\n        \t            \t+YES\n        \tTest:       \tTestIntersection\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\t// Find the intersection interval\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\t\n\t// Check if there's an intersection\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\t\n\t// Calculate the length of the intersection\n\tlength := end - start + 1\n\t\n\t// Check if the length is a prime number\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc isPrime(n int) bool {\n\t// Prime numbers are natural numbers greater than 1\n\tif n <= 1 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\t\n\t// Check odd divisors up to sqrt(n)\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIntersection (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_n2knju66/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: \"NO\"\n        \t            \tactual  : \"YES\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-NO\n        \t            \t+YES\n        \tTest:       \tTestIntersection\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\t// Find the intersection interval\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\t\n\t// Check if there's an intersection\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\t\n\t// Calculate the length of the intersection\n\tlength := end - start + 1\n\t\n\t// Check if the length is a prime number\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc isPrime(n int) bool {\n\t// Prime numbers are natural numbers greater than 1\n\tif n <= 1 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\t\n\t// Check odd divisors up to sqrt(n)\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIntersection (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_n2knju66/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: \"NO\"\n        \t            \tactual  : \"YES\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-NO\n        \t            \t+YES\n        \tTest:       \tTestIntersection\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

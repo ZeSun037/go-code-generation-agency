@@ -1,0 +1,13 @@
+{
+    "task": "task_147.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strconv\"\n)\n\nfunc Specialfilter(nums []int) int {\n    count := 0\n    for _, num := range nums {\n        if num > 10 {\n            strNum := strconv.Itoa(num)\n            firstDigit := strNum[0]\n            lastDigit := strNum[len(strNum)-1]\n\n            if isOdd(firstDigit) && isOdd(lastDigit) {\n                count++\n            }\n        }\n    }\n    return count\n}\n\nfunc isOdd(digit byte) bool {\n    return digit == '1' || digit == '3' || digit == '5' || digit == '7' || digit == '9'\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

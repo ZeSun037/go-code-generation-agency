@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/114",
+  "prompt": "import (\n    \"math\"\n)\n\n// Given an array of integers nums, find the minimum sum of any non-empty sub-array\n// of nums.\n// Example\n// Minsubarraysum([2, 3, 4, 1, 2, 4]) == 1\n// Minsubarraysum([-1, -2, -3]) == -6\nfunc Minsubarraysum(nums []int) int {\n",
+  "import": "import (\n    \"math\"\n)\n",
+  "docstring": "// Given an array of integers nums, find the minimum sum of any non-empty sub-array\n// of nums.\n// Example\n// Minsubarraysum([2, 3, 4, 1, 2, 4]) == 1\n// Minsubarraysum([-1, -2, -3]) == -6\n",
+  "declaration": "\nfunc Minsubarraysum(nums []int) int {\n",
+  "canonical_solution": "    max_sum := 0\n    s := 0\n    for _, num := range nums {\n        s += -num\n        if s < 0 {\n            s = 0\n        }\n        if s > max_sum {\n            max_sum = s\n        }\n    }\n    if max_sum == 0 {\n        max_sum = math.MinInt\n        for _, i := range nums {\n            if -i > max_sum {\n                max_sum = -i\n            }\n        }\n    }\n    return -max_sum\n}\n\n",
+  "test": "func TestMinSubArraySum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, Minsubarraysum([]int{2, 3, 4, 1, 2, 4}))\n    assert.Equal(-6, Minsubarraysum([]int{-1, -2, -3}))\n    assert.Equal(-14, Minsubarraysum([]int{-1, -2, -3, 2, -10}))\n    assert.Equal(-9999999999999999, Minsubarraysum([]int{-9999999999999999}))\n    assert.Equal(0, Minsubarraysum([]int{0, 10, 20, 1000000}))\n    assert.Equal(-6, Minsubarraysum([]int{-1, -2, -3, 10, -5}))\n    assert.Equal(-6, Minsubarraysum([]int{100, -1, -2, -3, 10, -5}))\n    assert.Equal(3, Minsubarraysum([]int{10, 11, 13, 8, 3, 4}))\n    assert.Equal(-33, Minsubarraysum([]int{100, -33, 32, -1, 0, -2}))\n    assert.Equal(-10, Minsubarraysum([]int{-10}))\n    assert.Equal(7, Minsubarraysum([]int{7}))\n    assert.Equal(-1, Minsubarraysum([]int{1, -1}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestMinSubArraySum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, Minsubarraysum([]int{2, 3, 4, 1, 2, 4}))\n    assert.Equal(-6, Minsubarraysum([]int{-1, -2, -3}))\n}\n"
+}

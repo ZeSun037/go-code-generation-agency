@@ -1,0 +1,13 @@
+{
+    "task": "task_101.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc MakeAPile(n int) []int {\n    stones := make([]int, n)\n    for i := 0; i < n; i++ {\n        if i == 0 {\n            stones[i] = n\n        } else {\n            if stones[i-1]%2 == 0 {\n                stones[i] = stones[i-1] + 1 // next odd number\n            } else {\n                stones[i] = stones[i-1] + 2 // next even number\n            }\n        }\n    }\n    return stones\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

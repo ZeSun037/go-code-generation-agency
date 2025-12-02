@@ -1,0 +1,38 @@
+{
+    "task": "task_109.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n    \"strconv\"\n)\n\nfunc CountNums(arr []int) int {\n    count := 0\n    for _, num := range arr {\n        if sumOfDigits(num) > 0 {\n            count++\n        }\n    }\n    return count\n}\n\nfunc sumOfDigits(num int) int {\n    strNum := strconv.Itoa(num)\n    sum := 0\n    for _, ch := range strNum {\n        digit, _ := strconv.Atoi(string(ch))\n        if ch == '-' {\n            sum -= digit\n        } else {\n            sum += digit\n        }\n    }\n    return sum\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:4:5: \"math\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"strconv\"\n)\n\n// Write a function CountNums which takes an array of integers and returns\n// the number of elements which has a sum of digits > 0.\n// If a number is negative, then its first signed digit will be negative:\n// e.g. -123 has signed digits -1, 2, and 3.\n// >>> CountNums([]) == 0\n// >>> CountNums([-1, 11, -11]) == 1\n// >>> CountNums([1, 1, 2]) == 3\nfunc CountNums(arr []int) int {\n    count := 0\n    for _, num := range arr {\n        if sumOfDigits(num) > 0 {\n            count++\n        }\n    }\n    return count\n}\n\nfunc sumOfDigits(num int) int {\n    strNum := strconv.Itoa(num)\n    sum := 0\n    for _, ch := range strNum {\n        digit, _ := strconv.Atoi(string(ch))\n        if ch == '-' {\n            sum -= digit\n        } else {\n            sum += digit\n        }\n    }\n    return sum\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestCountNums (0.00s)\n    main_test.go:12: \n        \tError Trace:\t/tmp/go_synthesis_u38iirmf/main_test.go:12\n        \tError:      \tNot equal: \n        \t            \texpected: 1\n        \t            \tactual  : 3\n        \tTest:       \tTestCountNums\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"strconv\"\n)\n\n// Write a function CountNums which takes an array of integers and returns\n// the number of elements which has a sum of digits > 0.\n// If a number is negative, then its first signed digit will be negative:\n// e.g. -123 has signed digits -1, 2, and 3.\n// >>> CountNums([]) == 0\n// >>> CountNums([-1, 11, -11]) == 1\n// >>> CountNums([1, 1, 2]) == 3\nfunc CountNums(arr []int) int {\n    count := 0\n    for _, num := range arr {\n        if sumOfDigits(num) > 0 {\n            count++\n        }\n    }\n    return count\n}\n\nfunc sumOfDigits(num int) int {\n    strNum := strconv.Itoa(num)\n    sum := 0\n    for i, ch := range strNum {\n        digit, _ := strconv.Atoi(string(ch))\n        if ch == '-' && i == 0 {\n            sum -= digit\n        } else {\n            sum += digit\n        }\n    }\n    return sum\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestCountNums (0.00s)\n    main_test.go:12: \n        \tError Trace:\t/tmp/go_synthesis_u38iirmf/main_test.go:12\n        \tError:      \tNot equal: \n        \t            \texpected: 1\n        \t            \tactual  : 3\n        \tTest:       \tTestCountNums\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

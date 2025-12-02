@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/47",
+  "prompt": "import (\n\t\"sort\"\n)\n\n// Return Median of elements in the list l.\n// >>> Median([3, 1, 2, 4, 5])\n// 3.0\n// >>> Median([-10, 4, 6, 1000, 10, 20])\n// 15.0\nfunc Median(l []int) float64 {\n",
+  "import": "import (\n\t\"sort\"\n)",
+  "docstring": "// Return Median of elements in the list l.\n// >>> Median([3, 1, 2, 4, 5])\n// 3\n// >>> Median([-10, 4, 6, 1000, 10, 20])\n// 15.0\n",
+  "declaration": "\nfunc Median(l []int) float64 {\n",
+  "canonical_solution": "    sort.Ints(l)\n\tif len(l)%2==1{\n\t\treturn float64(l[len(l)/2])\n\t}else{\n\t\treturn float64(l[len(l)/2-1]+l[len(l)/2])/2.0\n\t}\n}\n\n",
+  "test": "func TestMedian(t *testing.T) {\n\tassert := assert.New(t)\n\tassert.Equal(3.0, Median([]int{3, 1, 2, 4, 5}))\n\tassert.Equal(8.0, Median([]int{-10, 4, 6, 1000, 10, 20}))\n\tassert.Equal(5.0, Median([]int{5}))\n\tassert.Equal(5.5, Median([]int{6, 5}))\n\tassert.Equal(7.0, Median([]int{8, 1, 3, 9, 9, 2, 7}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestMedian(t *testing.T) {\n\tassert := assert.New(t)\n\tassert.Equal(3.0, Median([]int{3, 1, 2, 4, 5}))\n\tassert.Equal(8.0, Median([]int{-10, 4, 6, 1000, 10, 20}))\n}\n"
+}

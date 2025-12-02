@@ -1,0 +1,38 @@
+{
+    "task": "task_133.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc IsNested(s string) bool {\n    balance := 0\n    nested := false\n\n    for _, char := range s {\n        if char == '[' {\n            balance++\n            if balance > 1 {\n                nested = true\n            }\n        } else if char == ']' {\n            balance--\n            if balance < 0 {\n                return false\n            }\n        }\n    }\n\n    return nested && balance == 0\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIsNested (0.00s)\n    main_test.go:14: \n        \tError Trace:\t/tmp/go_synthesis_zlfd55hh/main_test.go:14\n        \tError:      \tNot equal: \n        \t            \texpected: true\n        \t            \tactual  : false\n        \tTest:       \tTestIsNested\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc IsNested(s string) bool {\n    balance := 0\n    nested := false\n\n    for _, char := range s {\n        if char == '[' {\n            balance++\n            if balance > 1 {\n                nested = true\n            }\n        } else if char == ']' {\n            balance--\n            if balance < 0 {\n                return false\n            }\n        }\n    }\n\n    return nested && balance == 0\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIsNested (0.00s)\n    main_test.go:14: \n        \tError Trace:\t/tmp/go_synthesis_zlfd55hh/main_test.go:14\n        \tError:      \tNot equal: \n        \t            \texpected: true\n        \t            \tactual  : false\n        \tTest:       \tTestIsNested\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc IsNested(s string) bool {\n    balance := 0\n    nested := false\n\n    for _, char := range s {\n        if char == '[' {\n            balance++\n            if balance > 1 {\n                nested = true\n            }\n        } else if char == ']' {\n            balance--\n            if balance < 0 {\n                return false\n            }\n        }\n    }\n\n    return nested && balance == 0\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIsNested (0.00s)\n    main_test.go:14: \n        \tError Trace:\t/tmp/go_synthesis_zlfd55hh/main_test.go:14\n        \tError:      \tNot equal: \n        \t            \texpected: true\n        \t            \tactual  : false\n        \tTest:       \tTestIsNested\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

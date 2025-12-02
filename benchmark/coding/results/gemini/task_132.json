@@ -1,0 +1,13 @@
+{
+    "task": "task_132.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Given a positive integer n, return the product of the odd Digits.\n// Return 0 if all Digits are even.\n// For example:\n// Digits(1)  == 1\n// Digits(4)  == 0\n// Digits(235) == 15\nfunc Digits(n int) int {\n\tproduct := 1\n\tfoundOddDigit := false\n\n\t// Loop until n becomes 0, processing one digit at a time\n\tfor n > 0 {\n\t\tdigit := n % 10 // Get the last digit\n\n\t\t// Check if the digit is odd\n\t\tif digit%2 != 0 {\n\t\t\tproduct *= digit     // Multiply with the product\n\t\t\tfoundOddDigit = true // Set the flag that an odd digit was found\n\t\t}\n\n\t\tn /= 10 // Remove the last digit\n\t}\n\n\t// If no odd digits were found, return 0 as per requirement\n\tif !foundOddDigit {\n\t\treturn 0\n\t}\n\n\t// Otherwise, return the calculated product\n\treturn product\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

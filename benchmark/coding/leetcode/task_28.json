@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/27",
+  "prompt": "import (\n    \"strings\"\n)\n\n// For a given string, flip lowercase characters to uppercase and uppercase to lowercase.\n// >>> FlipCase('Hello')\n// 'hELLO'\nfunc FlipCase(str string) string {\n",
+  "import": "import (\n    \"strings\"\n)",
+  "docstring": "\n// For a given string, flip lowercase characters to uppercase and uppercase to lowercase.\n// >>> FlipCase('Hello')\n// 'hELLO'\n",
+  "declaration": "\nfunc FlipCase(str string) string {\n",
+  "canonical_solution": "    result := []rune{}\n    for _, c := range str {\n        if c >= 'A' && c <= 'Z' {\n            result = append(result, 'a' + ((c - 'A' + 26) % 26))\n        } else if c >= 'a' && c <= 'z' {\n            result = append(result, 'A' + ((c - 'a' + 26) % 26))\n        } else {\n            result = append(result, c)\n        }\n    }\n    return string(result)\n}\n\n",
+  "test": "func TestFlipCase(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"\", FlipCase(\"\"))\n    assert.Equal(\"hELLO!\", FlipCase(\"Hello!\"))\n    assert.Equal(\"tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS\",FlipCase(\"These violent delights have violent ends\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFlipCase(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"hELLO\", FlipCase(\"Hello\"))\n}\n"
+}

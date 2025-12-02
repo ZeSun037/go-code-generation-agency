@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/52",
+  "prompt": "\n// Return true if all numbers in the list l are below threshold t.\n// >>> BelowThreshold([1, 2, 4, 10], 100)\n// true\n// >>> BelowThreshold([1, 20, 4, 10], 5)\n// false\nfunc BelowThreshold(l []int,t int) bool {\n",
+  "import": "",
+  "docstring": "// Return true if all numbers in the list l are below threshold t.\n// >>> BelowThreshold([1, 2, 4, 10], 100)\n// true\n// >>> BelowThreshold([1, 20, 4, 10], 5)\n// false\n",
+  "declaration": "\nfunc BelowThreshold(l []int,t int) bool {\n",
+  "canonical_solution": "    for _, n := range l {\n\t\tif n >= t {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n",
+  "test": "func TestBelowThreshold(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, BelowThreshold([]int{1, 2, 4, 10}, 100))\n    assert.Equal(false, BelowThreshold([]int{1, 20, 4, 10}, 5))\n    assert.Equal(true, BelowThreshold([]int{1, 20, 4, 10}, 21))\n    assert.Equal(true, BelowThreshold([]int{1, 20, 4, 10}, 22))\n    assert.Equal(true, BelowThreshold([]int{1, 8, 4, 10}, 11))\n    assert.Equal(false, BelowThreshold([]int{1, 8, 4, 10}, 10))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestBelowThreshold(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, BelowThreshold([]int{1, 2, 4, 10}, 100))\n    assert.Equal(false, BelowThreshold([]int{1, 20, 4, 10}, 5))\n}\n"
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/38",
+  "prompt": "import (\n    \"math\"\n    \"strings\"\n    \"time\"\n)\n\n// returns encoded string by cycling groups of three characters.\nfunc EncodeCyclic(s string) string {\n    groups := make([]string, 0)\n    for i := 0; i < ((len(s) + 2) / 3); i++ {\n        groups = append(groups, s[3*i:int(math.Min(float64(3*i+3), float64(len(s))))])\n    }\n    newGroups := make([]string, 0)\n    for _, group := range groups {\n        runes := []rune(group)\n        if len(group) == 3 {\n            newGroups = append(newGroups, string(append(runes[1:], runes[0])))\n        } else {\n            newGroups = append(newGroups, group)\n        }\n    }\n    return strings.Join(newGroups, \"\")\n}\n\n// takes as input string encoded with EncodeCyclic function. Returns decoded string.\nfunc DecodeCyclic(s string) string {\n",
+  "import": "import (\n    \"math\"\n    \"strings\"\n    \"time\"\n)\n",
+  "docstring": "// returns encoded string by cycling groups of three characters.\n// takes as input string encoded with EncodeCyclic function. Returns decoded string.\n",
+  "declaration": "\nfunc DecodeCyclic(s string) string {\n",
+  "canonical_solution": "    return EncodeCyclic(EncodeCyclic(s))\n}\n\n",
+  "test": "func TestDecodeCyclic(t *testing.T) {\n    assert := assert.New(t)\n    randInt := func(min, max int) int {\n        rng := rand.New(rand.NewSource(time.Now().UnixNano()))\n        if min >= max || min == 0 || max == 0 {\n            return max\n        }\n        return rng.Intn(max-min) + min\n    }\n    for i := 0; i <100 ; i++ {\n        runes := make([]rune, 0)\n        for j := 0; j < randInt(10,20); j++ {\n            runes = append(runes, int32(randInt('a','z')))\n        }\n        encoded_str := EncodeCyclic(string(runes))\n        assert.Equal(string(runes), DecodeCyclic(encoded_str))\n    }\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"math/rand\"\n    \"math\"\n    \"time\"\n    \"strings\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": ""
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/25",
+  "prompt": "import (\n    \"math\"\n)\n\n// Return list of prime factors of given integer in the order from smallest to largest.\n// Each of the factors should be listed number of times corresponding to how many times it appeares in factorization.\n// Input number should be equal to the product of all factors\n// >>> Factorize(8)\n// [2, 2, 2]\n// >>> Factorize(25)\n// [5, 5]\n// >>> Factorize(70)\n// [2, 5, 7]\nfunc Factorize(n int) []int {\n",
+  "import": "import (\n    \"math\"\n)",
+  "docstring": "// Return list of prime factors of given integer in the order from smallest to largest.\n// Each of the factors should be listed number of times corresponding to how many times it appeares in factorization.\n// Input number should be equal to the product of all factors\n// >>> Factorize(8)\n// [2, 2, 2]\n// >>> Factorize(25)\n// [5, 5]\n// >>> Factorize(70)\n// [2, 5, 7]\n",
+  "declaration": "\nfunc Factorize(n int) []int {\n",
+  "canonical_solution": "    fact := make([]int, 0)\n\tfor i := 2; i <= int(math.Sqrt(float64(n))+1); {\n\t\tif n%i == 0 {\n\t\t\tfact = append(fact, i)\n\t\t\tn = n / i\n\t\t} else {\n\t\t\ti++\n\t\t}\n\t}\n\tif n > 1 {\n\t\tfact = append(fact, n)\n\t}\n\treturn fact\n}\n\n",
+  "test": "func TestFactorize(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2}, Factorize(2))\n    assert.Equal([]int{2, 2}, Factorize(4))\n    assert.Equal([]int{2, 2, 2}, Factorize(8))\n    assert.Equal([]int{3, 19}, Factorize(3 * 19))\n    assert.Equal([]int{3, 3, 19, 19}, Factorize(3 * 19 * 3 * 19))\n    assert.Equal([]int{3, 3, 3, 19, 19, 19}, Factorize(3 * 19 * 3 * 19 * 3 * 19))\n    assert.Equal([]int{3, 19, 19, 19}, Factorize(3 * 19 * 19 * 19))\n    assert.Equal([]int{2, 3, 3}, Factorize(3 * 2 * 3))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFactorize(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2, 2, 2}, Factorize(8))\n    assert.Equal([]int{5,5}, Factorize(25))\n    assert.Equal([]int{2,5,7}, Factorize(70))\n}\n"
+}

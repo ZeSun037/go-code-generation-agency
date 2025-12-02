@@ -1,0 +1,13 @@
+{
+    "task": "task_109.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n\t\"strconv\"\n)\n\n// Write a function CountNums which takes an array of integers and returns\n// the number of elements which has a sum of digits > 0.\n// If a number is negative, then its first signed digit will be negative:\n// e.g. -123 has signed digits -1, 2, and 3.\n// >>> CountNums([]) == 0\n// >>> CountNums([-1, 11, -11]) == 1\n// >>> CountNums([1, 1, 2]) == 3\nfunc CountNums(arr []int) int {\n\tcount := 0\n\tfor _, num := range arr {\n\t\tif sumOfDigits(num) > 0 {\n\t\t\tcount++\n\t\t}\n\t}\n\treturn count\n}\n\nfunc sumOfDigits(num int) int {\n\tif num == 0 {\n\t\treturn 0\n\t}\n\n\tisNegative := num < 0\n\tabsNum := int(math.Abs(float64(num)))\n\tnumStr := strconv.Itoa(absNum)\n\n\tsum := 0\n\tfor i, digit := range numStr {\n\t\td := int(digit - '0')\n\t\tif isNegative && i == 0 {\n\t\t\td = -d\n\t\t}\n\t\tsum += d\n\t}\n\n\treturn sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

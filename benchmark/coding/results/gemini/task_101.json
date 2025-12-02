@@ -1,0 +1,13 @@
+{
+    "task": "task_101.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// MakeAPile calculates the number of stones in each level of a pile of 'n' levels.\n// The first level has 'n' stones.\n// Subsequent levels' stone counts are determined by adding 2 to the previous level's count:\n// - If 'n' is odd, the next level has the next odd number of stones. (e.g., 3 -> 5 -> 7)\n// - If 'n' is even, the next level has the next even number of stones. (e.g., 4 -> 6 -> 8)\n// Both rules effectively mean adding 2 stones to the previous level's count.\nfunc MakeAPile(n int) []int {\n\t// The problem states 'n' is a positive integer, so n >= 1.\n\t// If n is 0 or negative, an empty slice would be a reasonable default,\n\t// but per problem statement, this scenario won't occur.\n\tif n <= 0 {\n\t\treturn []int{}\n\t}\n\n\t// Initialize a slice to store the stone counts for each level.\n\t// We know the final size will be 'n', so we can pre-allocate it for efficiency.\n\tpile := make([]int, n)\n\n\t// The first level has 'n' stones.\n\tcurrentStones := n\n\n\t// Iterate 'n' times, once for each level.\n\tfor i := 0; i < n; i++ {\n\t\t// Store the current number of stones for this level.\n\t\tpile[i] = currentStones\n\t\t// For the next level, increase the stone count by 2.\n\t\t// This applies to both odd and even starting 'n' to get the next\n\t\t// odd or even number respectively.\n\t\tcurrentStones += 2\n\t}\n\n\treturn pile\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

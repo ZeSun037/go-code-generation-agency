@@ -1,0 +1,13 @@
+{
+    "task": "task_1.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// Check if in given list of numbers, are any two numbers closer to each other than given threshold.\n// >>> HasCloseElements([]float64{1.0, 2.0, 3.0}, 0.5)\n// false\n// >>> HasCloseElements([]float64{1.0, 2.8, 3.0, 4.0, 5.0, 2.0}, 0.3)\n// true\nfunc HasCloseElements(numbers []float64, threshold float64) bool {\n\tfor i := 0; i < len(numbers); i++ {\n\t\tfor j := i + 1; j < len(numbers); j++ {\n\t\t\tif math.Abs(numbers[i]-numbers[j]) < threshold {\n\t\t\t\treturn true\n\t\t\t}\n\t\t}\n\t}\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

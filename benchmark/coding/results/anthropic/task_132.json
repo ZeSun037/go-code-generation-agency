@@ -1,0 +1,13 @@
+{
+    "task": "task_132.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Given a positive integer n, return the product of the odd Digits.\n// Return 0 if all Digits are even.\n// For example:\n// Digits(1)  == 1\n// Digits(4)  == 0\n// Digits(235) == 15\nfunc Digits(n int) int {\n\ts := strconv.Itoa(n)\n\tproduct := 1\n\thasOdd := false\n\t\n\tfor _, ch := range s {\n\t\tdigit := int(ch - '0')\n\t\tif digit%2 == 1 {\n\t\t\tproduct *= digit\n\t\t\thasOdd = true\n\t\t}\n\t}\n\t\n\tif !hasOdd {\n\t\treturn 0\n\t}\n\treturn product\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_15.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Return list of all prefixes from shortest to longest of the input string\n// >>> AllPrefixes('abc')\n// ['a', 'ab', 'abc']\nfunc AllPrefixes(str string) []string {\n\tvar prefixes []string\n\t// Iterate from 1 up to the length of the string to capture all prefixes\n\t// str[0:i] will give prefixes of length i\n\tfor i := 1; i <= len(str); i++ {\n\t\tprefixes = append(prefixes, str[0:i])\n\t}\n\treturn prefixes\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

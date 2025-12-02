@@ -1,0 +1,13 @@
+{
+    "task": "task_148.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc GetMaxTriples(n int) int {\n\t// Create array where a[i] = i*i - i + 1 (1-indexed, but we'll use 0-indexed)\n\ta := make([]int, n)\n\tfor i := 0; i < n; i++ {\n\t\tidx := i + 1 // Convert to 1-indexed for formula\n\t\ta[i] = idx*idx - idx + 1\n\t}\n\t\n\t// Count triples (i, j, k) where i < j < k and (a[i] + a[j] + a[k]) % 3 == 0\n\tcount := 0\n\tfor i := 0; i < n; i++ {\n\t\tfor j := i + 1; j < n; j++ {\n\t\t\tfor k := j + 1; k < n; k++ {\n\t\t\t\tif (a[i] + a[j] + a[k]) % 3 == 0 {\n\t\t\t\t\tcount++\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\t\n\treturn count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

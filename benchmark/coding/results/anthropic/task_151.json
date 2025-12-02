@@ -1,0 +1,13 @@
+{
+    "task": "task_151.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc XOrY(n, x, y int) int {\n\tif isPrime(n) {\n\t\treturn x\n\t}\n\treturn y\n}\n\nfunc isPrime(n int) bool {\n\tif n < 2 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

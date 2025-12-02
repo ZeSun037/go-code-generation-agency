@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/98",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Given a string s, count the number of uppercase vowels in even indices.\n// \n// For example:\n// CountUpper('aBCdEf') returns 1\n// CountUpper('abcdefg') returns 0\n// CountUpper('dBBE') returns 0\nfunc CountUpper(s string) int {\n",
+  "import": "import (\n    \"strings\"\n)\n",
+  "docstring": "// Given a string s, count the number of uppercase vowels in even indices.\n// \n// For example:\n// CountUpper('aBCdEf') returns 1\n// CountUpper('abcdefg') returns 0\n// CountUpper('dBBE') returns 0\n",
+  "declaration": "\nfunc CountUpper(s string) int {\n",
+  "canonical_solution": "    count := 0\n    runes := []rune(s)\n    for i := 0; i < len(runes); i += 2 {\n        if strings.ContainsRune(\"AEIOU\", runes[i]) {\n            count += 1\n        }\n    }\n    return count\n}\n\n",
+  "test": "func TestCountUpper(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, CountUpper(\"aBCdEf\"))\n    assert.Equal(0, CountUpper(\"abcdefg\"))\n    assert.Equal(0, CountUpper(\"dBBE\"))\n    assert.Equal(0, CountUpper(\"B\"))\n    assert.Equal(1, CountUpper(\"U\"))\n    assert.Equal(0, CountUpper(\"\"))\n    assert.Equal(2, CountUpper(\"EEEE\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCountUpper(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, CountUpper(\"aBCdEf\"))\n    assert.Equal(0, CountUpper(\"abcdefg\"))\n    assert.Equal(0, CountUpper(\"dBBE\"))\n}\n"
+}

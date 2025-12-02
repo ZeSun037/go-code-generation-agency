@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/97",
+  "prompt": "import (\n    \"math\"\n)\n\n// Complete the function that takes two integers and returns\n// the product of their unit digits.\n// Assume the input is always valid.\n// Examples:\n// Multiply(148, 412) should return 16.\n// Multiply(19, 28) should return 72.\n// Multiply(2020, 1851) should return 0.\n// Multiply(14,-15) should return 20.\nfunc Multiply(a, b int) int {\n",
+  "import": "import (\n    \"math\"\n)\n",
+  "docstring": "// Complete the function that takes two integers and returns\n// the product of their unit digits.\n// Assume the input is always valid.\n// Examples:\n// Multiply(148, 412) should return 16.\n// Multiply(19, 28) should return 72.\n// Multiply(2020, 1851) should return 0.\n// Multiply(14,-15) should return 20.\n",
+  "declaration": "\nfunc Multiply(a, b int) int {\n",
+  "canonical_solution": "    return int(math.Abs(float64(a%10)) * math.Abs(float64(b%10)))\n}\n\n",
+  "test": "func TestMultiply(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(16, Multiply(148, 412))\n    assert.Equal(72, Multiply(19, 28))\n    assert.Equal(0, Multiply(2020, 1851))\n    assert.Equal(20, Multiply(14, -15))\n    assert.Equal(42, Multiply(76, 67))\n    assert.Equal(49, Multiply(17, 27))\n    assert.Equal(0, Multiply(0, 1))\n    assert.Equal(0, Multiply(0, 0))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestMultiply(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(16, Multiply(148, 412))\n    assert.Equal(72, Multiply(19, 28))\n    assert.Equal(0, Multiply(2020, 1851))\n    assert.Equal(20, Multiply(14, -15))\n}\n"
+}

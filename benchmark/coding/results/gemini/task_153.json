@@ -1,0 +1,23 @@
+{
+    "task": "task_153.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "import (\n\t\"math\"\n)\n\n// I think we all remember that feeling when the result of some long-awaited\n// event is finally known. The feelings and thoughts you have at that moment are\n// definitely worth noting down and comparing.\n// Your task is to determine if a person correctly guessed the results of a number of matches.\n// You are given two arrays of scores and guesses of equal length, where each index shows a match.\n// Return an array of the same length denoting how far off each guess was. If they have guessed correctly,\n// the value is 0, and if not, the value is the absolute difference between the guess and the score.\n//\n//\n// example:\n//\n// Compare([1,2,3,4,5,1],[1,2,3,4,2,-2]) -> [0,0,0,0,3,3]\n// Compare([0,5,0,0,0,4],[4,1,1,0,0,-2]) -> [4,4,1,0,0,6]\nfunc Compare(game, guess []int) []int {\n\t// Create a result slice of the same length as the input slices.\n\t// This pre-allocates memory and avoids reallocations during appending,\n\t// which is generally more efficient.\n\tresult := make([]int, len(game))\n\n\t// Iterate through the slices using an index.\n\t// The problem states that 'game' and 'guess' are of equal length.\n\tfor i := range game {\n\t\t// Calculate the difference between the actual game score and the guessed score.\n\t\tdiff := game[i] - guess[i]\n\n\t\t// The problem requires the absolute difference.\n\t\t// math.Abs operates on float64, so we cast the integer difference to float64,\n\t\t// compute its absolute value, and then cast it back to int.\n\t\tresult[i] = int(math.Abs(float64(diff)))\n\t}\n\n\treturn result\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// I think we all remember that feeling when the result of some long-awaited\n// event is finally known. The feelings and thoughts you have at that moment are\n// definitely worth noting down and comparing.\n// Your task is to determine if a person correctly guessed the results of a number of matches.\n// You are given two arrays of scores and guesses of equal length, where each index shows a match.\n// Return an array of the same length denoting how far off each guess was. If they have guessed correctly,\n// the value is 0, and if not, the value is the absolute difference between the guess and the score.\n//\n//\n// example:\n//\n// Compare([1,2,3,4,5,1],[1,2,3,4,2,-2]) -> [0,0,0,0,3,3]\n// Compare([0,5,0,0,0,4],[4,1,1,0,0,-2]) -> [4,4,1,0,0,6]\nfunc Compare(game, guess []int) []int {\n\t// Create a result slice of the same length as the input slices.\n\t// This pre-allocates memory and avoids reallocations during appending,\n\t// which is generally more efficient.\n\tresult := make([]int, len(game))\n\n\t// Iterate through the slices using an index.\n\t// The problem states that 'game' and 'guess' are of equal length.\n\tfor i := range game {\n\t\t// Calculate the difference between the actual game score and the guessed score.\n\t\tdiff := game[i] - guess[i]\n\n\t\t// The problem requires the absolute difference.\n\t\t// math.Abs operates on float64, so we cast the integer difference to float64,\n\t\t// compute its absolute value, and then cast it back to int.\n\t\tresult[i] = int(math.Abs(float64(diff)))\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/18",
+  "prompt": "\n// Find how many times a given substring can be found in the original string. Count overlaping cases.\n// >>> HowManyTimes('', 'a')\n// 0\n// >>> HowManyTimes('aaa', 'a')\n// 3\n// >>> HowManyTimes('aaaa', 'aa')\n// 3\nfunc HowManyTimes(str string,substring string) int{\n",
+  "import": "",
+  "docstring": "\n// Find how many times a given substring can be found in the original string. Count overlaping cases.\n// >>> HowManyTimes('', 'a')\n// 0\n// >>> HowManyTimes('aaa', 'a')\n// 3\n// >>> HowManyTimes('aaaa', 'aa')\n// 3\n",
+  "declaration": "\nfunc HowManyTimes(str string,substring string) int{\n",
+  "canonical_solution": "    times := 0\n\tfor i := 0; i < (len(str) - len(substring) + 1); i++ {\n\t\tif str[i:i+len(substring)] == substring {\n\t\t\ttimes += 1\n\t\t}\n\t}\n\treturn times\n}\n\n\n",
+  "test": "func TestHowManyTimes(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, HowManyTimes(\"\", \"x\"))\n    assert.Equal(4, HowManyTimes(\"xyxyxyx\", \"x\"))\n    assert.Equal(4, HowManyTimes(\"cacacacac\", \"cac\"))\n    assert.Equal(1, HowManyTimes(\"john doe\", \"john\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestHowManyTimes(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, HowManyTimes(\"\", \"a\"))\n    assert.Equal(3, HowManyTimes(\"aaa\", \"a\"))\n    assert.Equal(3, HowManyTimes(\"aaaa\", \"aa\"))\n}\n"
+}

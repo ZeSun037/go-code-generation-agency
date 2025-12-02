@@ -1,0 +1,13 @@
+{
+    "task": "task_122.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Solution(lst []int) int {\n\tsum := 0\n\tfor i, val := range lst {\n\t\tif i%2 == 0 && val%2 != 0 {\n\t\t\tsum += val\n\t\t}\n\t}\n\treturn sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

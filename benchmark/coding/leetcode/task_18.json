@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/17",
+  "prompt": "\n// Input to this function is a string representing musical notes in a special ASCII format.\n// Your task is to parse this string and return list of integers corresponding to how many beats does each\n// not last.\n// \n// Here is a legend:\n// 'o' - whole note, lasts four beats\n// 'o|' - half note, lasts two beats\n// '.|' - quater note, lasts one beat\n// \n// >>> ParseMusic('o o| .| o| o| .| .| .| .| o o')\n// [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\nfunc ParseMusic(music_string string) []int{\n",
+  "import": "",
+  "docstring": "// Input to this function is a string representing musical notes in a special ASCII format.\n// Your task is to parse this string and return list of integers corresponding to how many beats does each\n// not last.\n// \n// Here is a legend:\n// 'o' - whole note, lasts four beats\n// 'o|' - half note, lasts two beats\n// '.|' - quater note, lasts one beat\n// \n// >>> ParseMusic('o o| .| o| o| .| .| .| .| o o')\n// [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n",
+  "declaration": "\nfunc ParseMusic(music_string string) []int{\n",
+  "canonical_solution": "    note_map := map[string]int{\"o\": 4, \"o|\": 2, \".|\": 1}\n\tsplit := strings.Split(music_string, \" \")\n\tresult := make([]int, 0)\n\tfor _, x := range split {\n\t\tif i, ok := note_map[x]; ok {\n\t\t\tresult = append(result, i)\n\t\t}\n\t}\n\treturn result\n}\n\n\n",
+  "test": "func TestParseMusic(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{}, ParseMusic(\"\"))\n    assert.Equal([]int{4, 4, 4, 4}, ParseMusic(\"o o o o\"))\n    assert.Equal([]int{1, 1, 1, 1}, ParseMusic(\".| .| .| .|\"))\n    assert.Equal([]int{2, 2, 1, 1, 4, 4, 4, 4}, ParseMusic(\"o| o| .| .| o o o o\"))\n    assert.Equal([]int{2, 1, 2, 1, 4, 2, 4, 2}, ParseMusic(\"o| .| o| .| o o| o o|\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestParseMusic(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4}, ParseMusic(\"o o| .| o| o| .| .| .| .| o o\"))\n}\n"
+}

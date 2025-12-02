@@ -1,0 +1,13 @@
+{
+    "task": "task_101.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc MakeAPile(n int) []int {\n\tresult := make([]int, n)\n\tcurrent := n\n\tfor i := 0; i < n; i++ {\n\t\tresult[i] = current\n\t\tcurrent += 2\n\t}\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

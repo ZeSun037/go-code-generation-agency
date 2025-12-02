@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/75",
+  "prompt": "\n// Write a function that returns true if the given number is the multiplication of 3 prime numbers\n// and false otherwise.\n// Knowing that (a) is less then 100.\n// Example:\n// IsMultiplyPrime(30) == true\n// 30 = 2 * 3 * 5\nfunc IsMultiplyPrime(a int) bool {\n",
+  "import": "",
+  "docstring": "// Write a function that returns true if the given number is the multiplication of 3 prime numbers\n// and false otherwise.\n// Knowing that (a) is less then 100.\n// Example:\n// IsMultiplyPrime(30) == true\n// 30 = 2 * 3 * 5\n",
+  "declaration": "\nfunc IsMultiplyPrime(a int) bool {\n",
+  "canonical_solution": "    isPrime := func(n int) bool {\n        for i := 2; i < int(math.Pow(float64(n), 0.5)+1); i++ {\n            if n%i == 0 {\n                return false\n            }\n        }\n        return true\n    }\n    for i := 2; i < 101; i++ {\n\t\tif !isPrime(i) {\n\t\t\tcontinue\n\t\t}\n\t\tfor j := 2; j < 101; j++ {\n\t\t\tif !isPrime(j) {\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\tfor k := 2; k < 101; k++ {\n\t\t\t\tif !isPrime(k) {\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\tif i*j*k == a {\n\t\t\t\t\treturn true\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\treturn false\n}\n\n",
+  "test": "func TestIsMultiplyPrime(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, IsMultiplyPrime(5))\n    assert.Equal(true, IsMultiplyPrime(30))\n    assert.Equal(true, IsMultiplyPrime(8))\n    assert.Equal(false, IsMultiplyPrime(10))\n    assert.Equal(true, IsMultiplyPrime(125))\n    assert.Equal(true, IsMultiplyPrime(3 * 5 * 7))\n    assert.Equal(false, IsMultiplyPrime(3 * 6 * 7))\n    assert.Equal(false, IsMultiplyPrime(9 * 9 * 9))\n    assert.Equal(false, IsMultiplyPrime(11 * 9 * 9))\n    assert.Equal(true, IsMultiplyPrime(11 * 13 * 7))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIsMultiplyPrime(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, IsMultiplyPrime(30))\n}\n"
+}

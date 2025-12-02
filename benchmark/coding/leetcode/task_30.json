@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/29",
+  "prompt": "\n// Filter an input list of strings only for ones that start with a given prefix.\n// >>> FilterByPrefix([], 'a')\n// []\n// >>> FilterByPrefix(['abc', 'bcd', 'cde', 'array'], 'a')\n// ['abc', 'array']\nfunc FilterByPrefix(strings []string,prefix string) []string {\n",
+  "import": "",
+  "docstring": "// Filter an input list of strings only for ones that start with a given prefix.\n// >>> FilterByPrefix([], 'a')\n// []\n// >>> FilterByPrefix(['abc', 'bcd', 'cde', 'array'], 'a')\n// ['abc', 'array']\n",
+  "declaration": "\nfunc FilterByPrefix(strings []string,prefix string) []string {\n",
+  "canonical_solution": "    if len(strings) == 0 {\n        return []string{}\n    }\n    res := make([]string, 0, len(strings))\n\tfor _, s := range strings {\n\t\tif s[:len(prefix)] == prefix {\n\t\t\tres = append(res, s)\n\t\t}\n\t}\n\treturn res\n}\n\n\n",
+  "test": "func TestFilterByPrefix(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{}, FilterByPrefix([]string{}, \"john\"))\n    assert.Equal([]string{\"xxx\", \"xxxAAA\", \"xxx\"}, FilterByPrefix([]string{\"xxx\", \"asd\", \"xxy\", \"john doe\", \"xxxAAA\", \"xxx\"}, \"xxx\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFilterByPrefix(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{}, FilterByPrefix([]string{}, \"a\"))\n    assert.Equal([]string{\"abc\", \"array\"}, FilterByPrefix([]string{\"abc\", \"bcd\", \"cde\", \"array\"}, \"a\"))\n}\n"
+}

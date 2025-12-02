@@ -1,0 +1,13 @@
+{
+    "task": "task_142.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// Create a function which takes a string representing a file's name, and returns\n// 'Yes' if the the file's name is valid, and returns 'No' otherwise.\n// A file's name is considered to be valid if and only if all the following conditions\n// are met:\n// - There should not be more than three digits ('0'-'9') in the file's name.\n// - The file's name contains exactly one dot '.'\n// - The substring before the dot should not be empty, and it starts with a letter from\n// the latin alphapet ('a'-'z' and 'A'-'Z').\n// - The substring after the dot should be one of these: ['txt', 'exe', 'dll']\n// Examples:\n// FileNameCheck(\"example.txt\") # => 'Yes'\n// FileNameCheck(\"1example.dll\") # => 'No' (the name should start with a latin alphapet letter)\nfunc FileNameCheck(file_name string) string {\n\t// Check if there's exactly one dot\n\tdotCount := strings.Count(file_name, \".\")\n\tif dotCount != 1 {\n\t\treturn \"No\"\n\t}\n\n\t// Split by dot\n\tparts := strings.Split(file_name, \".\")\n\tname := parts[0]\n\text := parts[1]\n\n\t// Check if name part is not empty\n\tif len(name) == 0 {\n\t\treturn \"No\"\n\t}\n\n\t// Check if name starts with a latin alphabet letter\n\tfirstChar := rune(name[0])\n\tif !((firstChar >= 'a' && firstChar <= 'z') || (firstChar >= 'A' && firstChar <= 'Z')) {\n\t\treturn \"No\"\n\t}\n\n\t// Check if extension is one of the valid ones\n\tvalidExts := map[string]bool{\"txt\": true, \"exe\": true, \"dll\": true}\n\tif !validExts[ext] {\n\t\treturn \"No\"\n\t}\n\n\t// Count digits in the entire file_name\n\tdigitCount := 0\n\tfor _, ch := range file_name {\n\t\tif ch >= '0' && ch <= '9' {\n\t\t\tdigitCount++\n\t\t}\n\t}\n\n\t// Check if there are more than three digits\n\tif digitCount > 3 {\n\t\treturn \"No\"\n\t}\n\n\treturn \"Yes\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

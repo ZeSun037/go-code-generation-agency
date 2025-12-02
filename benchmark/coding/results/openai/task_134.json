@@ -1,0 +1,13 @@
+{
+    "task": "task_134.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\nfunc SumSquares(lst []float64) int {\n    sum := 0\n    for _, num := range lst {\n        ceiling := math.Ceil(num)\n        sum += int(ceiling * ceiling)\n    }\n    return sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_108.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// isPalindrome checks if an integer is a palindrome.\n// It converts the integer to a string and then compares characters\n// from the beginning and end to check for palindrome property.\nfunc isPalindrome(num int) bool {\n\ts := strconv.Itoa(num)\n\tlength := len(s)\n\tfor i := 0; i < length/2; i++ {\n\t\tif s[i] != s[length-1-i] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// EvenOddPalindrome calculates the number of even and odd integer palindromes\n// within the range [1, n], inclusive.\n// It returns an array of two integers: the first element is the count of\n// even palindromes, and the second element is the count of odd palindromes.\n//\n// Example 1:\n// Input: 3\n// Output: (1, 2)\n// Explanation:\n// Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.\n//\n// Example 2:\n// Input: 12\n// Output: (4, 6)\n// Explanation:\n// Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.\n//\n// Note:\n// 1. 1 <= n <= 10^3\n// 2. returned tuple has the number of even and odd integer palindromes respectively.\nfunc EvenOddPalindrome(n int) [2]int {\n\tcounts := [2]int{0, 0} // counts[0] for even palindromes, counts[1] for odd palindromes\n\n\tfor i := 1; i <= n; i++ {\n\t\tif isPalindrome(i) {\n\t\t\tif i%2 == 0 {\n\t\t\t\t// Number is an even palindrome\n\t\t\t\tcounts[0]++\n\t\t\t} else {\n\t\t\t\t// Number is an odd palindrome\n\t\t\t\tcounts[1]++\n\t\t\t}\n\t\t}\n\t}\n\treturn counts\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

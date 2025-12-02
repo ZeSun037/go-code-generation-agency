@@ -1,0 +1,13 @@
+{
+    "task": "task_111.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Exchange determines if it's possible to make lst1 a list of only even numbers\n// by exchanging elements between lst1 and lst2.\n// It counts the number of odd elements in lst1 and the number of even elements in lst2.\n// If there are enough even elements in lst2 to replace all odd elements in lst1,\n// then it's possible to make lst1 all even.\nfunc Exchange(lst1, lst2 []int) string {\n\t// Count the number of odd elements in lst1.\n\t// These are the elements that need to be replaced by even numbers.\n\toddCount1 := 0\n\tfor _, x := range lst1 {\n\t\tif x%2 != 0 { // x is odd\n\t\t\toddCount1++\n\t\t}\n\t}\n\n\t// Count the number of even elements in lst2.\n\t// These are the available even numbers that can be moved into lst1.\n\tevenCount2 := 0\n\tfor _, x := range lst2 {\n\t\tif x%2 == 0 { // x is even\n\t\t\tevenCount2++\n\t\t}\n\t}\n\n\t// If the number of odd elements in lst1 (that need to be replaced)\n\t// is less than or equal to the number of even elements available in lst2\n\t// (that can be used for replacement), then it's possible to make lst1 all even.\n\tif oddCount1 <= evenCount2 {\n\t\treturn \"YES\"\n\t}\n\t// Otherwise, there aren't enough even numbers in lst2 to replace all odd numbers in lst1.\n\treturn \"NO\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

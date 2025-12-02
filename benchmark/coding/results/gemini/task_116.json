@@ -1,0 +1,13 @@
+{
+    "task": "task_116.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// The \"math\" package is not strictly necessary if using integer arithmetic for ceiling division.\n// import (\n// \t\"math\"\n// )\n\n// MaxFill calculates the total number of times buckets need to be lowered to empty a grid of wells.\n// Each row in the grid represents a well, and each 1 represents a unit of water.\n// All buckets have the same `capacity`.\nfunc MaxFill(grid [][]int, capacity int) int {\n\ttotalLowerings := 0\n\n\t// Iterate through each well (row) in the grid\n\tfor _, well := range grid {\n\t\twaterInWell := 0\n\t\t// Calculate the total amount of water in the current well\n\t\tfor _, unit := range well {\n\t\t\tif unit == 1 {\n\t\t\t\twaterInWell++\n\t\t\t}\n\t\t}\n\n\t\t// Calculate the number of times the bucket needs to be lowered for this specific well.\n\t\t// This is equivalent to ceil(waterInWell / capacity).\n\t\t// Using integer arithmetic for ceiling division: (a + b - 1) / b for a >= 0, b > 0.\n\t\t// This formula correctly handles cases where waterInWell is 0, resulting in 0 lowerings.\n\t\tloweringsForWell := (waterInWell + capacity - 1) / capacity\n\n\t\t// Add the lowerings for this well to the total count\n\t\ttotalLowerings += loweringsForWell\n\t}\n\n\treturn totalLowerings\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

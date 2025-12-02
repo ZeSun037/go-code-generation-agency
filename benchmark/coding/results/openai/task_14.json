@@ -1,0 +1,13 @@
+{
+    "task": "task_14.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc GreatestCommonDivisor(a int, b int) int {\n    for b != 0 {\n        a, b = b, a%b\n    }\n    return a\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

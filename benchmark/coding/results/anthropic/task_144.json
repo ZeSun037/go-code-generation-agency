@@ -1,0 +1,13 @@
+{
+    "task": "task_144.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\nfunc isPrime(n int) bool {\n\tif n < 2 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc WordsInSentence(sentence string) string {\n\twords := strings.Fields(sentence)\n\tvar result []string\n\t\n\tfor _, word := range words {\n\t\tif isPrime(len(word)) {\n\t\t\tresult = append(result, word)\n\t\t}\n\t}\n\t\n\treturn strings.Join(result, \" \")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

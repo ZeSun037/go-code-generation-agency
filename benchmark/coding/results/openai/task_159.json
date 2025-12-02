@@ -1,0 +1,23 @@
+{
+    "task": "task_159.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n)\n\nfunc FindMax(words []string) string {\n    var maxWord string\n    maxUniqueCount := 0\n\n    for _, word := range words {\n        uniqueChars := make(map[rune]struct{})\n        for _, char := range word {\n            uniqueChars[char] = struct{}{}\n        }\n        uniqueCount := len(uniqueChars)\n\n        if uniqueCount > maxUniqueCount || (uniqueCount == maxUniqueCount && word < maxWord) {\n            maxUniqueCount = uniqueCount\n            maxWord = word\n        }\n    }\n\n    return maxWord\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:4:5: \"sort\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc FindMax(words []string) string {\n    var maxWord string\n    maxUniqueCount := 0\n\n    for _, word := range words {\n        uniqueChars := make(map[rune]struct{})\n        for _, char := range word {\n            uniqueChars[char] = struct{}{}\n        }\n        uniqueCount := len(uniqueChars)\n\n        if uniqueCount > maxUniqueCount || (uniqueCount == maxUniqueCount && (maxWord == \"\" || word < maxWord)) {\n            maxUniqueCount = uniqueCount\n            maxWord = word\n        }\n    }\n\n    return maxWord\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/16",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Given a string, find out how many distinct characters (regardless of case) does it consist of\n// >>> CountDistinctCharacters('xyzXYZ')\n// 3\n// >>> CountDistinctCharacters('Jerry')\n// 4\nfunc CountDistinctCharacters(str string) int{\n",
+  "import": "import (\n    \"strings\"\n)\n",
+  "docstring": "// Given a string, find out how many distinct characters (regardless of case) does it consist of\n// >>> CountDistinctCharacters('xyzXYZ')\n// 3\n// >>> CountDistinctCharacters('Jerry')\n// 4\n",
+  "declaration": "\nfunc CountDistinctCharacters(str string) int{\n",
+  "canonical_solution": "    lower := strings.ToLower(str)\n\tcount := 0\n\tset := make(map[rune]bool)\n\tfor _, i := range lower {\n\t\tif set[i] == true {\n\t\t\tcontinue\n\t\t} else {\n\t\t\tset[i] = true\n\t\t\tcount++\n\t\t}\n\t}\n\treturn count\n}\n\n\n",
+  "test": "func TestCountDistinctCharacters(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, CountDistinctCharacters(\"\"))\n    assert.Equal(5, CountDistinctCharacters(\"abcde\"))\n    assert.Equal(5, CountDistinctCharacters(\"abcde\" + \"cade\" + \"CADE\"))\n    assert.Equal(1, CountDistinctCharacters(\"aaaaAAAAaaaa\"))\n    assert.Equal(5, CountDistinctCharacters(\"Jerry jERRY JeRRRY\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCountDistinctCharacters(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, CountDistinctCharacters(\"xyzXYZ\"))\n    assert.Equal(4, CountDistinctCharacters(\"Jerry\"))\n}\n"
+}

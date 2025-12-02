@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/84",
+  "prompt": "import (\n    \"fmt\"\n    \"strconv\"\n)\n\n// Given a positive integer N, return the total sum of its digits in binary.\n// \n// Example\n// For N = 1000, the sum of digits will be 1 the output should be \"1\".\n// For N = 150, the sum of digits will be 6 the output should be \"110\".\n// For N = 147, the sum of digits will be 12 the output should be \"1100\".\n// \n// Variables:\n// @N integer\n// Constraints: 0 ≤ N ≤ 10000.\n// Output:\n// a string of binary number\nfunc Solve(N int) string {\n",
+  "import": "import (\n    \"fmt\"\n    \"strconv\"\n)\n",
+  "docstring": "// Given a positive integer N, return the total sum of its digits in binary.\n// \n// Example\n// For N = 1000, the sum of digits will be 1 the output should be \"1\".\n// For N = 150, the sum of digits will be 6 the output should be \"110\".\n// For N = 147, the sum of digits will be 12 the output should be \"1100\".\n// \n// Variables:\n// @N integer\n// Constraints: 0 ≤ N ≤ 10000.\n// Output:\n// a string of binary number\n",
+  "declaration": "\nfunc Solve(N int) string {\n",
+  "canonical_solution": "    sum := 0\n    for _, c := range strconv.Itoa(N) {\n        sum += int(c - '0')\n    }\n    return fmt.Sprintf(\"%b\", sum)\n}\n\n",
+  "test": "func TestSolve(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"1\", Solve(1000), \"Error\")\n    assert.Equal(\"110\", Solve(150), \"Error\")\n    assert.Equal(\"1100\", Solve(147), \"Error\")\n    assert.Equal(\"1001\", Solve(333), \"Error\")\n    assert.Equal(\"10010\", Solve(963), \"Error\")\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": ""
+}

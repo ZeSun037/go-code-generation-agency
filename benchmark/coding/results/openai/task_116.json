@@ -1,0 +1,13 @@
+{
+    "task": "task_116.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\n// MaxFill calculates the number of times buckets need to be lowered to empty the wells.\nfunc MaxFill(grid [][]int, capacity int) int {\n    totalWater := 0\n\n    for _, row := range grid {\n        for _, water := range row {\n            totalWater += water\n        }\n    }\n\n    // Calculate the number of times the buckets need to be lowered\n    return int(math.Ceil(float64(totalWater) / float64(capacity)))\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

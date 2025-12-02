@@ -1,0 +1,13 @@
+{
+    "task": "task_136.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\n// CanArrange returns the largest index of an element which is not greater\n// than or equal to the element immediately preceding it. If no such element\n// exists then return -1.\nfunc CanArrange(arr []int) int {\n\tlargestIndex := -1\n\t\n\tfor i := 1; i < len(arr); i++ {\n\t\t// Check if current element is not greater than or equal to previous element\n\t\t// In other words, check if current element is less than previous element\n\t\tif arr[i] < arr[i-1] {\n\t\t\tlargestIndex = i\n\t\t}\n\t}\n\t\n\treturn largestIndex\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

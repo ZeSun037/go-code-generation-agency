@@ -1,0 +1,13 @@
+{
+    "task": "task_111.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Exchange(lst1, lst2 []int) string {\n\t// Count even numbers in lst1\n\tevenCount := 0\n\tfor _, num := range lst1 {\n\t\tif num%2 == 0 {\n\t\t\tevenCount++\n\t\t}\n\t}\n\t\n\t// Count even numbers in lst2\n\tfor _, num := range lst2 {\n\t\tif num%2 == 0 {\n\t\t\tevenCount++\n\t\t}\n\t}\n\t\n\t// Check if we have enough even numbers to fill lst1\n\tif evenCount >= len(lst1) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

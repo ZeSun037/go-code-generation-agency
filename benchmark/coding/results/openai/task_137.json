@@ -1,0 +1,23 @@
+{
+    "task": "task_137.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc LargestSmallestIntegers(lst []int) [2]interface{} {\n\tvar largestNegative *int\n\tvar smallestPositive *int\n\n\tfor _, num := range lst {\n\t\tif num < 0 {\n\t\t\tif largestNegative == nil || num > *largestNegative {\n\t\t\t\tlargestNegative = &num\n\t\t\t}\n\t\t} else if num > 0 {\n\t\t\tif smallestPositive == nil || num < *smallestPositive {\n\t\t\t\tsmallestPositive = &num\n\t\t\t}\n\t\t}\n\t}\n\n\treturn [2]interface{}{largestNegative, smallestPositive}\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestLargestSmallestIntegers (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_4vhlejrh/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: [2]interface {}{interface {}(nil), 1}\n        \t            \tactual  : [2]interface {}{(*int)(nil), (*int)(0xc00011a818)}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,4 @@\n        \t            \t ([2]interface {}) (len=2) {\n        \t            \t- (interface {}) <nil>,\n        \t            \t- (int) 1\n        \t            \t+ (*int)(<nil>),\n        \t            \t+ (*int)(1)\n        \t            \t }\n        \tTest:       \tTestLargestSmallestIntegers\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_4vhlejrh/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: [2]interface {}{interface {}(nil), interface {}(nil)}\n        \t            \tactual  : [2]interface {}{(*int)(nil), (*int)(nil)}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,4 @@\n        \t            \t ([2]interface {}) (len=2) {\n        \t            \t- (interface {}) <nil>,\n        \t            \t- (interface {}) <nil>\n        \t            \t+ (*int)(<nil>),\n        \t            \t+ (*int)(<nil>)\n        \t            \t }\n        \tTest:       \tTestLargestSmallestIntegers\n    main_test.go:12: \n        \tError Trace:\t/tmp/go_synthesis_4vhlejrh/main_test.go:12\n        \tError:      \tNot equal: \n        \t            \texpected: [2]interface {}{interface {}(nil), interface {}(nil)}\n        \t            \tactual  : [2]interface {}{(*int)(nil), (*int)(nil)}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,4 @@\n        \t            \t ([2]interface {}) (len=2) {\n        \t            \t- (interface {}) <nil>,\n        \t            \t- (interface {}) <nil>\n        \t            \t+ (*int)(<nil>),\n        \t            \t+ (*int)(<nil>)\n        \t            \t }\n        \tTest:       \tTestLargestSmallestIntegers\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc LargestSmallestIntegers(lst []int) [2]interface{} {\n\tvar largestNegative interface{} = nil\n\tvar smallestPositive interface{} = nil\n\n\tfor _, num := range lst {\n\t\tif num < 0 {\n\t\t\tif largestNegative == nil || num > largestNegative.(int) {\n\t\t\t\tlargestNegative = num\n\t\t\t}\n\t\t} else if num > 0 {\n\t\t\tif smallestPositive == nil || num < smallestPositive.(int) {\n\t\t\t\tsmallestPositive = num\n\t\t\t}\n\t\t}\n\t}\n\n\treturn [2]interface{}{largestNegative, smallestPositive}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

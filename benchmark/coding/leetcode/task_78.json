@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/77",
+  "prompt": "import (\n    \"math\"\n)\n\n// Write a function that takes an integer a and returns true\n// if this ingeger is a cube of some integer number.\n// Note: you may assume the input is always valid.\n// Examples:\n// Iscube(1) ==> true\n// Iscube(2) ==> false\n// Iscube(-1) ==> true\n// Iscube(64) ==> true\n// Iscube(0) ==> true\n// Iscube(180) ==> false\nfunc Iscube(a int) bool {\n",
+  "import": "import (\n    \"math\"\n)",
+  "docstring": "// Write a function that takes an integer a and returns true\n// if this ingeger is a cube of some integer number.\n// Note: you may assume the input is always valid.\n// Examples:\n// Iscube(1) ==> true\n// Iscube(2) ==> false\n// Iscube(-1) ==> true\n// Iscube(64) ==> true\n// Iscube(0) ==> true\n// Iscube(180) ==> false\n",
+  "declaration": "\nfunc Iscube(a int) bool {\n",
+  "canonical_solution": "    abs := math.Abs(float64(a))\n\treturn int(math.Pow(math.Round(math.Pow(abs, 1.0/3.0)), 3.0)) == int(abs)\n}\n\n",
+  "test": "func TestIscube(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, Iscube(1))\n    assert.Equal(false, Iscube(2))\n    assert.Equal(true, Iscube(-1))\n    assert.Equal(true, Iscube(64))\n    assert.Equal(false, Iscube(180))\n    assert.Equal(true, Iscube(1000))\n    assert.Equal(true, Iscube(0))\n    assert.Equal(false, Iscube(1729))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIscube(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, Iscube(1))\n    assert.Equal(false, Iscube(2))\n    assert.Equal(true, Iscube(-1))\n    assert.Equal(true, Iscube(64))\n    assert.Equal(false, Iscube(180))\n    assert.Equal(true, Iscube(0))\n}\n"
+}

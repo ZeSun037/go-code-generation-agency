@@ -1,0 +1,13 @@
+{
+    "task": "task_141.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n\t\"regexp\"\n)\n\nfunc FixSpaces(text string) string {\n\t// Replace all consecutive spaces with a placeholder\n\tre := regexp.MustCompile(` {3,}`)\n\ttext = re.ReplaceAllString(text, \"-\")\n\n\t// Replace single and double spaces with underscores\n\ttext = strings.ReplaceAll(text, \" \", \"_\")\n\n\treturn text\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_122.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Solution(lst []int) int {\n    sum := 0\n    for i := 0; i < len(lst); i++ {\n        if i%2 == 0 && lst[i]%2 != 0 {\n            sum += lst[i]\n        }\n    }\n    return sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

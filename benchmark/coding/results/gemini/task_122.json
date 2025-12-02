@@ -1,0 +1,13 @@
+{
+    "task": "task_122.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Given a non-empty list of integers, return the sum of all of the odd elements that are in even positions.\n//\n// Examples\n// Solution([5, 8, 7, 1]) ==> 12\n// Solution([3, 3, 3, 3, 3]) ==> 9\n// Solution([30, 13, 24, 321]) ==>0\nfunc Solution(lst []int) int {\n\tsum := 0\n\tfor i, v := range lst {\n\t\t// Check if the current position (index) is even (0-indexed)\n\t\t// and if the element at that position is odd.\n\t\tif i%2 == 0 && v%2 != 0 {\n\t\t\tsum += v\n\t\t}\n\t}\n\treturn sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

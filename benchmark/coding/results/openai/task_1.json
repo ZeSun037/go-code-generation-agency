@@ -1,0 +1,13 @@
+{
+    "task": "task_1.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\nfunc HasCloseElements(numbers []float64, threshold float64) bool {\n    for i := 0; i < len(numbers); i++ {\n        for j := i + 1; j < len(numbers); j++ {\n            if math.Abs(numbers[i]-numbers[j]) < threshold {\n                return true\n            }\n        }\n    }\n    return false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

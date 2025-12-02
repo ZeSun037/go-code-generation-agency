@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/92",
+  "prompt": "\n// Create a function that takes 3 numbers.\n// Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.\n// Returns false in any other cases.\n// \n// Examples\n// AnyInt(5, 2, 7) ➞ true\n// \n// AnyInt(3, 2, 2) ➞ false\n// \n// AnyInt(3, -2, 1) ➞ true\n// \n// AnyInt(3.6, -2.2, 2) ➞ false\nfunc AnyInt(x, y, z interface{}) bool {\n",
+  "import": "",
+  "docstring": "// Create a function that takes 3 numbers.\n// Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.\n// Returns false in any other cases.\n// \n// Examples\n// AnyInt(5, 2, 7) ➞ true\n// \n// AnyInt(3, 2, 2) ➞ false\n// \n// AnyInt(3, -2, 1) ➞ true\n// \n// AnyInt(3.6, -2.2, 2) ➞ false\n",
+  "declaration": "\nfunc AnyInt(x, y, z interface{}) bool {\n",
+  "canonical_solution": "    xx, ok := x.(int)\n    if !ok {\n        return false\n    }\n    yy, ok := y.(int)\n    if !ok {\n        return false\n    }\n    zz, ok := z.(int)\n    if !ok {\n        return false\n    }\n\n    if (xx+yy == zz) || (xx+zz == yy) || (yy+zz == xx) {\n        return true\n    }\n    return false\n}\n\n",
+  "test": "func TestAnyInt(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, AnyInt(2, 3, 1))\n    assert.Equal(false, AnyInt(2.5, 2, 3))\n    assert.Equal(false, AnyInt(1.5, 5, 3.5))\n    assert.Equal(false, AnyInt(2, 6, 2))\n    assert.Equal(true, AnyInt(4, 2, 2))\n    assert.Equal(false, AnyInt(2.2, 2.2, 2.2))\n    assert.Equal(true, AnyInt(-4, 6, 2))\n    assert.Equal(true, AnyInt(2, 1, 1))\n    assert.Equal(true, AnyInt(3, 4, 7))\n    assert.Equal(false, AnyInt(3.0, 4, 7))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestAnyInt(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, AnyInt(5, 2, 7))\n    assert.Equal(false, AnyInt(3, 2, 2))\n    assert.Equal(true, AnyInt(3, -2, 1))\n    assert.Equal(false, AnyInt(3.6, -2.2, 2))\n}\n"
+}

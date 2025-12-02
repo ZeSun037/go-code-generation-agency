@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/46",
+  "prompt": "\n// The Fib4 number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n// Fib4(0) -> 0\n// Fib4(1) -> 0\n// Fib4(2) -> 2\n// Fib4(3) -> 0\n// Fib4(n) -> Fib4(n-1) + Fib4(n-2) + Fib4(n-3) + Fib4(n-4).\n// Please write a function to efficiently compute the n-th element of the Fib4 number sequence.  Do not use recursion.\n// >>> Fib4(5)\n// 4\n// >>> Fib4(6)\n// 8\n// >>> Fib4(7)\n// 14\nfunc Fib4(n int) int {\n",
+  "import": "",
+  "docstring": "// The Fib4 number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n// Fib4(0) -> 0\n// Fib4(1) -> 0\n// Fib4(2) -> 2\n// Fib4(3) -> 0\n// Fib4(n) -> Fib4(n-1) + Fib4(n-2) + Fib4(n-3) + Fib4(n-4).\n// Please write a function to efficiently compute the n-th element of the Fib4 number sequence.  Do not use recursion.\n// >>> Fib4(5)\n// 4\n// >>> Fib4(6)\n// 8\n// >>> Fib4(7)\n// 14\n",
+  "declaration": "\nfunc Fib4(n int) int {\n",
+  "canonical_solution": "    switch n {\n\tcase 0:\n\t\treturn 0\n\tcase 1:\n\t\treturn 0\n\tcase 2:\n\t\treturn 2\n\tcase 3:\n\t\treturn 0\n\tdefault:\n\t\treturn Fib4(n-1) + Fib4(n-2) + Fib4(n-3) + Fib4(n-4)\n\t}\n}\n\n",
+  "test": "func TestFib4(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(4, Fib4(5))\n    assert.Equal(28, Fib4(8))\n    assert.Equal(104, Fib4(10))\n    assert.Equal(386, Fib4(12))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFib4(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(4, Fib4(5))\n    assert.Equal(8, Fib4(6))\n    assert.Equal(14, Fib4(7))\n}\n"
+}

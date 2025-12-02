@@ -1,0 +1,13 @@
+{
+    "task": "task_115.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// Minsubarraysum finds the minimum sum of any non-empty sub-array of nums.\n// It uses a variation of Kadane's algorithm, adapted for minimum sums.\n//\n// The algorithm maintains two variables:\n// - currentMinSum: The minimum sum of a subarray ending at the current position.\n// - overallMinSum: The minimum sum found across all subarrays processed so far.\n//\n// For each number in the array, `currentMinSum` is updated by deciding\n// whether to start a new subarray (just the current number) or extend\n// the previous minimum subarray. The smaller of these two options is chosen.\n// `overallMinSum` is then updated to be the minimum between its current value\n// and the `currentMinSum`.\n//\n// Time Complexity: O(N), where N is the length of the nums array.\n// Space Complexity: O(1).\nfunc Minsubarraysum(nums []int) int {\n\tif len(nums) == 0 {\n\t\t// According to the problem statement \"find the minimum sum of any non-empty sub-array\",\n\t\t// if the input array `nums` is empty, there are no non-empty sub-arrays.\n\t\t// In such a scenario, returning math.MaxInt indicates that no valid minimum sum could be found.\n\t\treturn math.MaxInt\n\t}\n\n\t// Initialize currentMinSum and overallMinSum with the first element.\n\t// This ensures that both are initialized with a valid potential sum\n\t// from a non-empty subarray, and correctly handles single-element arrays.\n\tcurrentMinSum := nums[0]\n\toverallMinSum := nums[0]\n\n\t// Iterate starting from the second element.\n\t// For each element, we decide whether to extend the previous minimum subarray\n\t// or start a new subarray with the current number itself.\n\tfor i := 1; i < len(nums); i++ {\n\t\tnum := nums[i]\n\t\t// The current minimum sum ending at `num` is either `num` itself (starting a new subarray)\n\t\t// or `num` added to the `currentMinSum` from the previous position (extending the subarray).\n\t\tcurrentMinSum = min(num, currentMinSum+num)\n\n\t\t// The overall minimum sum is the minimum between the current overall minimum\n\t\t// and the minimum sum ending at the current position.\n\t\toverallMinSum = min(overallMinSum, currentMinSum)\n\t}\n\n\treturn overallMinSum\n}\n\n// min is a helper function to find the minimum of two integers.\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

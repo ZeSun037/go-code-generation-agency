@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/121",
+  "prompt": "\n// Given a non-empty list of integers, return the sum of all of the odd elements that are in even positions.\n// \n// Examples\n// Solution([5, 8, 7, 1]) ==> 12\n// Solution([3, 3, 3, 3, 3]) ==> 9\n// Solution([30, 13, 24, 321]) ==>0\nfunc Solution(lst []int) int {\n",
+  "import": "",
+  "docstring": "// Given a non-empty list of integers, return the sum of all of the odd elements that are in even positions.\n// \n// Examples\n// Solution([5, 8, 7, 1]) ==> 12\n// Solution([3, 3, 3, 3, 3]) ==> 9\n// Solution([30, 13, 24, 321]) ==>0\n",
+  "declaration": "\nfunc Solution(lst []int) int {\n",
+  "canonical_solution": "    sum:=0\n    for i, x := range lst {\n        if i&1==0&&x&1==1 {\n            sum+=x\n        }\n    }\n    return sum\n}\n\n",
+  "test": "func TestSolution(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(12, Solution([]int{5, 8, 7, 1}))\n    assert.Equal(9, Solution([]int{3, 3, 3, 3, 3}))\n    assert.Equal(0, Solution([]int{30, 13, 24, 321}))\n    assert.Equal(5, Solution([]int{5, 9}))\n    assert.Equal(0, Solution([]int{2, 4, 8}))\n    assert.Equal(23, Solution([]int{30, 13, 23, 32}))\n    assert.Equal(3, Solution([]int{3, 13, 2, 9}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestSolution(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(12, Solution([]int{5, 8, 7, 1}))\n    assert.Equal(9, Solution([]int{3, 3, 3, 3, 3}))\n    assert.Equal(0, Solution([]int{30, 13, 24, 321}))\n}\n"
+}

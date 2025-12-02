@@ -1,0 +1,13 @@
+{
+    "task": "task_151.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc isPrime(n int) bool {\n\tif n <= 1 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= n; i++ {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc XOrY(n, x, y int) int {\n\tif isPrime(n) {\n\t\treturn x\n\t}\n\treturn y\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

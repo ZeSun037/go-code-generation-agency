@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/150",
+  "prompt": "\n// A simple program which should return the value of x if n is\n// a prime number and should return the value of y otherwise.\n// \n// Examples:\n// for XOrY(7, 34, 12) == 34\n// for XOrY(15, 8, 5) == 5\nfunc XOrY(n, x, y int) int {\n",
+  "import": "",
+  "docstring": "// A simple program which should return the value of x if n is\n// a prime number and should return the value of y otherwise.\n// \n// Examples:\n// for XOrY(7, 34, 12) == 34\n// for XOrY(15, 8, 5) == 5\n",
+  "declaration": "\nfunc XOrY(n, x, y int) int {\n",
+  "canonical_solution": "    if n == 1 {\n        return y\n    }\n    for i := 2;i < n;i++ {\n        if n % i == 0 {\n            return y\n        }\n    }\n    return x\n}\n\n",
+  "test": "func TestXOrY(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(34, XOrY(7, 34, 12))\n    assert.Equal(5, XOrY(15, 8, 5))\n    assert.Equal(33, XOrY(3, 33, 5212))\n    assert.Equal(3, XOrY(1259, 3, 52))\n    assert.Equal(-1, XOrY(7919, -1, 12))\n    assert.Equal(583, XOrY(3609, 1245, 583))\n    assert.Equal(129, XOrY(91, 56, 129))\n    assert.Equal(1234, XOrY(6, 34, 1234))\n    assert.Equal(0, XOrY(1, 2, 0))\n    assert.Equal(2, XOrY(2, 2, 0))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestXOrY(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(34, XOrY(7, 34, 12))\n    assert.Equal(5, XOrY(15, 8, 5))\n}\n"
+}

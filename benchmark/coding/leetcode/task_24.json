@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/23",
+  "prompt": "\n// Return length of given string\n// >>> Strlen('')\n// 0\n// >>> Strlen('abc')\n// 3\nfunc Strlen(str string) int {\n",
+  "import": "",
+  "docstring": "// Return length of given string\n// >>> Strlen('')\n// 0\n// >>> Strlen('abc')\n// 3\n",
+  "declaration": "\nfunc Strlen(str string) int {\n",
+  "canonical_solution": "    return len(str)\n}\n\n",
+  "test": "func TestStrlen(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, Strlen(\"\"))\n    assert.Equal(1, Strlen(\"x\"))\n    assert.Equal(9, Strlen(\"asdasnakj\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestStrlen(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, Strlen(\"\"))\n    assert.Equal(3, Strlen(\"abc\"))\n}\n"
+}

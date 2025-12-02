@@ -1,0 +1,33 @@
+{
+    "task": "task_128.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport \"fmt\"\n\n// isPrime checks if a number is prime.\nfunc isPrime(num int) bool {\n\tif num <= 1 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= num; i++ {\n\t\tif num%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Intersection determines whether the length of the intersection of two intervals is a prime number.\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\n\tlength := end - start + 1\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\n// max returns the maximum of two integers.\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// min returns the minimum of two integers.\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// main function for testing purposes.\nfunc main() {\n\tfmt.Println(Intersection([2]int{1, 2}, [2]int{2, 3}))      // \"NO\"\n\tfmt.Println(Intersection([2]int{-1, 1}, [2]int{0, 4}))    // \"NO\"\n\tfmt.Println(Intersection([2]int{-3, -1}, [2]int{-5, 5}))  // \"YES\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIntersection (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_q7om9kzh/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: \"NO\"\n        \t            \tactual  : \"YES\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-NO\n        \t            \t+YES\n        \tTest:       \tTestIntersection\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport \"fmt\"\n\n// isPrime checks if a number is prime.\nfunc isPrime(num int) bool {\n\tif num <= 1 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= num; i++ {\n\t\tif num%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Intersection determines whether the length of the intersection of two intervals is a prime number.\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\n\tlength := end - start + 1\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\n// max returns the maximum of two integers.\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// min returns the minimum of two integers.\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// main function for testing purposes.\nfunc main() {\n\tfmt.Println(Intersection([2]int{1, 2}, [2]int{2, 3}))      // \"NO\"\n\tfmt.Println(Intersection([2]int{-1, 1}, [2]int{0, 4}))    // \"NO\"\n\tfmt.Println(Intersection([2]int{-3, -1}, [2]int{-5, 5}))  // \"YES\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestIntersection (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_q7om9kzh/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: \"NO\"\n        \t            \tactual  : \"YES\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-NO\n        \t            \t+YES\n        \tTest:       \tTestIntersection\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport \"fmt\"\n\n// isPrime checks if a number is prime.\nfunc isPrime(num int) bool {\n\tif num <= 1 {\n\t\treturn false\n\t}\n\tfor i := 2; i*i <= num; i++ {\n\t\tif num%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Intersection determines whether the length of the intersection of two intervals is a prime number.\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\tstart := max(interval1[0], interval2[0])\n\tend := min(interval1[1], interval2[1])\n\n\tif start > end {\n\t\treturn \"NO\"\n\t}\n\n\tlength := end - start\n\tif length > 0 && isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}\n\n// max returns the maximum of two integers.\nfunc max(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// min returns the minimum of two integers.\nfunc min(a, b int) int {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// main function for testing purposes.\nfunc main() {\n\tfmt.Println(Intersection([2]int{1, 2}, [2]int{2, 3}))      // \"NO\"\n\tfmt.Println(Intersection([2]int{-1, 1}, [2]int{0, 4}))    // \"NO\"\n\tfmt.Println(Intersection([2]int{-3, -1}, [2]int{-5, 5}))  // \"YES\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

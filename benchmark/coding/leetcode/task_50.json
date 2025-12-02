@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/49",
+  "prompt": "\n// Return 2^n modulo p (be aware of numerics).\n// >>> Modp(3, 5)\n// 3\n// >>> Modp(1101, 101)\n// 2\n// >>> Modp(0, 101)\n// 1\n// >>> Modp(3, 11)\n// 8\n// >>> Modp(100, 101)\n// 1\nfunc Modp(n int,p int) int {\n",
+  "import": "",
+  "docstring": "// Return 2^n modulo p (be aware of numerics).\n// >>> Modp(3, 5)\n// 3\n// >>> Modp(1101, 101)\n// 2\n// >>> Modp(0, 101)\n// 1\n// >>> Modp(3, 11)\n// 8\n// >>> Modp(100, 101)\n// 1\n",
+  "declaration": "\nfunc Modp(n int,p int) int {\n",
+  "canonical_solution": "    ret := 1\n    for i:= 0; i < n; i++ {\n\t\tret = (2 * ret) % p\n\t}\n    return ret\n}\n\n",
+  "test": "func TestModp(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, Modp(3, 5))\n    assert.Equal(2, Modp(1101, 101))\n    assert.Equal(1, Modp(0, 101))\n    assert.Equal(8, Modp(3, 11))\n    assert.Equal(1, Modp(100, 101))\n    assert.Equal(4, Modp(30, 5))\n    assert.Equal(3, Modp(31, 5))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestModp(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, Modp(3, 5))\n    assert.Equal(2, Modp(1101, 101))\n    assert.Equal(1, Modp(0, 101))\n    assert.Equal(8, Modp(3, 11))\n    assert.Equal(1, Modp(100, 101))\n}\n"
+}

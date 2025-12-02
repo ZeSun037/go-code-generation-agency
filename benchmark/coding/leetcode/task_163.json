@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/162",
+  "prompt": "import (\n    \"crypto/md5\"\n    \"fmt\"\n)\n\n// Given a string 'text', return its md5 hash equivalent string.\n// If 'text' is an empty string, return nil.\n// \n// >>> StringToMd5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'\nfunc StringToMd5(text string) interface{} {\n",
+  "import": "import (\n    \"crypto/md5\"\n    \"fmt\"\n)\n",
+  "docstring": "// Given a string 'text', return its md5 hash equivalent string.\n// If 'text' is an empty string, return nil.\n// \n// >>> StringToMd5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'\n",
+  "declaration": "\nfunc StringToMd5(text string) interface{} {\n",
+  "canonical_solution": "    if text == \"\" {\n        return nil\n    }\n    return fmt.Sprintf(\"%x\", md5.Sum([]byte(text)))\n}\n\n",
+  "test": "func TestStringToMd5(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"3e25960a79dbc69b674cd4ec67a72c62\", StringToMd5(\"Hello world\"))\n    assert.Equal(nil, StringToMd5(\"\"))\n    assert.Equal(\"0ef78513b0cb8cef12743f5aeb35f888\", StringToMd5(\"A B C\"))\n    assert.Equal(\"5f4dcc3b5aa765d61d8327deb882cf99\", StringToMd5(\"password\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"crypto/md5\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestStringToMd5(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"3e25960a79dbc69b674cd4ec67a72c62\", StringToMd5(\"Hello world\"))\n}\n"
+}

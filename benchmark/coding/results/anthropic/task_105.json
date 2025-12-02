@@ -1,0 +1,23 @@
+{
+    "task": "task_105.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n\t\"strconv\"\n)\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n//\n// Note: Returned list should be sorted in increasing order.\n//\n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n\tvar result []int\n\n\tfor _, num := range x {\n\t\tif hasNoEvenDigits(num) {\n\t\t\tresult = append(result, num)\n\t\t}\n\t}\n\n\tsort.Ints(result)\n\treturn result\n}\n\nfunc hasNoEvenDigits(num int) bool {\n\tstr := strconv.Itoa(num)\n\tfor _, ch := range str {\n\t\tdigit := int(ch - '0')\n\t\tif digit%2 == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestUniqueDigits (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_dtuvmc2a/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: []int{}\n        \t            \tactual  : []int(nil)\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,3 +1,2 @@\n        \t            \t-([]int) {\n        \t            \t-}\n        \t            \t+([]int) <nil>\n        \t            \t \n        \tTest:       \tTestUniqueDigits\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n\t\"strconv\"\n)\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n//\n// Note: Returned list should be sorted in increasing order.\n//\n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n\tvar result []int\n\n\tfor _, num := range x {\n\t\tif hasNoEvenDigits(num) {\n\t\t\tresult = append(result, num)\n\t\t}\n\t}\n\n\tif result == nil {\n\t\tresult = []int{}\n\t}\n\n\tsort.Ints(result)\n\treturn result\n}\n\nfunc hasNoEvenDigits(num int) bool {\n\tstr := strconv.Itoa(num)\n\tfor _, ch := range str {\n\t\tdigit := int(ch - '0')\n\t\tif digit%2 == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

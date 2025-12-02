@@ -1,0 +1,13 @@
+{
+    "task": "task_154.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\nfunc StrongestExtension(class_name string, extensions []string) string {\n\tmaxStrength := math.MinInt\n\tstrongestExtension := \"\"\n\n\tfor _, ext := range extensions {\n\t\tuppercase := 0\n\t\tlowercase := 0\n\n\t\tfor _, char := range ext {\n\t\t\tif char >= 'A' && char <= 'Z' {\n\t\t\t\tuppercase++\n\t\t\t} else if char >= 'a' && char <= 'z' {\n\t\t\t\tlowercase++\n\t\t\t}\n\t\t}\n\n\t\tstrength := uppercase - lowercase\n\n\t\tif strength > maxStrength {\n\t\t\tmaxStrength = strength\n\t\t\tstrongestExtension = ext\n\t\t}\n\t}\n\n\treturn class_name + \".\" + strongestExtension\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

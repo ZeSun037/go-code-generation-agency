@@ -1,0 +1,13 @@
+{
+    "task": "task_136.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc CanArrange(arr []int) int {\n\tfor i := len(arr) - 1; i > 0; i-- {\n\t\tif arr[i] < arr[i-1] {\n\t\t\treturn i\n\t\t}\n\t}\n\treturn -1\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

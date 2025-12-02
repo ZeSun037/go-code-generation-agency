@@ -1,0 +1,13 @@
+{
+    "task": "task_106.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n)\n\nfunc ByLength(arr []int) []string {\n    // Filter the array to keep only values between 1 and 9\n    filtered := []int{}\n    for _, num := range arr {\n        if num >= 1 && num <= 9 {\n            filtered = append(filtered, num)\n        }\n    }\n\n    // Sort the filtered array\n    sort.Ints(filtered)\n\n    // Reverse the sorted array\n    for i, j := 0, len(filtered)-1; i < j; i, j = i+1, j-1 {\n        filtered[i], filtered[j] = filtered[j], filtered[i]\n    }\n\n    // Map digits to their corresponding names\n    names := []string{\"\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"}\n    result := []string{}\n    for _, num := range filtered {\n        if num >= 1 && num <= 9 {\n            result = append(result, names[num])\n        }\n    }\n\n    return result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

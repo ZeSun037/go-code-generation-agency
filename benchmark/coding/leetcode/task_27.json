@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/26",
+  "prompt": "\n// From a list of integers, remove all elements that occur more than once.\n// Keep order of elements left the same as in the input.\n// >>> RemoveDuplicates([1, 2, 3, 2, 4])\n// [1, 3, 4]\nfunc RemoveDuplicates(numbers []int) []int {\n",
+  "import": "",
+  "docstring": "// From a list of integers, remove all elements that occur more than once.\n// Keep order of elements left the same as in the input.\n// >>> RemoveDuplicates([1, 2, 3, 2, 4])\n// [1, 3, 4]\n",
+  "declaration": "\nfunc RemoveDuplicates(numbers []int) []int {\n",
+  "canonical_solution": "    c := make(map[int] int)\n\tfor _, number := range numbers {\n\t\tif i, ok := c[number]; ok {\n\t\t\tc[number] = i + 1\n\t\t} else {\n\t\t\tc[number] = 1\n\t\t}\n\t}\n\tresult := make([]int, 0)\n\tfor _, number := range numbers {\n\t\tif c[number] <= 1 {\n\t\t\tresult = append(result, number)\n\t\t}\n\t}\n\treturn result\n}\n\n",
+  "test": "func TestRemoveDuplicates(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{}, RemoveDuplicates([]int{}))\n    assert.Equal([]int{1, 2, 3, 4}, RemoveDuplicates([]int{1, 2, 3,4}))\n    assert.Equal([]int{1, 4, 5}, RemoveDuplicates([]int{1, 2, 3, 2,4, 3, 5}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestRemoveDuplicates(t *testing.T) {\n    assert := assert.New(t)  \n    assert.Equal([]int{1,  3, 4}, RemoveDuplicates([]int{1,2, 3,2,4}))\n}\n"
+}

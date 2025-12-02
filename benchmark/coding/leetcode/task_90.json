@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/89",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Create a function Encrypt that takes a string as an argument and\n// returns a string Encrypted with the alphabet being rotated.\n// The alphabet should be rotated in a manner such that the letters\n// shift down by two multiplied to two places.\n// For example:\n// Encrypt('hi') returns 'lm'\n// Encrypt('asdfghjkl') returns 'ewhjklnop'\n// Encrypt('gf') returns 'kj'\n// Encrypt('et') returns 'ix'\nfunc Encrypt(s string) string {\n",
+  "import": "import (\n    \"strings\"\n)\n",
+  "docstring": "// Create a function Encrypt that takes a string as an argument and\n// returns a string Encrypted with the alphabet being rotated.\n// The alphabet should be rotated in a manner such that the letters\n// shift down by two multiplied to two places.\n// For example:\n// Encrypt('hi') returns 'lm'\n// Encrypt('asdfghjkl') returns 'ewhjklnop'\n// Encrypt('gf') returns 'kj'\n// Encrypt('et') returns 'ix'\n",
+  "declaration": "\nfunc Encrypt(s string) string {\n",
+  "canonical_solution": "    d := \"abcdefghijklmnopqrstuvwxyz\"\n    out := make([]rune, 0, len(s))\n    for _, c := range s {\n        pos := strings.IndexRune(d, c)\n        if pos != -1 {\n            out = append(out, []rune(d)[(pos+2*2)%26])\n        } else {\n            out = append(out, c)\n        }\n    }\n    return string(out)\n}\n\n",
+  "test": "func TestEncrypt(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"lm\", Encrypt(\"hi\"))\n    assert.Equal(\"ewhjklnop\", Encrypt(\"asdfghjkl\"))\n    assert.Equal(\"kj\", Encrypt(\"gf\"))\n    assert.Equal(\"ix\", Encrypt(\"et\"))\n    assert.Equal(\"jeiajeaijeiak\", Encrypt(\"faewfawefaewg\"))\n    assert.Equal(\"lippsqcjvmirh\", Encrypt(\"hellomyfriend\"))\n    assert.Equal(\"hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl\", Encrypt(\"dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh\"))\n    assert.Equal(\"e\", Encrypt(\"a\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestEncrypt(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"lm\", Encrypt(\"hi\"))\n    assert.Equal(\"ewhjklnop\", Encrypt(\"asdfghjkl\"))\n    assert.Equal(\"kj\", Encrypt(\"gf\"))\n    assert.Equal(\"ix\", Encrypt(\"et\"))\n}\n"
+}

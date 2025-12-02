@@ -1,0 +1,23 @@
+{
+    "task": "task_105.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n    \"strconv\"\n)\n\nfunc UniqueDigits(x []int) []int {\n    result := []int{}\n\n    for _, num := range x {\n        if containsEvenDigit(num) {\n            continue\n        }\n        result = append(result, num)\n    }\n\n    sort.Ints(result)\n    return result\n}\n\nfunc containsEvenDigit(num int) bool {\n    for num > 0 {\n        digit := num % 10\n        if digit%2 == 0 {\n            return true\n        }\n        num /= 10\n    }\n    return false\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:5:5: \"strconv\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n)\n\nfunc UniqueDigits(x []int) []int {\n    result := []int{}\n\n    for _, num := range x {\n        if containsEvenDigit(num) {\n            continue\n        }\n        result = append(result, num)\n    }\n\n    sort.Ints(result)\n    return result\n}\n\nfunc containsEvenDigit(num int) bool {\n    for num > 0 {\n        digit := num % 10\n        if digit%2 == 0 {\n            return true\n        }\n        num /= 10\n    }\n    return false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

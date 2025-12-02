@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/59",
+  "prompt": "\n// Return the largest prime factor of n. Assume n > 1 and is not a prime.\n// >>> LargestPrimeFactor(13195)\n// 29\n// >>> LargestPrimeFactor(2048)\n// 2\nfunc LargestPrimeFactor(n int) int {\n",
+  "import": "",
+  "docstring": "// Return the largest prime factor of n. Assume n > 1 and is not a prime.\n// >>> LargestPrimeFactor(13195)\n// 29\n// >>> LargestPrimeFactor(2048)\n// 2\n",
+  "declaration": "\nfunc LargestPrimeFactor(n int) int {\n",
+  "canonical_solution": "    isPrime := func(n int) bool {\n        for i := 2; i < int(math.Pow(float64(n), 0.5)+1); i++ {\n            if n%i == 0 {\n                return false\n            }\n        }\n        return true\n    }\n\n    largest := 1\n    for j := 2; j < n + 1; j++ {\n\t\tif n % j == 0 && isPrime(j) {\n\t\t\tif j > largest {\n\t\t\t\tlargest = j\n\t\t\t}\n\t\t}\n\t}\n    return largest\n}\n\n",
+  "test": "func TestLargestPrimeFactor(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(5, LargestPrimeFactor(15))\n    assert.Equal(3, LargestPrimeFactor(27))\n    assert.Equal(7, LargestPrimeFactor(63))\n    assert.Equal(11, LargestPrimeFactor(330))\n    assert.Equal(29, LargestPrimeFactor(13195))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestLargestPrimeFactor(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, LargestPrimeFactor(2048))\n    assert.Equal(29, LargestPrimeFactor(13195))\n}\n"
+}

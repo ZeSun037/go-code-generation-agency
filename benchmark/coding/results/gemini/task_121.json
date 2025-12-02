@@ -1,0 +1,13 @@
+{
+    "task": "task_121.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// Given an array arr of integers and a positive integer k, return a sorted list\n// of length k with the Maximum k numbers in arr.\n//\n// Example 1:\n//\n// Input: arr = [-3, -4, 5], k = 3\n// Output: [-4, -3, 5]\n//\n// Example 2:\n//\n// Input: arr = [4, -4, 4], k = 2\n// Output: [4, 4]\n//\n// Example 3:\n//\n// Input: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1\n// Output: [2]\n//\n// Note:\n// 1. The length of the array will be in the range of [1, 1000].\n// 2. The elements in the array will be in the range of [-1000, 1000].\n// 3. 0 <= k <= len(arr)\nfunc Maximum(arr []int, k int) []int {\n\t// Step 1: Sort the entire input array in ascending order.\n\t// The `sort.Ints` function sorts the slice in-place.\n\t// For example, if arr = [4, -4, 4], after sort.Ints(arr), arr becomes [-4, 4, 4].\n\tsort.Ints(arr)\n\n\t// Step 2: Extract the last k elements from the sorted array.\n\t// Since the array is sorted in ascending order, the k largest numbers\n\t// will be located at the end of the array.\n\t// The slice `arr[len(arr)-k:]` creates a new slice referencing the elements\n\t// from index `len(arr)-k` up to (but not including) the end of `arr`.\n\t//\n\t// This approach naturally handles the `k=0` case:\n\t// If `k` is 0, `len(arr)-k` becomes `len(arr)`.\n\t// `arr[len(arr):]` correctly returns an empty slice (`[]int{}`),\n\t// which is the desired output when `k` is 0.\n\t//\n\t// Example: arr = [-4, -3, 5], k = 3\n\t// len(arr) = 3, k = 3\n\t// index = len(arr) - k = 3 - 3 = 0\n\t// result = arr[0:] = [-4, -3, 5]\n\t//\n\t// Example: arr = [-4, 4, 4], k = 2\n\t// len(arr) = 3, k = 2\n\t// index = len(arr) - k = 3 - 2 = 1\n\t// result = arr[1:] = [4, 4]\n\t//\n\t// Example: arr = [-3, -2, -1, 1, 1, 2, 2], k = 1\n\t// len(arr) = 7, k = 1\n\t// index = len(arr) - k = 7 - 1 = 6\n\t// result = arr[6:] = [2]\n\treturn arr[len(arr)-k:]\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

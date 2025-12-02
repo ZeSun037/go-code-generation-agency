@@ -1,0 +1,13 @@
+{
+    "task": "task_140.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// factorial calculates k!\nfunc factorial(k int) int {\n\tif k < 0 {\n\t\t// Factorial is not defined for negative numbers.\n\t\t// For this problem, k will always be >= 1.\n\t\treturn 0 // Or panic, depending on desired error handling\n\t}\n\tif k == 0 || k == 1 {\n\t\treturn 1\n\t}\n\tresult := 1\n\tfor i := 2; i <= k; i++ {\n\t\tresult *= i\n\t}\n\treturn result\n}\n\n// SpecialFactorial calculates the Brazilian factorial as defined:\n// brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n// where n > 0\n// For example: SpecialFactorial(4) = 4! * 3! * 2! * 1! = 24 * 6 * 2 * 1 = 288\nfunc SpecialFactorial(n int) int {\n\t// According to the problem description, n > 0.\n\t// If n were allowed to be 0 or negative, additional handling would be needed.\n\t// For n=0, by convention, the product of an empty set is 1.\n\t// For n<0, it's typically undefined or an error.\n\tif n <= 0 {\n\t\t// Based on the problem's constraint \"n > 0\", this case should ideally not happen\n\t\t// with valid inputs. Returning 1 could be a reasonable default for n=0\n\t\t// (empty product), but for n<0 it's an invalid input.\n\t\t// Returning 0 or panicking could be options, depending on specific requirements\n\t\t// for invalid inputs. For now, assuming n will always be > 0.\n\t\treturn 1 // Returning 1 as product of an empty set, for n=0; but per problem n>0.\n\t}\n\n\ttotalProduct := 1\n\tfor i := n; i >= 1; i-- {\n\t\ttotalProduct *= factorial(i)\n\t}\n\n\treturn totalProduct\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

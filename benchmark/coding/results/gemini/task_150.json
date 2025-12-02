@@ -1,0 +1,13 @@
+{
+    "task": "task_150.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// SortedListSum processes a list of strings by first removing all strings with\n// odd lengths. The remaining strings are then sorted based on two criteria:\n//\n// 1. Primary sort: by the length of the string in ascending order.\n// 2. Secondary sort: if two strings have the same length, they are sorted\n//    alphabetically in ascending order.\n//\n// The function returns the filtered and sorted list of strings.\n// Note: The prompt's statement \"You may assume that all words will have the same length\"\n// is disregarded as it contradicts the provided examples and explicit sorting rules\n// (primary sort by length). The implementation adheres to the examples and rules.\nfunc SortedListSum(lst []string) []string {\n\t// Step 1: Filter out strings that have odd lengths.\n\t// Create a new slice to store strings with even lengths.\n\tvar evenLengthStrings []string\n\tfor _, s := range lst {\n\t\tif len(s)%2 == 0 { // Check if the length is even\n\t\t\tevenLengthStrings = append(evenLengthStrings, s)\n\t\t}\n\t}\n\n\t// Step 2: Sort the remaining strings according to the specified rules.\n\t// Use sort.Slice for custom sorting logic.\n\tsort.Slice(evenLengthStrings, func(i, j int) bool {\n\t\ts1 := evenLengthStrings[i]\n\t\ts2 := evenLengthStrings[j]\n\n\t\t// First, compare by length in ascending order.\n\t\tif len(s1) != len(s2) {\n\t\t\treturn len(s1) < len(s2)\n\t\t}\n\n\t\t// If lengths are equal, then sort alphabetically in ascending order.\n\t\treturn s1 < s2\n\t})\n\n\treturn evenLengthStrings\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

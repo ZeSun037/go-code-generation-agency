@@ -1,0 +1,13 @@
+{
+    "task": "task_138.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n\t\"strings\"\n)\n\n// toFloat64 converts an interface{} value to a float64.\n// It handles int, float64, and string representations of real numbers.\n// Strings can use either '.' or ',' as decimal separators.\n// It returns an error if the type is unsupported or the string cannot be parsed.\nfunc toFloat64(v interface{}) (float64, error) {\n\tswitch val := v.(type) {\n\tcase int:\n\t\treturn float64(val), nil\n\tcase float64:\n\t\treturn val, nil\n\tcase string:\n\t\t// Replace comma with dot for consistent parsing\n\t\ts := strings.ReplaceAll(val, \",\", \".\")\n\t\tf, err := strconv.ParseFloat(s, 64)\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"invalid string format for real number: %v, error: %w\", val, err)\n\t\t}\n\t\treturn f, nil\n\tdefault:\n\t\treturn 0, fmt.Errorf(\"unsupported type for comparison: %T\", v)\n\t}\n}\n\n// CompareOne compares two values that can be integers, floats, or strings\n// representing real numbers. It returns the larger value, preserving its\n// original type. If the values are equal, it returns nil.\n// Note: If a real number is represented as a string, the floating point\n// might be '.' or ','.\nfunc CompareOne(a, b interface{}) interface{} {\n\tfA, errA := toFloat64(a)\n\tif errA != nil {\n\t\t// Per problem description, inputs are expected to be valid integers,\n\t\t// floats, or strings representing real numbers. If an error occurs,\n\t\t// it indicates an unexpected input type or a malformed string\n\t\t// that cannot be parsed. Panicking here signals a violation of\n\t\t// the function's expected input contract.\n\t\tpanic(fmt.Sprintf(\"CompareOne input 'a' error: %v\", errA))\n\t}\n\n\tfB, errB := toFloat64(b)\n\tif errB != nil {\n\t\tpanic(fmt.Sprintf(\"CompareOne input 'b' error: %v\", errB))\n\t}\n\n\t// Use a small epsilon for robust floating-point comparisons when determining\n\t// if values are \"equal\". For direct inequality (> or <), direct comparison\n\t// is generally sufficient. The epsilon ensures that minor floating-point\n\t// inaccuracies don't cause values that should be considered equal to be\n\t// treated as unequal.\n\tepsilon := 1e-9 // A common choice for float64 comparisons\n\n\tif fA > fB+epsilon {\n\t\t// fA is definitively greater than fB\n\t\treturn a\n\t} else if fB > fA+epsilon {\n\t\t// fB is definitively greater than fA\n\t\treturn b\n\t} else {\n\t\t// Values are approximately equal within the epsilon margin\n\t\treturn nil\n\t}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

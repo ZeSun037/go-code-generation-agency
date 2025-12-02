@@ -1,0 +1,13 @@
+{
+    "task": "task_139.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc IsEqualToSumEven(n int) bool {\n    // A sum of 4 positive even numbers must be at least 8 (2 + 2 + 2 + 2).\n    // Thus, if n is less than 8 or if n is odd, it cannot be expressed as such a sum.\n    if n < 8 || n%2 != 0 {\n        return false\n    }\n    // If n is 8 or more and even, it can always be expressed as the sum of four even numbers.\n    return true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

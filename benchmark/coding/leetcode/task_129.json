@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/128",
+  "prompt": "import (\n    \"math\"\n)\n\n// You are given an array arr of integers and you need to return\n// sum of magnitudes of integers multiplied by product of all signs\n// of each number in the array, represented by 1, -1 or 0.\n// Note: return nil for empty arr.\n// \n// Example:\n// >>> ProdSigns([1, 2, 2, -4]) == -9\n// >>> ProdSigns([0, 1]) == 0\n// >>> ProdSigns([]) == nil\nfunc ProdSigns(arr []int) interface{} {\n",
+  "import": "import (\n    \"math\"\n)\n",
+  "docstring": "// You are given an array arr of integers and you need to return\n// sum of magnitudes of integers multiplied by product of all signs\n// of each number in the array, represented by 1, -1 or 0.\n// Note: return nil for empty arr.\n// \n// Example:\n// >>> ProdSigns([1, 2, 2, -4]) == -9\n// >>> ProdSigns([0, 1]) == 0\n// >>> ProdSigns([]) == nil\n",
+  "declaration": "\nfunc ProdSigns(arr []int) interface{} {\n",
+  "canonical_solution": "    if len(arr) == 0 {\n        return nil\n    }\n    cnt := 0\n    sum := 0\n    for _, i := range arr {\n        if i == 0 {\n            return 0\n        }\n        if i < 0 {\n            cnt++\n        }\n        sum += int(math.Abs(float64(i)))\n    }\n\n    prod := int(math.Pow(-1, float64(cnt)))\n    return prod * sum\n}\n\n",
+  "test": "func TestProdSigns(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(-9, ProdSigns([]int{1, 2, 2, -4}))\n    assert.Equal(0, ProdSigns([]int{0, 1}))\n    assert.Equal(-10, ProdSigns([]int{1, 1, 1, 2, 3, -1, 1}))\n    assert.Equal(nil, ProdSigns([]int{}))\n    assert.Equal(20, ProdSigns([]int{2, 4,1, 2, -1, -1, 9}))\n    assert.Equal(4, ProdSigns([]int{-1, 1, -1, 1}))\n    assert.Equal(-4, ProdSigns([]int{-1, 1, 1, 1}))\n    assert.Equal(0, ProdSigns([]int{-1, 1, 1, 0}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestProdSigns(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(-9, ProdSigns([]int{1, 2, 2, -4}))\n    assert.Equal(0, ProdSigns([]int{0, 1}))\n    assert.Equal(nil, ProdSigns([]int{}))\n}\n"
+}

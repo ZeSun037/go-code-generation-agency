@@ -1,0 +1,23 @@
+{
+    "task": "task_142.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "import (\n\t\"strings\"\n)\n\n// FileNameCheck takes a string representing a file's name and returns\n// 'Yes' if the file's name is valid, and 'No' otherwise.\n// A file's name is considered to be valid if and only if all the following conditions\n// are met:\n// - There should not be more than three digits ('0'-'9') in the file's name.\n// - The file's name contains exactly one dot '.'\n// - The substring before the dot should not be empty, and it starts with a letter from\n// the latin alphabet ('a'-'z' and 'A'-'Z').\n// - The substring after the dot should be one of these: ['txt', 'exe', 'dll']\nfunc FileNameCheck(file_name string) string {\n\t// Rule 2: The file's name contains exactly one dot '.'\n\tdotCount := strings.Count(file_name, \".\")\n\tif dotCount != 1 {\n\t\treturn \"No\"\n\t}\n\n\tparts := strings.SplitN(file_name, \".\", 2)\n\tbeforeDot := parts[0]\n\tafterDot := parts[1] // This is the file extension\n\n\t// Rule 3: The substring before the dot should not be empty.\n\tif len(beforeDot) == 0 {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 3: The substring before the dot starts with a letter from the latin alphabet.\n\tfirstChar := rune(beforeDot[0])\n\tif !((firstChar >= 'a' && firstChar <= 'z') || (firstChar >= 'A' && firstChar <= 'Z')) {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 4: The substring after the dot should be one of these: ['txt', 'exe', 'dll'].\n\tvalidExtensions := map[string]bool{\n\t\t\"txt\": true,\n\t\t\"exe\": true,\n\t\t\"dll\": true,\n\t}\n\tif !validExtensions[afterDot] {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 1: There should not be more than three digits ('0'-'9') in the file's name.\n\tdigitCount := 0\n\tfor _, r := range file_name {\n\t\tif r >= '0' && r <= '9' {\n\t\t\tdigitCount++\n\t\t}\n\t}\n\tif digitCount > 3 {\n\t\treturn \"No\"\n\t}\n\n\t// If all conditions are met, the file name is valid.\n\treturn \"Yes\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// FileNameCheck takes a string representing a file's name and returns\n// 'Yes' if the file's name is valid, and 'No' otherwise.\n// A file's name is considered to be valid if and only if all the following conditions\n// are met:\n// - There should not be more than three digits ('0'-'9') in the file's name.\n// - The file's name contains exactly one dot '.'\n// - The substring before the dot should not be empty, and it starts with a letter from\n// the latin alphabet ('a'-'z' and 'A'-'Z').\n// - The substring after the dot should be one of these: ['txt', 'exe', 'dll']\nfunc FileNameCheck(file_name string) string {\n\t// Rule 2: The file's name contains exactly one dot '.'\n\tdotCount := strings.Count(file_name, \".\")\n\tif dotCount != 1 {\n\t\treturn \"No\"\n\t}\n\n\tparts := strings.SplitN(file_name, \".\", 2)\n\tbeforeDot := parts[0]\n\tafterDot := parts[1] // This is the file extension\n\n\t// Rule 3: The substring before the dot should not be empty.\n\tif len(beforeDot) == 0 {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 3: The substring before the dot starts with a letter from the latin alphabet.\n\t// We need to ensure beforeDot is not empty before accessing its first character.\n\t// This is already guaranteed by the len(beforeDot) == 0 check above.\n\tfirstChar := rune(beforeDot[0])\n\tif !((firstChar >= 'a' && firstChar <= 'z') || (firstChar >= 'A' && firstChar <= 'Z')) {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 4: The substring after the dot should be one of these: ['txt', 'exe', 'dll'].\n\tvalidExtensions := map[string]bool{\n\t\t\"txt\": true,\n\t\t\"exe\": true,\n\t\t\"dll\": true,\n\t}\n\tif !validExtensions[afterDot] {\n\t\treturn \"No\"\n\t}\n\n\t// Rule 1: There should not be more than three digits ('0'-'9') in the file's name.\n\tdigitCount := 0\n\tfor _, r := range file_name {\n\t\tif r >= '0' && r <= '9' {\n\t\t\tdigitCount++\n\t\t}\n\t}\n\tif digitCount > 3 {\n\t\treturn \"No\"\n\t}\n\n\t// If all conditions are met, the file name is valid.\n\treturn \"Yes\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

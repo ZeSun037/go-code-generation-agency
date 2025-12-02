@@ -1,0 +1,13 @@
+{
+    "task": "task_156.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Given an integer. return a tuple that has the number of even and odd digits respectively.\n// \n// Example:\n// EvenOddCount(-12) ==> (1, 1)\n// EvenOddCount(123) ==> (1, 2)\nfunc EvenOddCount(num int) [2]int {\n\t// Convert to string and remove negative sign if present\n\tstr := strconv.Itoa(num)\n\tif str[0] == '-' {\n\t\tstr = str[1:]\n\t}\n\t\n\teven := 0\n\todd := 0\n\t\n\t// Count even and odd digits\n\tfor _, ch := range str {\n\t\tdigit := int(ch - '0')\n\t\tif digit%2 == 0 {\n\t\t\teven++\n\t\t} else {\n\t\t\todd++\n\t\t}\n\t}\n\t\n\treturn [2]int{even, odd}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/62",
+  "prompt": "\n// xs represent coefficients of a polynomial.\n// xs[0] + xs[1] * x + xs[2] * x^2 + ....\n// Return Derivative of this polynomial in the same form.\n// >>> Derivative([3, 1, 2, 4, 5])\n// [1, 4, 12, 20]\n// >>> Derivative([1, 2, 3])\n// [2, 6]\nfunc Derivative(xs []int) []int {\n",
+  "import": "",
+  "docstring": "// xs represent coefficients of a polynomial.\n// xs[0] + xs[1] * x + xs[2] * x^2 + ....\n// Return Derivative of this polynomial in the same form.\n// >>> Derivative([3, 1, 2, 4, 5])\n// [1, 4, 12, 20]\n// >>> Derivative([1, 2, 3])\n// [2, 6]\n",
+  "declaration": "\nfunc Derivative(xs []int) []int {\n",
+  "canonical_solution": "    l := len(xs)\n\ty := make([]int, l - 1)\n\tfor i := 0; i < l - 1; i++ {\n\t\ty[i] = xs[i + 1] * (i + 1)\n\t}\n\treturn y\n}\n\n",
+  "test": "func TestDerivative(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 4, 12, 20}, Derivative([]int{3, 1, 2, 4, 5}))\n    assert.Equal([]int{2, 6}, Derivative([]int{1, 2, 3}))\n    assert.Equal([]int{2, 2}, Derivative([]int{3, 2, 1}))\n    assert.Equal([]int{2, 2, 0, 16}, Derivative([]int{3, 2, 1,0, 4}))\n    assert.Equal([]int{}, Derivative([]int{1}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestDerivative(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 4, 12, 20}, Derivative([]int{3, 1, 2, 4, 5}))\n    assert.Equal([]int{2, 6}, Derivative([]int{1, 2, 3}))\n}\n"
+}

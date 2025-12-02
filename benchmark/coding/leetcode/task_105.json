@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/104",
+  "prompt": "import (\n    \"sort\"\n    \"strconv\"\n)\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n// \n// Note: Returned list should be sorted in increasing order.\n// \n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n",
+  "import": "import (\n    \"sort\"\n    \"strconv\"\n)\n",
+  "docstring": "// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n// \n// Note: Returned list should be sorted in increasing order.\n// \n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\n",
+  "declaration": "\nfunc UniqueDigits(x []int) []int {\n",
+  "canonical_solution": "    odd_digit_elements := make([]int, 0)\n    OUTER:\n    for _, i := range x {\n        for _, c := range strconv.Itoa(i) {\n            if (c - '0') % 2 == 0 {\n                continue OUTER\n            }\n        }\n            odd_digit_elements = append(odd_digit_elements, i)\n    }\n    sort.Slice(odd_digit_elements, func(i, j int) bool {\n        return odd_digit_elements[i] < odd_digit_elements[j]\n    })\n    return odd_digit_elements\n}\n\n",
+  "test": "func TestUniqueDigits(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 15, 33}, UniqueDigits([]int{15, 33, 1422, 1}))\n    assert.Equal([]int{}, UniqueDigits([]int{152, 323, 1422, 10}))\n    assert.Equal([]int{111, 151}, UniqueDigits([]int{12345, 2033, 111, 151}))\n    assert.Equal([]int{31, 135}, UniqueDigits([]int{135, 103, 31}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestUniqueDigits(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 15, 33}, UniqueDigits([]int{15, 33, 1422, 1}))\n    assert.Equal([]int{}, UniqueDigits([]int{152, 323, 1422, 10}))\n}\n"
+}

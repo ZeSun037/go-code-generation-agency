@@ -1,0 +1,13 @@
+{
+    "task": "task_139.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// IsEqualToSumEven evaluates whether the given number n can be written as the sum of exactly 4 positive even numbers.\n//\n// Let the four positive even numbers be e1, e2, e3, e4.\n// Since they are positive even numbers, each ei must be at least 2 (i.e., 2, 4, 6, ...).\n//\n// 1. The sum of four even numbers must itself be an even number.\n//    If n is odd, it cannot be the sum of four even numbers.\n//    (e.g., 2k1 + 2k2 + 2k3 + 2k4 = 2 * (k1 + k2 + k3 + k4))\n//\n// 2. The minimum possible sum of four positive even numbers is when each is the smallest positive even number, 2.\n//    Minimum sum = 2 + 2 + 2 + 2 = 8.\n//    Therefore, n must be at least 8.\n//\n// If n satisfies both conditions (n is even and n >= 8), it is always possible to find such a sum.\n// For example, we can always express n as 2 + 2 + 2 + (n - 6).\n// Since n is even, (n - 6) will also be an even number.\n// Since n >= 8, (n - 6) will be >= 2, meaning it's a positive even number.\n// Thus, (2, 2, 2, n - 6) is a valid set of four positive even numbers that sum to n.\nfunc IsEqualToSumEven(n int) bool {\n\t// Condition 1: n must be an even number.\n\tif n%2 != 0 {\n\t\treturn false\n\t}\n\n\t// Condition 2: n must be at least 8 (the minimum sum of 4 positive even numbers).\n\tif n < 8 {\n\t\treturn false\n\t}\n\n\t// If both conditions are met, n can be written as the sum of exactly 4 positive even numbers.\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

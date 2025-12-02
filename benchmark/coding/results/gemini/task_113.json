@@ -1,0 +1,13 @@
+{
+    "task": "task_113.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// Task\n// We are given two strings s and c, you have to deleted all the characters in s that are equal to any character in c\n// then check if the result string is palindrome.\n// A string is called palindrome if it reads the same backward as forward.\n// You should return a tuple containing the result string and true/false for the check.\n// Example\n// For s = \"abcde\", c = \"ae\", the result should be ('bcd',false)\n// For s = \"abcdef\", c = \"b\"  the result should be ('acdef',false)\n// For s = \"abcdedcba\", c = \"ab\", the result should be ('cdedc',true)\nfunc ReverseDelete(s, c string) [2]interface{} {\n\t// Step 1: Create a set of characters from 'c' for efficient lookup.\n\t// Using a map[rune]bool allows for O(1) average time complexity for checking if a character should be deleted.\n\tcharsToDelete := make(map[rune]bool)\n\tfor _, charC := range c {\n\t\tcharsToDelete[charC] = true\n\t}\n\n\t// Step 2: Build the resulting string by appending characters from 's' that are not in 'c'.\n\t// strings.Builder is used for efficient string concatenation, avoiding multiple memory allocations.\n\tvar sb strings.Builder\n\tfor _, charS := range s {\n\t\tif !charsToDelete[charS] {\n\t\t\tsb.WriteRune(charS)\n\t\t}\n\t}\n\tresultString := sb.String()\n\n\t// Step 3: Check if the resulting string is a palindrome.\n\t// Convert the string to a slice of runes to correctly handle multi-byte Unicode characters.\n\trunes := []rune(resultString)\n\tisPalindrome := true\n\tnRunes := len(runes)\n\n\t// Iterate from both ends of the rune slice inwards.\n\t// If any pair of characters does not match, it's not a palindrome.\n\tfor i := 0; i < nRunes/2; i++ {\n\t\tif runes[i] != runes[nRunes-1-i] {\n\t\t\tisPalindrome = false\n\t\t\tbreak\n\t\t}\n\t}\n\n\t// Step 4: Return the result string and the palindrome check result as a tuple ([2]interface{}).\n\treturn [2]interface{}{resultString, isPalindrome}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

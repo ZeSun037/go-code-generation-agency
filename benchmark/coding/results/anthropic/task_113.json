@@ -1,0 +1,23 @@
+{
+    "task": "task_113.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "import (\n\t\"strings\"\n)\n\nfunc ReverseDelete(s, c string) [2]interface{} {\n\t// Create a set of characters to delete for O(1) lookup\n\tdeleteChars := make(map[rune]bool)\n\tfor _, char := range c {\n\t\tdeleteChars[char] = true\n\t}\n\n\t// Build the result string by excluding characters in c\n\tvar result strings.Builder\n\tfor _, char := range s {\n\t\tif !deleteChars[char] {\n\t\t\tresult.WriteRune(char)\n\t\t}\n\t}\n\n\tresultStr := result.String()\n\n\t// Check if result string is a palindrome\n\tisPalindrome := true\n\trunes := []rune(resultStr)\n\tfor i := 0; i < len(runes)/2; i++ {\n\t\tif runes[i] != runes[len(runes)-1-i] {\n\t\t\tisPalindrome = false\n\t\t\tbreak\n\t\t}\n\t}\n\n\treturn [2]interface{}{resultStr, isPalindrome}\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\nfunc ReverseDelete(s, c string) [2]interface{} {\n\t// Create a set of characters to delete for O(1) lookup\n\tdeleteChars := make(map[rune]bool)\n\tfor _, char := range c {\n\t\tdeleteChars[char] = true\n\t}\n\n\t// Build the result string by excluding characters in c\n\tvar result strings.Builder\n\tfor _, char := range s {\n\t\tif !deleteChars[char] {\n\t\t\tresult.WriteRune(char)\n\t\t}\n\t}\n\n\tresultStr := result.String()\n\n\t// Check if result string is a palindrome\n\tisPalindrome := true\n\trunes := []rune(resultStr)\n\tfor i := 0; i < len(runes)/2; i++ {\n\t\tif runes[i] != runes[len(runes)-1-i] {\n\t\t\tisPalindrome = false\n\t\t\tbreak\n\t\t}\n\t}\n\n\treturn [2]interface{}{resultStr, isPalindrome}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

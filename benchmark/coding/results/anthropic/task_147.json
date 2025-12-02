@@ -1,0 +1,13 @@
+{
+    "task": "task_147.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Write a function that takes an array of numbers as input and returns\n// the number of elements in the array that are greater than 10 and both\n// first and last digits of a number are odd (1, 3, 5, 7, 9).\n// For example:\n// Specialfilter([15, -73, 14, -15]) => 1\n// Specialfilter([33, -2, -3, 45, 21, 109]) => 2\nfunc Specialfilter(nums []int) int {\n\tcount := 0\n\n\tfor _, num := range nums {\n\t\t// Check if number is greater than 10\n\t\tif num <= 10 {\n\t\t\tcontinue\n\t\t}\n\n\t\t// Convert to string to get digits (use absolute value to handle negatives)\n\t\tnumStr := strconv.Itoa(num)\n\t\tif numStr[0] == '-' {\n\t\t\tnumStr = numStr[1:]\n\t\t}\n\n\t\t// Get first and last digits\n\t\tfirstDigit := int(numStr[0] - '0')\n\t\tlastDigit := int(numStr[len(numStr)-1] - '0')\n\n\t\t// Check if both first and last digits are odd\n\t\tif isOdd(firstDigit) && isOdd(lastDigit) {\n\t\t\tcount++\n\t\t}\n\t}\n\n\treturn count\n}\n\n// Helper function to check if a digit is odd\nfunc isOdd(digit int) bool {\n\treturn digit%2 == 1\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

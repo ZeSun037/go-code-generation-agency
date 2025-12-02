@@ -1,0 +1,13 @@
+{
+    "task": "task_160.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Eat(number, need, remaining int) []int {\n\ttotalEaten := number + need\n\tif remaining < need {\n\t\ttotalEaten = number + remaining\n\t\tremaining = 0\n\t} else {\n\t\tremaining -= need\n\t}\n\treturn []int{totalEaten, remaining}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

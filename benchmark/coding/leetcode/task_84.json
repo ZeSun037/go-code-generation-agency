@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/83",
+  "prompt": "import (\n    \"math\"\n)\n\n// Given a positive integer n, return the count of the numbers of n-digit\n// positive integers that start or end with 1.\nfunc StartsOneEnds(n int) int {\n",
+  "import": "import (\n    \"math\"\n)\n",
+  "docstring": "// Given a positive integer n, return the count of the numbers of n-digit\n// positive integers that start or end with 1.\n",
+  "declaration": "\nfunc StartsOneEnds(n int) int {\n",
+  "canonical_solution": "    if n == 1 {\n        return 1\n    }\n    return 18 * int(math.Pow(10, float64(n-2)))\n}\n\n",
+  "test": "func TestStartsOneEnds(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, StartsOneEnds(1))\n    assert.Equal(18, StartsOneEnds(2))\n    assert.Equal(180, StartsOneEnds(3))\n    assert.Equal(1800, StartsOneEnds(4))\n    assert.Equal(18000, StartsOneEnds(5))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": ""
+}

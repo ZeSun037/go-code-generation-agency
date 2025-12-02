@@ -1,0 +1,23 @@
+{
+    "task": "task_112.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc Histogram(test string) map[rune]int {\n    // Create a map to store the frequency of each character\n    freq := make(map[rune]int)\n\n    // Split the string by spaces\n    letters := strings.Fields(test)\n\n    // Count the occurrences of each letter\n    for _, letter := range letters {\n        for _, r := range letter {\n            freq[r]++\n        }\n    }\n\n    return freq\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestHistogram (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_5938fwkb/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: map[int32]int{97:2, 98:2}\n        \t            \tactual  : map[int32]int{97:2, 98:2, 99:1}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,5 @@\n        \t            \t-(map[int32]int) (len=2) {\n        \t            \t+(map[int32]int) (len=3) {\n        \t            \t  (int32) 97: (int) 2,\n        \t            \t- (int32) 98: (int) 2\n        \t            \t+ (int32) 98: (int) 2,\n        \t            \t+ (int32) 99: (int) 1\n        \t            \t }\n        \tTest:       \tTestHistogram\n    main_test.go:13: \n        \tError Trace:\t/tmp/go_synthesis_5938fwkb/main_test.go:13\n        \tError:      \tNot equal: \n        \t            \texpected: map[int32]int{98:4}\n        \t            \tactual  : map[int32]int{97:1, 98:4}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,2 +1,3 @@\n        \t            \t-(map[int32]int) (len=1) {\n        \t            \t+(map[int32]int) (len=2) {\n        \t            \t+ (int32) 97: (int) 1,\n        \t            \t  (int32) 98: (int) 4\n        \tTest:       \tTestHistogram\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc Histogram(test string) map[rune]int {\n    // Create a map to store the frequency of each character\n    freq := make(map[rune]int)\n\n    // Split the string by spaces\n    letters := strings.Fields(test)\n\n    // Count the occurrences of each letter\n    for _, letter := range letters {\n        for _, r := range letter {\n            freq[r]++\n        }\n    }\n\n    // Prepare the result map\n    result := make(map[rune]int)\n    maxCount := 0\n\n    // Find the maximum count\n    for _, count := range freq {\n        if count > maxCount {\n            maxCount = count\n        }\n    }\n\n    // Collect all letters with the maximum count\n    for r, count := range freq {\n        if count == maxCount {\n            result[r] = count\n        }\n    }\n\n    return result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

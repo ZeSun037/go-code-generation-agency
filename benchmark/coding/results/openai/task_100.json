@@ -1,0 +1,23 @@
+{
+    "task": "task_100.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n    \"strconv\"\n    \"strings\"\n)\n\nfunc ClosestInteger(value string) int {\n    // Parse the string to a float64\n    num, err := strconv.ParseFloat(value, 64)\n    if err != nil {\n        return 0 // Handle the error case\n    }\n\n    // Get the fractional part\n    integerPart := math.Floor(num)\n    fractionPart := num - integerPart\n\n    // Handle rounding\n    if fractionPart > 0.5 {\n        return int(integerPart) + 1\n    } else if fractionPart < -0.5 {\n        return int(integerPart) - 1\n    } else if fractionPart == 0.5 {\n        if integerPart >= 0 {\n            return int(integerPart) + 1\n        }\n        return int(integerPart) - 1\n    }\n\n    return int(integerPart)\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:6:5: \"strings\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n    \"strconv\"\n)\n\n// Create a function that takes a value (string) representing a number\n// and returns the closest integer to it. If the number is equidistant\n// from two integers, round it away from zero.\n// \n// Examples\n// >>> ClosestInteger(\"10\")\n// 10\n// >>> ClosestInteger(\"15.3\")\n// 15\n// \n// Note:\n// Rounding away from zero means that if the given number is equidistant\n// from two integers, the one you should return is the one that is the\n// farthest from zero. For example ClosestInteger(\"14.5\") should\n// return 15 and ClosestInteger(\"-14.5\") should return -15.\nfunc ClosestInteger(value string) int {\n    // Parse the string to a float64\n    num, err := strconv.ParseFloat(value, 64)\n    if err != nil {\n        return 0 // Handle the error case\n    }\n\n    // Get the integer part and the fractional part\n    integerPart := math.Floor(num)\n    fractionPart := num - integerPart\n\n    // Handle rounding\n    if fractionPart > 0.5 {\n        return int(integerPart) + 1\n    } else if fractionPart < -0.5 {\n        return int(integerPart) - 1\n    } else if fractionPart == 0.5 {\n        if integerPart >= 0 {\n            return int(integerPart) + 1\n        }\n        return int(integerPart) - 1\n    }\n\n    return int(integerPart)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

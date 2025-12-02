@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/58",
+  "prompt": "import (\n    \"sort\"\n)\n\n// Return sorted unique Common elements for two lists.\n// >>> Common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])\n// [1, 5, 653]\n// >>> Common([5, 3, 2, 8], [3, 2])\n// [2, 3]\nfunc Common(l1 []int,l2 []int) []int {\n",
+  "import": "import (\n    \"sort\"\n)",
+  "docstring": "// Return sorted unique Common elements for two lists.\n// >>> Common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])\n// [1, 5, 653]\n// >>> Common([5, 3, 2, 8], [3, 2])\n// [2, 3]\n",
+  "declaration": "\nfunc Common(l1 []int,l2 []int) []int {\n",
+  "canonical_solution": "    m := make(map[int]bool)\n\tfor _, e1 := range l1 {\n\t\tif m[e1] {\n\t\t\tcontinue\n\t\t}\n\t\tfor _, e2 := range l2 {\n\t\t\tif e1 == e2 {\n\t\t\t\tm[e1] = true\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t}\n\tres := make([]int, 0, len(m))\n\tfor k, _ := range m {\n\t\tres = append(res, k)\n\t}\n\tsort.Ints(res)\n\treturn res\n}\n\n",
+  "test": "func TestCommon(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 5, 653}, Common([]int{1, 4, 3, 34, 653, 2, 5}, []int{5, 7, 1, 5, 9, 653, 121}))\n    assert.Equal([]int{2, 3}, Common([]int{5, 3, 2, 8}, []int{3, 2}))\n    assert.Equal([]int{2, 3, 4}, Common([]int{4, 3, 2, 8}, []int{3, 2, 4}))\n    assert.Equal([]int{}, Common([]int{4, 3, 2, 8}, []int{}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCommon(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 5, 653}, Common([]int{1, 4, 3, 34, 653, 2, 5}, []int{5, 7, 1, 5, 9, 653, 121}))\n    assert.Equal([]int{2, 3}, Common([]int{5, 3, 2, 8}, []int{3, 2}))\n}\n"
+}

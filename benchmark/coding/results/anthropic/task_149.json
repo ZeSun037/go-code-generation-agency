@@ -1,0 +1,23 @@
+{
+    "task": "task_149.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Bf(planet1, planet2 string) []string {\n\tplanets := []string{\"Mercury\", \"Venus\", \"Earth\", \"Mars\", \"Jupiter\", \"Saturn\", \"Uranus\", \"Neptune\"}\n\t\n\t// Find indices of planet1 and planet2\n\tindex1 := -1\n\tindex2 := -1\n\t\n\tfor i, p := range planets {\n\t\tif p == planet1 {\n\t\t\tindex1 = i\n\t\t}\n\t\tif p == planet2 {\n\t\t\tindex2 = i\n\t\t}\n\t}\n\t\n\t// Return empty slice if either planet is not found\n\tif index1 == -1 || index2 == -1 {\n\t\treturn []string{}\n\t}\n\t\n\t// Ensure index1 is smaller than index2\n\tif index1 > index2 {\n\t\tindex1, index2 = index2, index1\n\t}\n\t\n\t// Return planets between index1 and index2 (exclusive)\n\treturn planets[index1+1 : index2]\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestBf (0.00s)\npanic: runtime error: slice bounds out of range [3:2] [recovered, repanicked]\n\ngoroutine 8 [running]:\ntesting.tRunner.func1.2({0x635ea0, 0xc00001c318})\n\t/usr/local/go/src/testing/testing.go:1872 +0x237\ntesting.tRunner.func1()\n\t/usr/local/go/src/testing/testing.go:1875 +0x35b\npanic({0x635ea0?, 0xc00001c318?})\n\t/usr/local/go/src/runtime/panic.go:783 +0x132\nsynthesis.Bf(...)\n\t/tmp/go_synthesis_zutg322g/main.go:30\nsynthesis.TestBf(0xc0000be8c0?)\n\t/tmp/go_synthesis_zutg322g/main_test.go:14 +0x1a7f\ntesting.tRunner(0xc0000be8c0, 0x663a10)\n\t/usr/local/go/src/testing/testing.go:1934 +0xea\ncreated by testing.(*T).Run in goroutine 1\n\t/usr/local/go/src/testing/testing.go:1997 +0x465\nFAIL\tsynthesis\t0.004s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc Bf(planet1, planet2 string) []string {\n\tplanets := []string{\"Mercury\", \"Venus\", \"Earth\", \"Mars\", \"Jupiter\", \"Saturn\", \"Uranus\", \"Neptune\"}\n\t\n\t// Find indices of planet1 and planet2\n\tindex1 := -1\n\tindex2 := -1\n\t\n\tfor i, p := range planets {\n\t\tif p == planet1 {\n\t\t\tindex1 = i\n\t\t}\n\t\tif p == planet2 {\n\t\t\tindex2 = i\n\t\t}\n\t}\n\t\n\t// Return empty slice if either planet is not found\n\tif index1 == -1 || index2 == -1 {\n\t\treturn []string{}\n\t}\n\t\n\t// Return empty slice if planets are the same\n\tif index1 == index2 {\n\t\treturn []string{}\n\t}\n\t\n\t// Ensure index1 is smaller than index2\n\tif index1 > index2 {\n\t\tindex1, index2 = index2, index1\n\t}\n\t\n\t// Return planets between index1 and index2 (exclusive)\n\treturn planets[index1+1 : index2]\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

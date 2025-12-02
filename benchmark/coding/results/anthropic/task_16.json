@@ -1,0 +1,13 @@
+{
+    "task": "task_16.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n\t\"strings\"\n)\n\n// Return a string containing space-delimited numbers starting from 0 upto n inclusive.\n// >>> StringSequence(0)\n// '0'\n// >>> StringSequence(5)\n// '0 1 2 3 4 5'\nfunc StringSequence(n int) string {\n\tvar result []string\n\tfor i := 0; i <= n; i++ {\n\t\tresult = append(result, strconv.Itoa(i))\n\t}\n\treturn strings.Join(result, \" \")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

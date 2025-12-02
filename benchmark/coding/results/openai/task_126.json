@@ -1,0 +1,38 @@
+{
+    "task": "task_126.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc SplitWords(txt string) interface{} {\n    // Split on whitespace first\n    words := strings.Fields(txt)\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words, try splitting on commas\n    words = strings.Split(txt, \",\")\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words or commas, count the lower-case letters with odd order in the alphabet\n    count := 0\n    for i, ch := range txt {\n        if ch >= 'a' && ch <= 'z' && (i%2 == 1) {\n            count++\n        }\n    }\n    return count\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestSplitWords (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_k7jr7dxf/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: []string{\"Hello\", \"world!\"}\n        \t            \tactual  : []string{\"Hello,world!\"}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,3 @@\n        \t            \t-([]string) (len=2) {\n        \t            \t- (string) (len=5) \"Hello\",\n        \t            \t- (string) (len=6) \"world!\"\n        \t            \t+([]string) (len=1) {\n        \t            \t+ (string) (len=12) \"Hello,world!\"\n        \t            \t }\n        \tTest:       \tTestSplitWords\n    main_test.go:12: \n        \tError Trace:\t/tmp/go_synthesis_k7jr7dxf/main_test.go:12\n        \tError:      \tNot equal: \n        \t            \texpected: int(3)\n        \t            \tactual  : []string([]string{\"abcdef\"})\n        \tTest:       \tTestSplitWords\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc SplitWords(txt string) interface{} {\n    // Split on whitespace first\n    words := strings.Fields(txt)\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words, try splitting on commas\n    words = strings.Split(txt, \",\")\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words or commas, count the lower-case letters with odd order in the alphabet\n    count := 0\n    for i, ch := range txt {\n        if ch >= 'a' && ch <= 'z' && (int(ch-'a')%2 == 1) {\n            count++\n        }\n    }\n    return count\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:22:9: declared and not used: i"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc SplitWords(txt string) interface{} {\n    // Split on whitespace first\n    words := strings.Fields(txt)\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words, try splitting on commas\n    words = strings.Split(txt, \",\")\n    if len(words) > 0 {\n        return words\n    }\n\n    // If there are no words or commas, count the lower-case letters with odd order in the alphabet\n    count := 0\n    for _, ch := range txt {\n        if ch >= 'a' && ch <= 'z' && (int(ch-'a')%2 == 1) {\n            count++\n        }\n    }\n    return count\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestSplitWords (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_k7jr7dxf/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: []string{\"Hello\", \"world!\"}\n        \t            \tactual  : []string{\"Hello,world!\"}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,4 +1,3 @@\n        \t            \t-([]string) (len=2) {\n        \t            \t- (string) (len=5) \"Hello\",\n        \t            \t- (string) (len=6) \"world!\"\n        \t            \t+([]string) (len=1) {\n        \t            \t+ (string) (len=12) \"Hello,world!\"\n        \t            \t }\n        \tTest:       \tTestSplitWords\n    main_test.go:12: \n        \tError Trace:\t/tmp/go_synthesis_k7jr7dxf/main_test.go:12\n        \tError:      \tNot equal: \n        \t            \texpected: int(3)\n        \t            \tactual  : []string([]string{\"abcdef\"})\n        \tTest:       \tTestSplitWords\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

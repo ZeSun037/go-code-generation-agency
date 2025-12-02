@@ -1,0 +1,13 @@
+{
+    "task": "task_103.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc ChooseNum(x, y int) int {\n\t// If x is greater than y, no valid range exists\n\tif x > y {\n\t\treturn -1\n\t}\n\t\n\t// Start from the larger number and work backwards\n\t// to find the biggest even number\n\tfor i := y; i >= x; i-- {\n\t\tif i%2 == 0 {\n\t\t\treturn i\n\t\t}\n\t}\n\t\n\t// No even number found in the range\n\treturn -1\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

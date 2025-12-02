@@ -1,0 +1,13 @@
+{
+    "task": "task_128.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// isPrime checks if a number is prime.\n// A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.\nfunc isPrime(n int) bool {\n\tif n <= 1 { // Numbers less than or equal to 1 are not prime.\n\t\treturn false\n\t}\n\tif n == 2 { // 2 is the only even prime number.\n\t\treturn true\n\t}\n\tif n%2 == 0 { // All other even numbers are not prime.\n\t\treturn false\n\t}\n\t// Check for odd divisors from 3 up to the square root of n.\n\t// Using i*i <= n instead of i <= sqrt(n) to avoid floating-point calculations.\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Intersection determines if the length of the intersection of two closed intervals is a prime number.\n// It returns \"YES\" if the length is prime, \"NO\" otherwise.\n// If the intervals do not intersect, it returns \"NO\".\nfunc Intersection(interval1 [2]int, interval2 [2]int) string {\n\ts1 := interval1[0]\n\te1 := interval1[1]\n\ts2 := interval2[0]\n\te2 := interval2[1]\n\n\t// Calculate the start of the intersection: max(s1, s2)\n\tis := s1\n\tif s2 > is {\n\t\tis = s2\n\t}\n\n\t// Calculate the end of the intersection: min(e1, e2)\n\tie := e1\n\tif e2 < ie {\n\t\tie = e2\n\t}\n\n\t// If the intersection's start is greater than its end, the intervals do not intersect.\n\t// The problem explicitly states: \"If the two intervals don't intersect, return \"NO\".\"\n\t// The length would be non-positive, which is not prime.\n\tif is > ie {\n\t\treturn \"NO\"\n\t}\n\n\t// Calculate the length of the intersection.\n\t// Based on the example \"Intersection of (2, 3) is (2, 3) which its length is 1\",\n\t// the length is calculated as end - start.\n\tlength := ie - is\n\n\t// Check if the calculated length is a prime number.\n\tif isPrime(length) {\n\t\treturn \"YES\"\n\t}\n\treturn \"NO\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

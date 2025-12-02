@@ -1,0 +1,13 @@
+{
+    "task": "task_160.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Eat(number, need, remaining int) []int {\n\t// Calculate how many carrots we can actually eat\n\tcanEat := need\n\tif need > remaining {\n\t\tcanEat = remaining\n\t}\n\t\n\t// Total eaten = what we've already eaten + what we can eat now\n\ttotalEaten := number + canEat\n\t\n\t// Remaining carrots after eating\n\tleftover := remaining - canEat\n\t\n\treturn []int{totalEaten, leftover}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

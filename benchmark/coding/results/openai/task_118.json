@@ -1,0 +1,13 @@
+{
+    "task": "task_118.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"bytes\"\n    \"strings\"\n)\n\n// Given a string s and a natural number n, you have been tasked to implement\n// a function that returns a list of all words from string s that contain exactly\n// n consonants, in order these words appear in the string s.\n// If the string s is empty then the function should return an empty list.\n// Note: you may assume the input string contains only letters and spaces.\n// Examples:\n// SelectWords(\"Mary had a little lamb\", 4) ==> [\"little\"]\n// SelectWords(\"Mary had a little lamb\", 3) ==> [\"Mary\", \"lamb\"]\n// SelectWords(\"simple white space\", 2) ==> []\n// SelectWords(\"Hello world\", 4) ==> [\"world\"]\n// SelectWords(\"Uncle sam\", 3) ==> [\"Uncle\"]\nfunc SelectWords(s string, n int) []string {\n    if s == \"\" {\n        return []string{}\n    }\n\n    words := strings.Fields(s)\n    result := []string{}\n    \n    for _, word := range words {\n        consonantCount := countConsonants(word)\n        if consonantCount == n {\n            result = append(result, word)\n        }\n    }\n    \n    return result\n}\n\nfunc countConsonants(word string) int {\n    count := 0\n    vowels := \"aeiouAEIOU\"\n    \n    for _, char := range word {\n        if !strings.ContainsRune(vowels, char) && bytes.IndexByte([]byte(word), byte(char)) != -1 {\n            count++\n        }\n    }\n    \n    return count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

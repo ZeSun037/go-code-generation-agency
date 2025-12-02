@@ -1,0 +1,13 @@
+{
+    "task": "task_108.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Given a positive integer n, return a tuple that has the number of even and odd\n// integer palindromes that fall within the range(1, n), inclusive.\n// \n// Example 1:\n// \n// Input: 3\n// Output: (1, 2)\n// Explanation:\n// Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.\n// \n// Example 2:\n// \n// Input: 12\n// Output: (4, 6)\n// Explanation:\n// Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.\n// \n// Note:\n// 1. 1 <= n <= 10^3\n// 2. returned tuple has the number of even and odd integer palindromes respectively.\nfunc EvenOddPalindrome(n int) [2]int {\n\tevenCount := 0\n\toddCount := 0\n\n\tfor i := 1; i <= n; i++ {\n\t\tif isPalindrome(i) {\n\t\t\tif i%2 == 0 {\n\t\t\t\tevenCount++\n\t\t\t} else {\n\t\t\t\toddCount++\n\t\t\t}\n\t\t}\n\t}\n\n\treturn [2]int{evenCount, oddCount}\n}\n\nfunc isPalindrome(num int) bool {\n\tstr := strconv.Itoa(num)\n\treversed := \"\"\n\tfor j := len(str) - 1; j >= 0; j-- {\n\t\treversed += string(str[j])\n\t}\n\treturn str == reversed\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/64",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Write a function VowelsCount which takes a string representing\n// a word as input and returns the number of vowels in the string.\n// Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a\n// vowel, but only when it is at the end of the given word.\n// \n// Example:\n// >>> VowelsCount(\"abcde\")\n// 2\n// >>> VowelsCount(\"ACEDY\")\n// 3\nfunc VowelsCount(s string) int {\n",
+  "import": "import (\n    \"strings\"\n)",
+  "docstring": "// Write a function VowelsCount which takes a string representing\n// a word as input and returns the number of vowels in the string.\n// Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a\n// vowel, but only when it is at the end of the given word.\n// \n// Example:\n// >>> VowelsCount(\"abcde\")\n// 2\n// >>> VowelsCount(\"ACEDY\")\n// 3\n",
+  "declaration": "\nfunc VowelsCount(s string) int {\n",
+  "canonical_solution": "    s = strings.ToLower(s)\n\tvowels := map[int32]interface{}{'a': nil, 'e': nil, 'i': nil, 'o': nil, 'u': nil}\n\tcount := 0\n\tfor _, i := range s {\n\t\tif _, ok := vowels[i]; ok {\n\t\t\tcount++\n\t\t}\n\t}\n\tif (s[len(s)-1]) == 'y' {\n\t\tcount++\n\t}\n\treturn count\n}\n\n",
+  "test": "func TestVowelsCount(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, VowelsCount(\"abcde\"))\n    assert.Equal(3, VowelsCount(\"Alone\"))\n    assert.Equal(2, VowelsCount(\"key\"))\n    assert.Equal(1, VowelsCount(\"bye\"))\n    assert.Equal(2, VowelsCount(\"keY\"))\n    assert.Equal(1, VowelsCount(\"bYe\"))\n    assert.Equal(3, VowelsCount(\"ACEDY\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestVowelsCount(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, VowelsCount(\"abcde\"))\n    assert.Equal(3, VowelsCount(\"ACEDY\"))\n}\n"
+}

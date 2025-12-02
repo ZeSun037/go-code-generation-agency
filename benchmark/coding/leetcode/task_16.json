@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/15",
+  "prompt": "import (\n    \"strconv\"\n)\n\n// Return a string containing space-delimited numbers starting from 0 upto n inclusive.\n// >>> StringSequence(0)\n// '0'\n// >>> StringSequence(5)\n// '0 1 2 3 4 5'\nfunc StringSequence(n int) string{\n",
+  "import": "import (\n    \"strconv\"\n)\n",
+  "docstring": "// Return a string containing space-delimited numbers starting from 0 upto n inclusive.\n// >>> StringSequence(0)\n// '0'\n// >>> StringSequence(5)\n// '0 1 2 3 4 5'\n",
+  "declaration": "\nfunc StringSequence(n int) string{\n",
+  "canonical_solution": "    var seq string\n    for i := 0; i <= n; i++ {\n        seq += strconv.Itoa(i)\n        if i != n {\n            seq += \" \"\n        }\n    }\n    return seq\n}\n\n",
+  "test": "func TestStringSequence(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"0\", StringSequence(0))\n    assert.Equal(\"0 1 2 3\", StringSequence(3))\n    assert.Equal(\"0 1 2 3 4 5 6 7 8 9 10\", StringSequence(10))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestStringSequence(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"0\", StringSequence(0))\n    assert.Equal(\"0 1 2 3 4 5\", StringSequence(5))\n}\n"
+}

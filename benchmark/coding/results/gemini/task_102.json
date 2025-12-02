@@ -1,0 +1,23 @@
+{
+    "task": "task_102.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "import (\n\t\"strings\"\n)\n\n// You will be given a string of words separated by commas or spaces. Your task is\n// to split the string into words and return an array of the words.\n//\n// For example:\n// WordsString(\"Hi, my name is John\") == [\"Hi\", \"my\", \"name\", \"is\", \"John\"]\n// WordsString(\"One, two, three, four, five, six\") == [\"One\", \"two\", \"three\", \"four\", \"five\", \"six\"]\nfunc WordsString(s string) []string {\n\t// First, replace all commas with spaces to standardize delimiters.\n\t// This might result in multiple spaces if a comma was followed by a space (e.g., \"word, word\" -> \"word  word\").\n\tsWithSpaces := strings.ReplaceAll(s, \",\", \" \")\n\n\t// Then, use strings.Fields. This function splits the string around one or more consecutive\n\t// white space characters and returns a slice of substrings. It also trims leading and\n\t// trailing white space, and handles multiple internal spaces correctly by treating them\n\t// as a single delimiter.\n\twords := strings.Fields(sWithSpaces)\n\n\treturn words\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// You will be given a string of words separated by commas or spaces. Your task is\n// to split the string into words and return an array of the words.\n//\n// For example:\n// WordsString(\"Hi, my name is John\") == [\"Hi\", \"my\", \"name\", \"is\", \"John\"]\n// WordsString(\"One, two, three, four, five, six\") == [\"One\", \"two\", \"three\", \"four\", \"five\", \"six\"]\nfunc WordsString(s string) []string {\n\t// First, replace all commas with spaces to standardize delimiters.\n\t// This might result in multiple spaces if a comma was followed by a space (e.g., \"word, word\" -> \"word  word\").\n\tsWithSpaces := strings.ReplaceAll(s, \",\", \" \")\n\n\t// Then, use strings.Fields. This function splits the string around one or more consecutive\n\t// white space characters and returns a slice of substrings. It also trims leading and\n\t// trailing white space, and handles multiple internal spaces correctly by treating them\n\t// as a single delimiter.\n\twords := strings.Fields(sWithSpaces)\n\n\treturn words\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_126.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you\n// should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the\n// alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25\n// Examples\n// SplitWords(\"Hello world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"Hello,world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"abcdef\") == 3\nfunc SplitWords(txt string) interface{} {\n\t// First, check if there are whitespaces\n\tif strings.ContainsAny(txt, \" \\t\\n\\r\") {\n\t\treturn strings.Fields(txt)\n\t}\n\n\t// Second, check if there are commas\n\tif strings.Contains(txt, \",\") {\n\t\treturn strings.Split(txt, \",\")\n\t}\n\n\t// Third, count lowercase letters with odd order in the alphabet\n\tcount := 0\n\tfor _, ch := range txt {\n\t\tif ch >= 'a' && ch <= 'z' {\n\t\t\t// ord('a') = 0, ord('b') = 1, ..., ord('z') = 25\n\t\t\tord := int(ch - 'a')\n\t\t\t// Check if odd\n\t\t\tif ord%2 == 1 {\n\t\t\t\tcount++\n\t\t\t}\n\t\t}\n\t}\n\n\treturn count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

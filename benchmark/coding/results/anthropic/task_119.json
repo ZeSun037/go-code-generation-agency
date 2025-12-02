@@ -1,0 +1,33 @@
+{
+    "task": "task_119.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"bytes\"\n)\n\n// You are given a word. Your task is to find the closest vowel that stands between\n// two consonants from the right side of the word (case sensitive).\n//\n// Vowels in the beginning and ending doesn't count. Return empty string if you didn't\n// find any vowel met the above condition.\n//\n// You may assume that the given string contains English letter only.\n//\n// Example:\n// GetClosestVowel(\"yogurt\") ==> \"u\"\n// GetClosestVowel(\"FULL\") ==> \"U\"\n// GetClosestVowel(\"quick\") ==> \"\"\n// GetClosestVowel(\"ab\") ==> \"\"\nfunc GetClosestVowel(word string) string {\n\tvowels := bytes.NewBufferString(\"aeiouAEIOU\")\n\tisVowel := func(ch byte) bool {\n\t\treturn bytes.ContainsAny(string(ch), \"aeiouAEIOU\")\n\t}\n\n\t// Search from right to left, but we need at least 3 characters\n\t// and the vowel cannot be at position 0 or len(word)-1\n\tfor i := len(word) - 2; i >= 1; i-- {\n\t\tif isVowel(word[i]) {\n\t\t\t// Check if there's a consonant on the left and right\n\t\t\tif !isVowel(word[i-1]) && !isVowel(word[i+1]) {\n\t\t\t\treturn string(word[i])\n\t\t\t}\n\t\t}\n\t}\n\n\treturn \"\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:21:2: declared and not used: vowels\n./main.go:23:28: cannot use string(ch) (value of type string) as []byte value in argument to bytes.ContainsAny"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"bytes\"\n)\n\n// You are given a word. Your task is to find the closest vowel that stands between\n// two consonants from the right side of the word (case sensitive).\n//\n// Vowels in the beginning and ending doesn't count. Return empty string if you didn't\n// find any vowel met the above condition.\n//\n// You may assume that the given string contains English letter only.\n//\n// Example:\n// GetClosestVowel(\"yogurt\") ==> \"u\"\n// GetClosestVowel(\"FULL\") ==> \"U\"\n// GetClosestVowel(\"quick\") ==> \"\"\n// GetClosestVowel(\"ab\") ==> \"\"\nfunc GetClosestVowel(word string) string {\n\tisVowel := func(ch byte) bool {\n\t\treturn bytes.ContainsAny(string(ch), \"aeiouAEIOU\")\n\t}\n\n\t// Search from right to left, but we need at least 3 characters\n\t// and the vowel cannot be at position 0 or len(word)-1\n\tfor i := len(word) - 2; i >= 1; i-- {\n\t\tif isVowel(word[i]) {\n\t\t\t// Check if there's a consonant on the left and right\n\t\t\tif !isVowel(word[i-1]) && !isVowel(word[i+1]) {\n\t\t\t\treturn string(word[i])\n\t\t\t}\n\t\t}\n\t}\n\n\treturn \"\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:22:28: cannot use string(ch) (value of type string) as []byte value in argument to bytes.ContainsAny"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"bytes\"\n)\n\n// You are given a word. Your task is to find the closest vowel that stands between\n// two consonants from the right side of the word (case sensitive).\n//\n// Vowels in the beginning and ending doesn't count. Return empty string if you didn't\n// find any vowel met the above condition.\n//\n// You may assume that the given string contains English letter only.\n//\n// Example:\n// GetClosestVowel(\"yogurt\") ==> \"u\"\n// GetClosestVowel(\"FULL\") ==> \"U\"\n// GetClosestVowel(\"quick\") ==> \"\"\n// GetClosestVowel(\"ab\") ==> \"\"\nfunc GetClosestVowel(word string) string {\n\tisVowel := func(ch byte) bool {\n\t\treturn bytes.IndexByte([]byte(\"aeiouAEIOU\"), ch) >= 0\n\t}\n\n\t// Search from right to left, but we need at least 3 characters\n\t// and the vowel cannot be at position 0 or len(word)-1\n\tfor i := len(word) - 2; i >= 1; i-- {\n\t\tif isVowel(word[i]) {\n\t\t\t// Check if there's a consonant on the left and right\n\t\t\tif !isVowel(word[i-1]) && !isVowel(word[i+1]) {\n\t\t\t\treturn string(word[i])\n\t\t\t}\n\t\t}\n\t}\n\n\treturn \"\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

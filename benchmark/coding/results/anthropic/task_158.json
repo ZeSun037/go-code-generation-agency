@@ -1,0 +1,13 @@
+{
+    "task": "task_158.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc RightAngleTriangle(a, b, c int) bool {\n\t// Sort the three sides so that c is the largest\n\tsides := []int{a, b, c}\n\t\n\t// Simple bubble sort to order sides\n\tfor i := 0; i < len(sides); i++ {\n\t\tfor j := i + 1; j < len(sides); j++ {\n\t\t\tif sides[i] > sides[j] {\n\t\t\t\tsides[i], sides[j] = sides[j], sides[i]\n\t\t\t}\n\t\t}\n\t}\n\t\n\t// Check Pythagorean theorem: a\u00b2 + b\u00b2 = c\u00b2\n\t// where c is the longest side (hypotenuse)\n\treturn sides[0]*sides[0] + sides[1]*sides[1] == sides[2]*sides[2]\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

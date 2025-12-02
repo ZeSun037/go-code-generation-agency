@@ -1,0 +1,13 @@
+{
+    "task": "task_137.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc LargestSmallestIntegers(lst []int) [2]interface{} {\n\tvar largestNegative interface{} = nil\n\tvar smallestPositive interface{} = nil\n\t\n\tfor _, num := range lst {\n\t\tif num < 0 {\n\t\t\tif largestNegative == nil || num > largestNegative.(int) {\n\t\t\t\tlargestNegative = num\n\t\t\t}\n\t\t} else if num > 0 {\n\t\t\tif smallestPositive == nil || num < smallestPositive.(int) {\n\t\t\t\tsmallestPositive = num\n\t\t\t}\n\t\t}\n\t}\n\t\n\treturn [2]interface{}{largestNegative, smallestPositive}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

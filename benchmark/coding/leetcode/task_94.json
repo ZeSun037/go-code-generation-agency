@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/93",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Write a function that takes a message, and Encodes in such a\n// way that it swaps case of all letters, replaces all vowels in\n// the message with the letter that appears 2 places ahead of that\n// vowel in the english alphabet.\n// Assume only letters.\n// \n// Examples:\n// >>> Encode('test')\n// 'TGST'\n// >>> Encode('This is a message')\n// 'tHKS KS C MGSSCGG'\nfunc Encode(message string) string {\n",
+  "import": "import (\n    \"strings\"\n)\n",
+  "docstring": "// Write a function that takes a message, and Encodes in such a\n// way that it swaps case of all letters, replaces all vowels in\n// the message with the letter that appears 2 places ahead of that\n// vowel in the english alphabet.\n// Assume only letters.\n// \n// Examples:\n// >>> Encode('test')\n// 'TGST'\n// >>> Encode('This is a message')\n// 'tHKS KS C MGSSCGG'\n",
+  "declaration": "\nfunc Encode(message string) string {\n",
+  "canonical_solution": "    vowels := \"aeiouAEIOU\"\n    vowels_replace := make(map[rune]rune)\n    for _, c := range vowels {\n        vowels_replace[c] = c + 2\n    }\n    result := make([]rune, 0, len(message))\n    for _, c := range message {\n        if 'a' <= c && c <= 'z' {\n            c += 'A' - 'a'\n        } else if 'A' <= c && c <= 'Z' {\n            c += 'a' - 'A'\n        }\n        if strings.ContainsRune(vowels, c) {\n            result = append(result, vowels_replace[c])\n        } else {\n            result = append(result, c)\n        }\n    }\n    return string(result)\n}\n\n",
+  "test": "func TestEncode(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"tgst\", Encode(\"TEST\"))\n    assert.Equal(\"mWDCSKR\", Encode(\"Mudasir\"))\n    assert.Equal(\"ygs\", Encode(\"YES\"))\n    assert.Equal(\"tHKS KS C MGSSCGG\", Encode(\"This is a message\"))\n    assert.Equal(\"k dQnT kNqW wHcT Tq wRkTg\", Encode(\"I DoNt KnOw WhAt tO WrItE\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestEncode(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"TGST\", Encode(\"test\"))\n    assert.Equal(\"tHKS KS C MGSSCGG\", Encode(\"This is a message\"))\n}\n"
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/65",
+  "prompt": "\n// Circular shift the digits of the integer x, shift the digits right by shift\n// and return the result as a string.\n// If shift > number of digits, return digits reversed.\n// >>> CircularShift(12, 1)\n// \"21\"\n// >>> CircularShift(12, 2)\n// \"12\"\nfunc CircularShift(x int,shift int) string {\n",
+  "import": "import (\n    \"strconv\"\n)",
+  "docstring": "// Circular shift the digits of the integer x, shift the digits right by shift\n// and return the result as a string.\n// If shift > number of digits, return digits reversed.\n// >>> CircularShift(12, 1)\n// \"21\"\n// >>> CircularShift(12, 2)\n// \"12\"\n",
+  "declaration": "\nfunc CircularShift(x int, shift int) string {\n",
+  "canonical_solution": "    s := strconv.Itoa(x)\n\tif shift > len(s) {\n\t\trunes := make([]rune, 0)\n\t\tfor i := len(s)-1; i >= 0; i-- {\n\t\t\trunes = append(runes, rune(s[i]))\n\t\t}\n\t\treturn string(runes)\n\t}else{\n\t\treturn s[len(s)-shift:]+s[:len(s)-shift]\n\t}\n}\n\n",
+  "test": "func TestCircularShift(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"001\", CircularShift(100, 2))\n    assert.Equal(\"12\", CircularShift(12, 2))\n    assert.Equal(\"79\", CircularShift(97, 8))\n    assert.Equal(\"21\", CircularShift(12, 1))\n    assert.Equal(\"11\", CircularShift(11, 101))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCircularShift(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"12\", CircularShift(12, 2))\n    assert.Equal(\"21\", CircularShift(12, 1))\n}\n"
+}

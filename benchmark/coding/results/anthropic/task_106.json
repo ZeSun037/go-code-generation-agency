@@ -1,0 +1,13 @@
+{
+    "task": "task_106.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n// reverse the resulting array, and then replace each digit by its corresponding name from\n// \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n//\n// For example:\n// arr = [2, 1, 1, 4, 5, 8, 2, 3]\n// -> sort arr -> [1, 1, 2, 2, 3, 4, 5, 8]\n// -> reverse arr -> [8, 5, 4, 3, 2, 2, 1, 1]\n// return [\"Eight\", \"Five\", \"Four\", \"Three\", \"Two\", \"Two\", \"One\", \"One\"]\n//\n// If the array is empty, return an empty array:\n// arr = []\n// return []\n//\n// If the array has any strange number ignore it:\n// arr = [1, -1 , 55]\n// -> sort arr -> [-1, 1, 55]\n// -> reverse arr -> [55, 1, -1]\n// return = ['One']\nfunc ByLength(arr []int) []string {\n\t// Filter array to keep only integers between 1 and 9 inclusive\n\tvar filtered []int\n\tfor _, num := range arr {\n\t\tif num >= 1 && num <= 9 {\n\t\t\tfiltered = append(filtered, num)\n\t\t}\n\t}\n\n\t// If no valid numbers, return empty slice\n\tif len(filtered) == 0 {\n\t\treturn []string{}\n\t}\n\n\t// Sort the filtered array\n\tsort.Ints(filtered)\n\n\t// Reverse the sorted array\n\tfor i, j := 0, len(filtered)-1; i < j; i, j = i+1, j-1 {\n\t\tfiltered[i], filtered[j] = filtered[j], filtered[i]\n\t}\n\n\t// Map numbers to their string representations\n\tnumToWord := map[int]string{\n\t\t1: \"One\",\n\t\t2: \"Two\",\n\t\t3: \"Three\",\n\t\t4: \"Four\",\n\t\t5: \"Five\",\n\t\t6: \"Six\",\n\t\t7: \"Seven\",\n\t\t8: \"Eight\",\n\t\t9: \"Nine\",\n\t}\n\n\t// Convert to string array\n\tresult := make([]string, len(filtered))\n\tfor i, num := range filtered {\n\t\tresult[i] = numToWord[num]\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

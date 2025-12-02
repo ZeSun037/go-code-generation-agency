@@ -1,0 +1,13 @@
+{
+    "task": "task_16.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n\t\"strings\" // Added for strings.Builder\n)\n\n// Return a string containing space-delimited numbers starting from 0 upto n inclusive.\n// >>> StringSequence(0)\n// '0'\n// >>> StringSequence(5)\n// '0 1 2 3 4 5'\nfunc StringSequence(n int) string {\n\tif n < 0 {\n\t\treturn \"\" // Or handle error, but based on examples, n is non-negative.\n\t}\n\n\tvar sb strings.Builder\n\tfor i := 0; i <= n; i++ {\n\t\tsb.WriteString(strconv.Itoa(i))\n\t\tif i < n {\n\t\t\tsb.WriteString(\" \")\n\t\t}\n\t}\n\treturn sb.String()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

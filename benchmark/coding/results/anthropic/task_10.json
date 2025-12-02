@@ -1,0 +1,13 @@
+{
+    "task": "task_10.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// From a given list of integers, generate a list of rolling maximum element found until given moment\n// in the sequence.\n// >>> RollingMax([1, 2, 3, 2, 3, 4, 2])\n// [1, 2, 3, 3, 3, 4, 4]\nfunc RollingMax(numbers []int) []int {\n\tif len(numbers) == 0 {\n\t\treturn []int{}\n\t}\n\n\tresult := make([]int, len(numbers))\n\tmaxVal := math.MinInt\n\n\tfor i, num := range numbers {\n\t\tif num > maxVal {\n\t\t\tmaxVal = num\n\t\t}\n\t\tresult[i] = maxVal\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

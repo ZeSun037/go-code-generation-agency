@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/66",
+  "prompt": "\n// Task\n// Write a function that takes a string as input and returns the sum of the upper characters only'\n// ASCII codes.\n// \n// Examples:\n// Digitsum(\"\") => 0\n// Digitsum(\"abAB\") => 131\n// Digitsum(\"abcCd\") => 67\n// Digitsum(\"helloE\") => 69\n// Digitsum(\"woArBld\") => 131\n// Digitsum(\"aAaaaXa\") => 153\nfunc Digitsum(x string) int {\n",
+  "import": "",
+  "docstring": "// Task\n// Write a function that takes a string as input and returns the sum of the upper characters only'\n// ASCII codes.\n// \n// Examples:\n// Digitsum(\"\") => 0\n// Digitsum(\"abAB\") => 131\n// Digitsum(\"abcCd\") => 67\n// Digitsum(\"helloE\") => 69\n// Digitsum(\"woArBld\") => 131\n// Digitsum(\"aAaaaXa\") => 153\n",
+  "declaration": "\nfunc Digitsum(x string) int {\n",
+  "canonical_solution": "    if len(x) == 0 {\n\t\treturn 0\n\t}\n\tresult := 0\n\tfor _, i := range x {\n\t\tif 'A' <= i && i <= 'Z' {\n\t\t\tresult += int(i)\n\t\t}\n\t}\n\treturn result\n}\n\n",
+  "test": "func TestDigitSum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, Digitsum(\"\"))\n    assert.Equal(131, Digitsum(\"abAB\"))\n    assert.Equal(67, Digitsum(\"abcCd\"))\n    assert.Equal(69, Digitsum(\"helloE\"))\n    assert.Equal(131, Digitsum(\"woArBld\"))\n    assert.Equal(153, Digitsum(\"aAaaaXa\"))\n    assert.Equal(151, Digitsum(\" How are yOu?\"))\n    assert.Equal(327, Digitsum(\"You arE Very Smart\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestDigitSum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, Digitsum(\"\"))\n    assert.Equal(131, Digitsum(\"abAB\"))\n    assert.Equal(67, Digitsum(\"abcCd\"))\n    assert.Equal(69, Digitsum(\"helloE\"))\n    assert.Equal(131, Digitsum(\"woArBld\"))\n    assert.Equal(153, Digitsum(\"aAaaaXa\"))\n}\n"
+}

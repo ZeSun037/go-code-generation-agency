@@ -1,0 +1,13 @@
+{
+    "task": "task_120.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// isGood checks if a string of parentheses is balanced.\n// A string is balanced if:\n// 1. The total count of '(' equals the total count of ')'.\n// 2. At no point during traversal from left to right does the count of ')' exceed the count of '('.\nfunc isGood(s string) bool {\n    balance := 0\n    for _, char := range s {\n        if char == '(' {\n            balance++\n        } else if char == ')' {\n            balance--\n        }\n        // If balance drops below zero, it means we have a ')' without a preceding '('\n        // making the string unbalanced at this point.\n        if balance < 0 {\n            return false\n        }\n    }\n    // For a string to be perfectly balanced, the final balance must be zero.\n    // This ensures that for every opening parenthesis, there is a corresponding closing one.\n    return balance == 0\n}\n\nfunc MatchParens(lst []string) string {\n    // The input list is guaranteed to have two strings.\n    s1 := lst[0]\n    s2 := lst[1]\n\n    // There are two possible concatenations: s1 followed by s2, or s2 followed by s1.\n    // We need to check if either of these results in a \"good\" (balanced) string.\n\n    // Check the first possible concatenation: s1 + s2\n    if isGood(s1 + s2) {\n        return \"Yes\"\n    }\n\n    // If s1 + s2 was not good, check the second possible concatenation: s2 + s1\n    if isGood(s2 + s1) {\n        return \"Yes\"\n    }\n\n    // If neither concatenation results in a good string, return \"No\".\n    return \"No\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

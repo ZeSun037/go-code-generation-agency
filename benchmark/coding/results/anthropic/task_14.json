@@ -1,0 +1,13 @@
+{
+    "task": "task_14.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc GreatestCommonDivisor(a int, b int) int {\n\t// Handle negative numbers by using absolute values\n\tif a < 0 {\n\t\ta = -a\n\t}\n\tif b < 0 {\n\t\tb = -b\n\t}\n\t\n\t// Euclidean algorithm\n\tfor b != 0 {\n\t\ttemp := b\n\t\tb = a % b\n\t\ta = temp\n\t}\n\t\n\treturn a\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

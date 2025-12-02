@@ -1,0 +1,13 @@
+{
+    "task": "task_155.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport \"strings\"\n\nfunc CycpatternCheck(a, b string) bool {\n\t// If b is longer than a, it can't be a substring of a or its rotations\n\tif len(b) > len(a) {\n\t\treturn false\n\t}\n\t\n\t// Create a string that contains all rotations of b\n\t// For example, if b = \"abc\", doubled = \"abcabc\"\n\t// This allows us to find all rotations by checking substrings\n\tdoubled := b + b\n\t\n\t// Check if any rotation of b is a substring of a\n\t// We iterate through all possible rotations of b\n\tfor i := 0; i < len(b); i++ {\n\t\trotation := doubled[i : i+len(b)]\n\t\tif strings.Contains(a, rotation) {\n\t\t\treturn true\n\t\t}\n\t}\n\t\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

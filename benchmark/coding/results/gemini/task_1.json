@@ -1,0 +1,13 @@
+{
+    "task": "task_1.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// Check if in given list of numbers, are any two numbers closer to each other than given threshold.\n// The function iterates through all unique pairs of numbers in the slice and checks if the absolute difference\n// between any pair is less than the given threshold.\n//\n// If the slice has fewer than two elements, no two numbers can be closer, so it returns false.\n//\n// Examples:\n// >>> HasCloseElements([]float64{1.0, 2.0, 3.0}, 0.5)\n// false // Differences are 1.0, 2.0, 1.0; all are >= 0.5\n// >>> HasCloseElements([]float64{1.0, 2.8, 3.0, 4.0, 5.0, 2.0}, 0.3)\n// true // |2.8 - 3.0| = 0.2, which is < 0.3\nfunc HasCloseElements(numbers []float64, threshold float64) bool {\n\tn := len(numbers)\n\n\t// If there are fewer than two numbers, no two numbers can be \"closer\".\n\tif n < 2 {\n\t\treturn false\n\t}\n\n\t// Iterate through all unique pairs of numbers.\n\t// The outer loop picks the first number of the pair.\n\tfor i := 0; i < n; i++ {\n\t\t// The inner loop picks the second number of the pair,\n\t\t// ensuring it's a different number (j > i) to avoid self-comparison\n\t\t// and duplicate comparisons (e.g., (a,b) and then (b,a)).\n\t\tfor j := i + 1; j < n; j++ {\n\t\t\t// Calculate the absolute difference between the two numbers.\n\t\t\tdiff := math.Abs(numbers[i] - numbers[j])\n\n\t\t\t// If the absolute difference is less than the threshold, we found a pair.\n\t\t\tif diff < threshold {\n\t\t\t\treturn true\n\t\t\t}\n\t\t}\n\t}\n\n\t// If no such pair was found after checking all combinations, return false.\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

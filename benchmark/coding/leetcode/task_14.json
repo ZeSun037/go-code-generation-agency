@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/13",
+  "prompt": "\n// Return a greatest common divisor of two integers a and b\n// >>> GreatestCommonDivisor(3, 5)\n// 1\n// >>> GreatestCommonDivisor(25, 15)\n// 5\nfunc GreatestCommonDivisor(a int,b int) int{\n",
+  "import": "",
+  "docstring": "// Return a greatest common divisor of two integers a and b\n// >>> GreatestCommonDivisor(3, 5)\n// 1\n// >>> GreatestCommonDivisor(25, 15)\n// 5\n",
+  "declaration": "\nfunc GreatestCommonDivisor(a int,b int) int{\n",
+  "canonical_solution": "    if b < 2 {\n\t\treturn b\n\t}\n\tvar gcd int = 1\n\tfor i := 2; i < b; i++ {\n\t\tif a%i == 0 && b%i == 0 {\n\t\t\tgcd = i\n\t\t}\n\t}\n\treturn gcd\n}\n\n",
+  "test": "func TestGreatestCommonDivisor(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, GreatestCommonDivisor(3, 7))\n    assert.Equal(5, GreatestCommonDivisor(10, 15))\n    assert.Equal(7, GreatestCommonDivisor(49, 14))\n    assert.Equal(12, GreatestCommonDivisor(144, 60))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestGreatestCommonDivisor(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, GreatestCommonDivisor(3, 5))\n    assert.Equal(5, GreatestCommonDivisor(25, 15))\n}\n"
+}

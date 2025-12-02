@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/21",
+  "prompt": "\n// Given list of numbers (of at least two elements), apply a linear transform to that list,\n// such that the smallest number will become 0 and the largest will become 1\n// >>> RescaleToUnit([1.0, 2.0, 3.0, 4.0, 5.0])\n// [0.0, 0.25, 0.5, 0.75, 1.0]\nfunc RescaleToUnit(numbers []float64) []float64 {\n",
+  "import": "",
+  "docstring": "// Given list of numbers (of at least two elements), apply a linear transform to that list,\n// such that the smallest number will become 0 and the largest will become 1\n// >>> RescaleToUnit([1.0, 2.0, 3.0, 4.0, 5.0])\n// [0.0, 0.25, 0.5, 0.75, 1.0]\n",
+  "declaration": "\nfunc RescaleToUnit(numbers []float64) []float64 {\n",
+  "canonical_solution": "    smallest := numbers[0]\n\tlargest := smallest\n\tfor _, n := range numbers {\n\t\tif smallest > n {\n\t\t\tsmallest = n\n\t\t}\n\t\tif largest < n {\n\t\t\tlargest = n\n\t\t}\n\t}\n\tif smallest == largest {\n\t\treturn numbers\n\t}\n\tfor i, n := range numbers {\n\t\tnumbers[i] = (n - smallest) / (largest - smallest)\n\t}\n\treturn numbers\n}\n\n",
+  "test": "func TestRescaleToUnit(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]float64{0.0, 1.0}, RescaleToUnit([]float64{2.0, 49.9}))\n    assert.Equal([]float64{1.0, 0.0}, RescaleToUnit([]float64{100.0, 49.9}))\n    assert.Equal([]float64{0.0, 0.25, 0.5, 0.75, 1.0}, RescaleToUnit([]float64{1.0, 2.0, 3.0, 4.0, 5.0}))\n    assert.Equal([]float64{0.25, 0.0, 1.0, 0.5, 0.75}, RescaleToUnit([]float64{2.0, 1.0, 5.0, 3.0, 4.0}))\n    assert.Equal([]float64{0.25, 0.0, 1.0, 0.5, 0.75}, RescaleToUnit([]float64{12.0, 11.0, 15.0, 13.0, 14.0}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestRescaleToUnit(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]float64{0.0, 0.25, 0.5, 0.75, 1.0}, RescaleToUnit([]float64{1.0, 2.0, 3.0, 4.0, 5.0}))\n}\n"
+}

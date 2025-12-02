@@ -1,0 +1,13 @@
+{
+    "task": "task_112.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// Given a string representing a space separated lowercase letters, return a dictionary\n// of the letter with the most repetition and containing the corresponding count.\n// If several letters have the same occurrence, return all of them.\n//\n// Example:\n// Histogram('a b c') == {'a': 1, 'b': 1, 'c': 1}\n// Histogram('a b b a') == {'a': 2, 'b': 2}\n// Histogram('a b c a b') == {'a': 2, 'b': 2}\n// Histogram('b b b b a') == {'b': 4}\n// Histogram('') == {}\nfunc Histogram(test string) map[rune]int {\n\tresult := make(map[rune]int)\n\n\t// Handle empty string\n\tif test == \"\" {\n\t\treturn result\n\t}\n\n\t// Split the string by spaces\n\tletters := strings.Fields(test)\n\n\t// Count occurrences of each letter\n\tcounts := make(map[rune]int)\n\tfor _, letter := range letters {\n\t\tif len(letter) > 0 {\n\t\t\tr := rune(letter[0])\n\t\t\tcounts[r]++\n\t\t}\n\t}\n\n\t// Find the maximum count\n\tmaxCount := 0\n\tfor _, count := range counts {\n\t\tif count > maxCount {\n\t\t\tmaxCount = count\n\t\t}\n\t}\n\n\t// Add all letters with the maximum count to the result\n\tfor letter, count := range counts {\n\t\tif count == maxCount {\n\t\t\tresult[letter] = count\n\t\t}\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

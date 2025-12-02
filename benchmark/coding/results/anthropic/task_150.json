@@ -1,0 +1,13 @@
+{
+    "task": "task_150.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// SortedListSum accepts a list of strings, deletes strings with odd lengths,\n// and returns the result sorted by length (ascending) and then alphabetically.\nfunc SortedListSum(lst []string) []string {\n\t// Filter out strings with odd lengths\n\tvar filtered []string\n\tfor _, s := range lst {\n\t\tif len(s)%2 == 0 {\n\t\t\tfiltered = append(filtered, s)\n\t\t}\n\t}\n\t\n\t// Sort by length first, then alphabetically\n\tsort.Slice(filtered, func(i, j int) bool {\n\t\tif len(filtered[i]) != len(filtered[j]) {\n\t\t\treturn len(filtered[i]) < len(filtered[j])\n\t\t}\n\t\treturn filtered[i] < filtered[j]\n\t})\n\t\n\treturn filtered\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

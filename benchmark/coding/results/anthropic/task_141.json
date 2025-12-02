@@ -1,0 +1,13 @@
+{
+    "task": "task_141.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\nfunc FixSpaces(text string) string {\n\tresult := \"\"\n\tspaceCount := 0\n\n\tfor _, char := range text {\n\t\tif char == ' ' {\n\t\t\tspaceCount++\n\t\t} else {\n\t\t\t// Handle accumulated spaces\n\t\t\tif spaceCount > 0 {\n\t\t\t\tif spaceCount > 2 {\n\t\t\t\t\tresult += \"-\"\n\t\t\t\t} else {\n\t\t\t\t\tresult += strings.Repeat(\"_\", spaceCount)\n\t\t\t\t}\n\t\t\t\tspaceCount = 0\n\t\t\t}\n\t\t\tresult += string(char)\n\t\t}\n\t}\n\n\t// Handle trailing spaces\n\tif spaceCount > 0 {\n\t\tif spaceCount > 2 {\n\t\t\tresult += \"-\"\n\t\t} else {\n\t\t\tresult += strings.Repeat(\"_\", spaceCount)\n\t\t}\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

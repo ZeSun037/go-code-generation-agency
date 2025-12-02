@@ -1,0 +1,13 @@
+{
+    "task": "task_115.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// Given an array of integers nums, find the minimum sum of any non-empty sub-array\n// of nums.\n// Example\n// Minsubarraysum([2, 3, 4, 1, 2, 4]) == 1\n// Minsubarraysum([-1, -2, -3]) == -6\nfunc Minsubarraysum(nums []int) int {\n\tminSum := math.MaxInt32\n\tcurrentSum := 0\n\n\tfor _, num := range nums {\n\t\tcurrentSum += num\n\t\tif currentSum < minSum {\n\t\t\tminSum = currentSum\n\t\t}\n\t\tif currentSum > 0 {\n\t\t\tcurrentSum = 0\n\t\t}\n\t}\n\n\treturn minSum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

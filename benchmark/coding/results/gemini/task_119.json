@@ -1,0 +1,23 @@
+{
+    "task": "task_119.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "import (\n\t// \"bytes\" // The \"bytes\" package is not used in this solution.\n)\n\n// isVowel checks if a given rune is an English vowel (case-sensitive).\nfunc isVowel(r rune) bool {\n\tswitch r {\n\tcase 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U':\n\t\treturn true\n\tdefault:\n\t\treturn false\n\t}\n}\n\n// isConsonant checks if a given rune is an English consonant (case-sensitive).\n// It assumes the input rune is an English letter; if it's not a vowel, it's considered a consonant.\nfunc isConsonant(r rune) bool {\n\treturn !isVowel(r)\n}\n\n// GetClosestVowel finds the closest vowel that stands between two consonants\n// from the right side of the word (case sensitive).\n// Vowels in the beginning and ending do not count.\n// Returns an empty string if no such vowel is found.\n// It is assumed that the given string contains English letters only.\nfunc GetClosestVowel(word string) string {\n\trunes := []rune(word)\n\tn := len(runes)\n\n\t// A vowel must be surrounded by two consonants (C V C),\n\t// which means we need at least 3 characters in the word.\n\t// Also, vowels at the beginning and ending don't count,\n\t// so the vowel must be at an index i where 1 <= i <= n-2.\n\tif n < 3 {\n\t\treturn \"\"\n\t}\n\n\t// Iterate from right to left to find the \"closest\" vowel.\n\t// The loop variable 'i' represents the potential index of the vowel.\n\t// 'i' ranges from n-2 (second to last character) down to 1 (second character).\n\tfor i := n - 2; i >= 1; i-- {\n\t\tvowelCandidate := runes[i]\n\t\tleftChar := runes[i-1]\n\t\trightChar := runes[i+1]\n\n\t\t// Check if the current character is a vowel and is surrounded by two consonants.\n\t\tif isVowel(vowelCandidate) && isConsonant(leftChar) && isConsonant(rightChar) {\n\t\t\treturn string(vowelCandidate)\n\t\t}\n\t}\n\n\t// If no vowel is found that meets the conditions after checking all possibilities,\n\t// return an empty string.\n\treturn \"\"\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\n// isVowel checks if a given rune is an English vowel (case-sensitive).\nfunc isVowel(r rune) bool {\n\tswitch r {\n\tcase 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U':\n\t\treturn true\n\tdefault:\n\t\treturn false\n\t}\n}\n\n// isConsonant checks if a given rune is an English consonant (case-sensitive).\n// It assumes the input rune is an English letter; if it's not a vowel, it's considered a consonant.\nfunc isConsonant(r rune) bool {\n\treturn !isVowel(r)\n}\n\n// GetClosestVowel finds the closest vowel that stands between two consonants\n// from the right side of the word (case sensitive).\n// Vowels in the beginning and ending do not count.\n// Returns an empty string if no such vowel is found.\n// It is assumed that the given string contains English letters only.\nfunc GetClosestVowel(word string) string {\n\trunes := []rune(word)\n\tn := len(runes)\n\n\t// A vowel must be surrounded by two consonants (C V C),\n\t// which means we need at least 3 characters in the word.\n\t// Also, vowels at the beginning and ending don't count,\n\t// so the vowel must be at an index i where 1 <= i <= n-2.\n\tif n < 3 {\n\t\treturn \"\"\n\t}\n\n\t// Iterate from right to left to find the \"closest\" vowel.\n\t// The loop variable 'i' represents the potential index of the vowel.\n\t// 'i' ranges from n-2 (second to last character) down to 1 (second character).\n\tfor i := n - 2; i >= 1; i-- {\n\t\tvowelCandidate := runes[i]\n\t\tleftChar := runes[i-1]\n\t\trightChar := runes[i+1]\n\n\t\t// Check if the current character is a vowel and is surrounded by two consonants.\n\t\tif isVowel(vowelCandidate) && isConsonant(leftChar) && isConsonant(rightChar) {\n\t\t\treturn string(vowelCandidate)\n\t\t}\n\t}\n\n\t// If no vowel is found that meets the conditions after checking all possibilities,\n\t// return an empty string.\n\treturn \"\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

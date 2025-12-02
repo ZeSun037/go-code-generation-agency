@@ -1,0 +1,13 @@
+{
+    "task": "task_123.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Given a non-empty array of integers arr and an integer k, return\n// the sum of the elements with at most two digits from the first k elements of arr.\n//\n// Example:\n//\n// Input: arr = [111,21,3,4000,5,6,7,8,9], k = 4\n// Output: 24 # sum of 21 + 3\n//\n// Constraints:\n// 1. 1 <= len(arr) <= 100\n// 2. 1 <= k <= len(arr)\nfunc AddElements(arr []int, k int) int {\n\tsum := 0\n\tfor i := 0; i < k; i++ {\n\t\t// Get the absolute value to handle negative numbers\n\t\tnum := arr[i]\n\t\tif num < 0 {\n\t\t\tnum = -num\n\t\t}\n\t\t// Convert to string to count digits\n\t\tstr := strconv.Itoa(num)\n\t\t// Check if the number has at most 2 digits\n\t\tif len(str) <= 2 {\n\t\t\tsum += arr[i]\n\t\t}\n\t}\n\treturn sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

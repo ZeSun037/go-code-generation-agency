@@ -1,0 +1,13 @@
+{
+    "task": "task_153.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\n// Compare determines how far off each guess was from the actual scores.\nfunc Compare(game, guess []int) []int {\n    result := make([]int, len(game))\n    for i := range game {\n        result[i] = int(math.Abs(float64(game[i] - guess[i])))\n    }\n    return result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/82",
+  "prompt": "\n// Write a function that takes a string and returns true if the string\n// length is a prime number or false otherwise\n// Examples\n// PrimeLength('Hello') == true\n// PrimeLength('abcdcba') == true\n// PrimeLength('kittens') == true\n// PrimeLength('orange') == false\nfunc PrimeLength(s string) bool {\n",
+  "import": "",
+  "docstring": "// Write a function that takes a string and returns true if the string\n// length is a prime number or false otherwise\n// Examples\n// PrimeLength('Hello') == true\n// PrimeLength('abcdcba') == true\n// PrimeLength('kittens') == true\n// PrimeLength('orange') == false\n",
+  "declaration": "\nfunc PrimeLength(s string) bool {\n",
+  "canonical_solution": "    l := len(s)\n    if l == 0 || l == 1 {\n        return false\n    }\n    for i := 2; i < l; i++ {\n        if l%i == 0 {\n            return false\n        }\n    }\n    return true\n}\n\n",
+  "test": "func TestPrimeLength(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, PrimeLength(\"Hello\"))\n    assert.Equal(true, PrimeLength(\"abcdcba\"))\n    assert.Equal(true, PrimeLength(\"kittens\"))\n    assert.Equal(false, PrimeLength(\"orange\"))\n    assert.Equal(true, PrimeLength(\"wow\"))\n    assert.Equal(true, PrimeLength(\"world\"))\n    assert.Equal(true, PrimeLength(\"MadaM\"))\n    assert.Equal(true, PrimeLength(\"Wow\"))\n    assert.Equal(false, PrimeLength(\"\"))\n    assert.Equal(true, PrimeLength(\"HI\"))\n    assert.Equal(true, PrimeLength(\"go\"))\n    assert.Equal(false, PrimeLength(\"gogo\"))\n    assert.Equal(false, PrimeLength(\"aaaaaaaaaaaaaaa\"))\n    assert.Equal(true, PrimeLength(\"Madam\"))\n    assert.Equal(false, PrimeLength(\"M\"))\n    assert.Equal(false, PrimeLength(\"0\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestPrimeLength(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, PrimeLength(\"Hello\"))\n    assert.Equal(true, PrimeLength(\"abcdcba\"))\n    assert.Equal(true, PrimeLength(\"kittens\"))\n    assert.Equal(false, PrimeLength(\"orange\"))\n}\n"
+}

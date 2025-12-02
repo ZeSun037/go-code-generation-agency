@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/154",
+  "prompt": "\n// You are given 2 words. You need to return true if the second word or any of its rotations is a substring in the first word\n// CycpatternCheck(\"abcd\",\"abd\") => false\n// CycpatternCheck(\"hello\",\"ell\") => true\n// CycpatternCheck(\"whassup\",\"psus\") => false\n// CycpatternCheck(\"abab\",\"baa\") => true\n// CycpatternCheck(\"efef\",\"eeff\") => false\n// CycpatternCheck(\"himenss\",\"simen\") => true\nfunc CycpatternCheck(a , b string) bool {\n",
+  "import": "",
+  "docstring": "// You are given 2 words. You need to return true if the second word or any of its rotations is a substring in the first word\n// CycpatternCheck(\"abcd\",\"abd\") => false\n// CycpatternCheck(\"hello\",\"ell\") => true\n// CycpatternCheck(\"whassup\",\"psus\") => false\n// CycpatternCheck(\"abab\",\"baa\") => true\n// CycpatternCheck(\"efef\",\"eeff\") => false\n// CycpatternCheck(\"himenss\",\"simen\") => true\n",
+  "declaration": "\nfunc CycpatternCheck(a , b string) bool {\n",
+  "canonical_solution": "    l := len(b)\n    pat := b + b\n    for i := 0;i < len(a) - l + 1; i++ {\n        for j := 0;j<l + 1;j++ {\n            if a[i:i+l] == pat[j:j+l] {\n                return true\n            }\n        }\n    }\n    return false\n}\n\n",
+  "test": "func TestCycpatternCheck(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, CycpatternCheck(\"xyzw\", \"xyw\"))\n    assert.Equal(true, CycpatternCheck(\"yello\", \"ell\"))\n    assert.Equal(false, CycpatternCheck(\"whattup\", \"ptut\"))\n    assert.Equal(true, CycpatternCheck(\"efef\", \"fee\"))\n    assert.Equal(false, CycpatternCheck(\"abab\", \"aabb\"))\n    assert.Equal(true, CycpatternCheck(\"winemtt\", \"tinem\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCycpatternCheck(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, CycpatternCheck(\"abcd\", \"abd\"))\n    assert.Equal(true, CycpatternCheck(\"hello\", \"ell\"))\n    assert.Equal(false, CycpatternCheck(\"whasup\", \"psus\"))\n    assert.Equal(true, CycpatternCheck(\"abab\", \"baa\"))\n    assert.Equal(false, CycpatternCheck(\"efef\", \"eeff\"))\n    assert.Equal(true, CycpatternCheck(\"himenss\", \"simen\"))\n}\n"
+}

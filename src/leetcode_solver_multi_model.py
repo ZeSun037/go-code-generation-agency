@@ -6,7 +6,10 @@ Supports multiple LLMs (Claude, Gemini, OpenAI, DeepSeek) and extended static an
 Batch mode with --taskfolder and --outputfolder.
 For each .txt task file in taskfolder, run the pipeline and save a corresponding .json result file in outputfolder.
 example usage: 
-python3 src/go_generator_multi_model.py --taskfolder benchmark/concurrency/realworld_bug_scene/ --outputfolder benchmark/concurrency/results/ --provider deepseek --batchlimit 3
+python3 src/leetcode_solver_multi_model.py \
+    --taskfolder benchmark/coding/leetcode/ \
+    --outputfolder benchmark/coding/results/ \
+    --provider openai
 
 Prerequisites (Python):
     pip install anthropic google-generativeai openai
@@ -127,14 +130,15 @@ class OpenAIBackend(LLMBackend):
 
 @dataclass
 class AnalysisResult:
-    """Result from a single analysis tool."""
+    """Result from running a single external tool (here: go test)."""
     tool_name: str
     passed: bool
     output: str
     errors: List[str]
 
+
 class GoCodeSynthesisPipeline:
-    """Complete pipeline for Go code generation and analysis."""
+    """Go code synthesis loop driven by `go test` failures."""
 
     def __init__(
         self,
@@ -143,41 +147,29 @@ class GoCodeSynthesisPipeline:
     ):
         self.llm = llm_backend
         self.max_iterations = max_iterations
-        self.workspace = None
-        self._last_code = ""
+        self.workspace: Optional[str] = None
+        self._last_code: str = ""
+
+    # ---------- basic env helpers ----------
 
     def _check_tool(self, tool: str) -> bool:
-        """Check if a tool is available."""
+        """Check if a tool is available (only need `go`)."""
         try:
-            subprocess.run([tool, "--help"], capture_output=True, timeout=2)
+            subprocess.run([tool, "help"], capture_output=True, timeout=2)
             return True
-        except (subprocess.TimeoutExpired, FileNotFoundError):
-            try:
-                subprocess.run([tool, "version"], capture_output=True, timeout=2)
-                return True
-            except Exception:
-                return False
+        except Exception:
+            return False
 
     def check_prerequisites(self) -> bool:
-        """Verify all required tools are installed."""
+        """Verify required tools are installed (just `go`)."""
         tools = {
             "go": "Go compiler",
-            "errcheck": "github.com/kisielk/errcheck@latest",
-            "go-errorlint": "github.com/polyfloyd/go-errorlint@latest",
-            "staticcheck": "honnef.co/go/tools/cmd/staticcheck@latest",
-            "revive": "github.com/mgechev/revive@latest",
-            "ineffassign": "github.com/gordonklaus/ineffassign@latest",
-            "govulncheck": "golang.org/x/vuln/cmd/govulncheck@latest"
         }
 
         missing = []
         for tool, install in tools.items():
             if not self._check_tool(tool):
-                cmd_str = (
-                    f"go install {install}"
-                    if "github" in install or "honnef" in install or "golang.org" in install
-                    else "Install Go"
-                )
+                cmd_str = "Install Go"
                 missing.append(f"  • {tool}: {cmd_str}")
 
         if missing:
@@ -187,10 +179,13 @@ class GoCodeSynthesisPipeline:
         return True
 
     def setup_workspace(self) -> str:
-        """Create temporary Go workspace."""
+        """Create temporary Go module workspace."""
         self.workspace = tempfile.mkdtemp(prefix="go_synthesis_")
         subprocess.run(
-            ["go", "mod", "init", "synthesis"], cwd=self.workspace, capture_output=True
+            ["go", "mod", "init", "synthesis"],
+            cwd=self.workspace,
+            capture_output=True,
+            text=True,
         )
         return self.workspace
 
@@ -199,53 +194,91 @@ class GoCodeSynthesisPipeline:
             shutil.rmtree(self.workspace)
             self.workspace = None
 
-    def generate_code(self, prompt: str, feedback: Optional[str] = None) -> Tuple[str, str]:
-        """Generate Go code using the configured LLM backend."""
-        
-        system = """You are an expert Go programmer. Generate clean, single-file Go code.
-                Strictly follow these rules:
-                1. Return ONLY the Go code.
-                2. Do not use Markdown formatting (no ```go ... ```).
-                3. Include package main and func main().
-                4. Ensure all imports are used.
-                """
+    # ---------- LLM interaction ----------
+
+    def generate_code(self, prompt: str, test_code: str, feedback: Optional[str] = None) -> Tuple[str, str]:
+        """
+        Ask the LLM to either generate initial code or fix code based on `go test` output.
+        """
+
+        system = """You are an expert Go programmer.
+
+Rules:
+1. Return ONLY valid Go source code (no Markdown code fences).
+2. Preserve any given function signatures and types in the prompt.
+3. Use the same package name as in the prompt (usually `package main`).
+4. Ensure the code compiles and passes `go test` with the provided tests.
+"""
 
         if feedback:
-            message = f"""The previous code had issues. Please fix them.
+            message = f"""The previous Go code failed when running `go test ./...`. Please fix it.
 
-TASK:
+TASK PROMPT:
 {prompt}
 
 PREVIOUS CODE:
 {self._last_code}
 
-ANALYSIS ERRORS:
+GO TEST CODE:
+{test_code}
+
+GO TEST OUTPUT (stderr/stdout):
 {feedback}
 
-Generate corrected Go code addressing all issues above. Return ONLY the raw code."""
+Generate corrected Go code that fixes the issues and makes all tests pass.
+Return ONLY the raw Go source code (no ``` fences)."""
         else:
-            message = f"""Generate a complete, single-file Go program for this task:
+            # 首轮：根据 prompt 生成完整实现
+            message = f"""You are given a partial Go program or a description of a task.
 
+Complete or implement the Go code so that it compiles and passes the test suite
+defined in a separate *_test.go file.
+
+TASK PROMPT:
 {prompt}
-
-Make it production-ready, concurrent (if applicable), and robust."""
+"""
 
         raw_response = self.llm.generate(system, message)
-        
-        # Cleanup response if LLM ignores instructions and adds markdown
+
+        # 清理掉 LLM 偶尔加的 ```go ``` 包裹
         code = raw_response.strip()
         if "```go" in code:
             code = code.split("```go", 1)[1]
         if "```" in code:
             code = code.split("```", 1)[0]
-        
+
         return code.strip(), message
 
+    # ---------- filesystem / tool helpers ----------
+
     def write_to_workspace(self, filename: str, content: str) -> str:
+        if self.workspace is None:
+            raise RuntimeError("Workspace is not set up")
         filepath = os.path.join(self.workspace, filename)
-        with open(filepath, "w") as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
         return filepath
+
+    def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
+        """Run an external command (here: `go test`) inside workspace."""
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=self.workspace,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            output = (result.stdout or "") + (result.stderr or "")
+            passed = result.returncode == 0
+            errors = [] if passed else [line.strip() for line in output.splitlines() if line.strip()]
+            return AnalysisResult(tool_name, passed, output, errors)
+        except subprocess.TimeoutExpired:
+            return AnalysisResult(tool_name, False, "Timeout", ["Tool timed out after 120s"])
+        except Exception as e:
+            return AnalysisResult(tool_name, False, str(e), [f"Failed: {e}"])
+
+    # ---------- main loop: generate -> go test -> fix ----------
 
     def run_go_mod_tidy(self):
         if verbose:
@@ -254,96 +287,29 @@ Make it production-ready, concurrent (if applicable), and robust."""
         if not result.passed:
             print(f"  ⚠️ go mod tidy failed: {result.output}")
         return result.passed
-
-    def run_tool(self, cmd: List[str], tool_name: str) -> AnalysisResult:
-        try:
-            result = subprocess.run(
-                cmd, cwd=self.workspace, capture_output=True, text=True, timeout=30
-            )
-            output = result.stdout + result.stderr
-            passed = result.returncode == 0
-            errors = [] if passed else [line.strip() for line in output.split("\n") if line.strip()]
-            return AnalysisResult(tool_name, passed, output, errors)
-        except subprocess.TimeoutExpired:
-            return AnalysisResult(tool_name, False, "Timeout", ["Tool timed out after 30s"])
-        except Exception as e:
-            return AnalysisResult(tool_name, False, str(e), [f"Failed: {e}"])
-
-    # --- Analysis Categories ---
-
-    def analyze_concurrency(self, filepath: str) -> List[AnalysisResult]:
-        if verbose:
-            print("    → go build -race")
-        results = [self.run_tool(["go", "build", "-race", "-o", "/dev/null", filepath], "go build -race")]
-        if verbose:
-            print("    → gosec")
-        results.append(self.run_tool(["gosec", "."], "gosec"))
-        if verbose:
-            print("    → govulncheck")
-        results.append(self.run_tool(["govulncheck", "."], "govulncheck"))
-        return results
-
-    # def analyze_code_quality(self, filepath: str) -> List[AnalysisResult]:
-    #     print("    → go vet")
-    #     results = [self.run_tool(["go", "vet", filepath], "go vet")]
-    #     print("    → revive")
-    #     results.append(self.run_tool(["revive", filepath], "revive"))
-    #     print("    → ineffassign")
-    #     results.append(self.run_tool(["ineffassign", filepath], "ineffassign"))
-    #     return results
-
-    def analyze_error_handling(self, filepath: str) -> List[AnalysisResult]:
-        if verbose:
-            print("    → errcheck")
-        results = [self.run_tool(["errcheck", filepath], "errcheck")]
-        if verbose:
-            print("    → go-errorlint")
-        results.append(self.run_tool(["go-errorlint", filepath], "go-errorlint"))
-        return results
-
-    def analyze_performance(self, filepath: str) -> List[AnalysisResult]:
-        if verbose:
-            print("    → staticcheck")
-        return [self.run_tool(["staticcheck", filepath], "staticcheck")]
-
-    def run_all_analyses(self, filepath: str) -> Dict[str, List[AnalysisResult]]:
-        self.run_go_mod_tidy()
-        if verbose:
-            print("\n  🔍 Running Analysis Tools...")
-        return {
-            "concurrency_security": self.analyze_concurrency(filepath),
-            # "quality_correctness": self.analyze_code_quality(filepath),
-            "error_handling": self.analyze_error_handling(filepath),
-            "performance": self.analyze_performance(filepath),
-        }
-
-    def format_feedback(self, analyses: Dict[str, List[AnalysisResult]]) -> Optional[str]:
-        feedback = []
-        has_errors = False
-        for category, results in analyses.items():
-            for result in results:
-                if not result.passed:
-                    has_errors = True
-                    # Simplify output for LLM consumption
-                    feedback.append(f"TOOL: {result.tool_name}\nERROR:\n{result.output[:500]}")
-        return "\n\n".join(feedback) if has_errors else None
-
-    def run(self, task: str) -> Tuple[str, bool, List[Dict[str, Any]]]:
+    
+    def run(
+        self,
+        task: str,
+        test_setup: Optional[str] = None,
+        example_test: Optional[str] = None,
+    ) -> Tuple[str, bool, List[Dict[str, Any]]]:
         """
-        Run the synthesis+analysis loop.
+        Test-driven synthesis loop.
+
+        Args:
+            task:          textual prompt (可以是完整/部分 Go 代码，如你 task.json 里的 prompt)
+            test_setup:    来自 task.json["test_setup"] 的内容 (包含 package / imports)
+            example_test:  来自 task.json["example_test"] (或你想用的 test body)
 
         Returns:
             final_code: str
-            success: bool
-            rounds: List[{
-                "code": str,
-                "passed": bool,
-                "errors": List[{"verifier": str, "error": str}]
-            }]
+            success:   bool (go test 是否通过)
+            rounds:    list of { "code", "passed", "errors": [ {verifier, error}, ... ] }
         """
         if verbose:
             print("=" * 70)
-            print("🚀 Go Code Synthesis Pipeline (Enhanced)")
+            print("🚀 Go Code Synthesis Pipeline (go test-based)")
             print("=" * 70)
             print(f"\n📝 Task: {task}\n")
 
@@ -356,60 +322,75 @@ Make it production-ready, concurrent (if applicable), and robust."""
         if verbose:
             print(f"📁 Workspace: {self.workspace}\n")
 
-        feedback = None
-        final_code = None
+        # 先把 tests 写进 workspace：test_setup + example_test
+        test_code = ""
+        if test_setup or example_test:
+            pieces: List[str] = []
+            if test_setup:
+                pieces.append(test_setup.strip())
+            if example_test:
+                pieces.append(example_test.strip())
+            test_code = "\n\n".join(pieces) + "\n"
+
+            if verbose:
+                print("🧪 Writing tests to main_test.go")
+            self.write_to_workspace("main_test.go", test_code)
+
+        feedback: Optional[str] = None
+        final_code: Optional[str] = None
         success = False
 
         try:
             for iteration in range(1, self.max_iterations + 1):
                 if verbose:
-                    print(f"\n{'='*70}")
+                    print("\n" + "=" * 70)
                     print(f"🔄 ITERATION {iteration}/{self.max_iterations}")
-                    print(f"{'='*70}")
+                    print("=" * 70)
+                    print("\n  ✨ Generating Go code...")
 
-                    print(f"\n  ✨ Generating Go code...")
-                code, full_prompt = self.generate_code(task, feedback)
+                code, full_prompt = self.generate_code(task, test_code, feedback)
                 self._last_code = code
                 final_code = code
 
-                filepath = self.write_to_workspace("main.go", code)
-                # self.write_to_workspace(f"iter_{iteration}.go", code)
+                #print(full_prompt)
 
-                analyses = self.run_all_analyses(filepath)
-                
-                # Check if all passed
-                all_passed = all(r.passed for results in analyses.values() for r in results)
-                
-                # Collect per-round error details
-                round_info = {
-                    "code": code,
-                    "passed": all_passed,
-                    "errors": []
-                }
+                # 写当前解到 main.go
+                self.write_to_workspace("main.go", code)
+
+                # 跑 go test
                 if verbose:
-                    print("\n  📊 Analysis Summary:")
-                for cat, results in analyses.items():
-                    for result in results:
-                        status = "✅" if result.passed else "❌"
-                        if verbose:
-                            print(f"    {status} {result.tool_name}")
-                        if not result.passed:
-                            round_info["errors"].append({
-                                "verifier": result.tool_name,
-                                "error": result.output.strip()
-                            })
+                    print("  🧪 Running `go test ./...` ...")
+                self.run_go_mod_tidy()
+                test_result = self.run_tool(["go", "test", "./..."], "go test")
 
+                round_info: Dict[str, Any] = {
+                    "code": code,
+                    "passed": test_result.passed,
+                    "errors": [],
+                }
+                if not test_result.passed:
+                    round_info["errors"].append(
+                        {
+                            "verifier": "go test",
+                            "error": test_result.output.strip(),
+                        }
+                    )
                 rounds.append(round_info)
 
-                if all_passed:
+                if test_result.passed:
                     if verbose:
-                        print("\n✅ SUCCESS! All analyses passed!")
+                        print("\n✅ SUCCESS! All tests passed!")
                     success = True
                     break
 
-                feedback = self.format_feedback(analyses)
+                # 为下一轮构造 feedback：直接用 go test 的 stdout+stderr
+                truncated_out = test_result.output or ""
+                if len(truncated_out) > 4000:
+                    truncated_out = truncated_out[:4000] + "\n...[truncated]..."
+                feedback = truncated_out
+
                 if verbose:
-                    print(f"\n  ⚠️  Issues detected. Retrying...")
+                    print("\n  ⚠️ Tests failed. Retrying with feedback from `go test`...")
 
             if not success and verbose:
                 print(f"\n❌ Max iterations ({self.max_iterations}) reached.")
@@ -485,27 +466,31 @@ def main():
 
     if batch_mode:
         verbose = False
-        # Batch mode: require outputfolder
         if not args.outputfolder:
             print("❌ In batch mode, --outputfolder is required.")
             sys.exit(1)
 
         taskfolder = args.taskfolder
         outputfolder = os.path.join(args.outputfolder, args.provider)
-        num_results_in_output_folder = len([f for f in os.listdir(outputfolder) if os.path.isfile(os.path.join(outputfolder, f))])
 
         if not os.path.isdir(taskfolder):
             print(f"❌ Task folder does not exist or is not a directory: {taskfolder}")
             sys.exit(1)
 
         os.makedirs(outputfolder, exist_ok=True)
+        num_results_in_output_folder = len(
+            [f for f in os.listdir(outputfolder) if os.path.isfile(os.path.join(outputfolder, f))]
+        )
 
-        # Setup backend and pipeline once for batch
         backend = get_backend(args.provider, args.model)
         pipeline = GoCodeSynthesisPipeline(backend, max_iterations=max_iter)
 
         model_name = args.model or getattr(backend, "model_name", None)
-        task_files = [f for f in sorted(os.listdir(taskfolder)) if f.lower().endswith(".txt")]
+
+        task_files = [
+            f for f in sorted(os.listdir(taskfolder))
+            if f.lower().endswith(".json")
+        ]
 
         if args.batchlimit:
             try:
@@ -514,72 +499,54 @@ def main():
             except ValueError:
                 pass
 
-        #skip task files already processed
-        task_files=task_files[num_results_in_output_folder:]
+        # 跳过已经生成结果的前 N 个任务
+        task_files = task_files[num_results_in_output_folder:]
 
         total = len(task_files)
-
         print(f"📂 Found {total} task files. Starting batch processing...")
 
-        # Iterate over .txt files in taskfolder
         for fname in tqdm(task_files, desc="Processing tasks", unit="task"):
-            if not fname.lower().endswith(".txt"):
-                continue
-
             task_path = os.path.join(taskfolder, fname)
-            with open(task_path, "r", encoding="utf-8") as f:
-                task_text = f.read().strip()
+
+            # 默认值
+            task_text: str = ""
+            test_setup: Optional[str] = None
+            example_test: Optional[str] = None
+
+            if fname.lower().endswith(".json"):
+                with open(task_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                # 对应你给的 task.json 结构
+                task_text = (data.get("prompt") or "").strip()
+                test_setup = data.get("test_setup")
+                example_test = data.get("example_test")
+            else:
+                # 老的 .txt 模式：只用纯文本 task，没有测试
+                with open(task_path, "r", encoding="utf-8") as f:
+                    task_text = f.read().strip()
 
             if not task_text:
                 print(f"\n⚠️  Skipping empty task file: {fname}")
                 continue
-            if verbose:
-                print(f"\n\n================ Processing task file: {fname} ================")
-            final_code, success, rounds = pipeline.run(task_text)
 
-            # Build JSON record
+            final_code, success, rounds = pipeline.run(
+                task_text,
+                test_setup=test_setup,
+                example_test=example_test,
+            )
+
             result_obj = {
-                "task": fname,  # task file name
+                "task": fname,
                 "provider": args.provider,
                 "model": model_name,
                 "rounds": rounds,
-                "passed": success
+                "passed": success,
             }
 
             out_name = os.path.splitext(fname)[0] + ".json"
             out_path = os.path.join(outputfolder, out_name)
             with open(out_path, "w", encoding="utf-8") as out_f:
                 json.dump(result_obj, out_f, indent=4)
-            if verbose:
-                print(f"\n💾 Result JSON saved to: {out_path}")
-
-        sys.exit(0)
-
-    # ----- Single-task mode (original behavior) -----
-    if args.file:
-        with open(args.file, 'r', encoding="utf-8") as f:
-            task = f.read().strip()
-    elif args.task:
-        task = args.task
-    else:
-        parser.print_help()
-        sys.exit(1)
-
-    try:
-        backend = get_backend(args.provider, args.model)
-        pipeline = GoCodeSynthesisPipeline(backend, max_iterations=max_iter)
-        final_code, success, rounds = pipeline.run(task)
-        
-        output_file = "generated_code.go"
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(final_code)
-            
-        print(f"\n💾 Final code saved to: {output_file}")
-        sys.exit(0 if success else 1)
-
-    except Exception as e:
-        print(f"\n❌ Error: {e}")
-        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+{
+    "task": "task_116.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\nfunc MaxFill(grid [][]int, capacity int) int {\n\ttotalLowerings := 0\n\t\n\t// For each well (row)\n\tfor _, well := range grid {\n\t\t// Count total water units in this well\n\t\twaterUnits := 0\n\t\tfor _, cell := range well {\n\t\t\twaterUnits += cell\n\t\t}\n\t\t\n\t\t// Calculate number of times we need to lower the bucket\n\t\t// This is ceiling(waterUnits / capacity)\n\t\tif waterUnits > 0 {\n\t\t\tlowerings := int(math.Ceil(float64(waterUnits) / float64(capacity)))\n\t\t\ttotalLowerings += lowerings\n\t\t}\n\t}\n\t\n\treturn totalLowerings\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

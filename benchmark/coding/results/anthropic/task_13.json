@@ -1,0 +1,13 @@
+{
+    "task": "task_13.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Longest(strings []string) interface{} {\n\tif len(strings) == 0 {\n\t\treturn nil\n\t}\n\t\n\tlongest := strings[0]\n\tfor _, s := range strings[1:] {\n\t\tif len(s) > len(longest) {\n\t\t\tlongest = s\n\t\t}\n\t}\n\t\n\treturn longest\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

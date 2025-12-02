@@ -1,0 +1,13 @@
+{
+    "task": "task_127.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc IsSorted(lst []int) bool {\n\t// Check if list is sorted in ascending order\n\t// and has at most 1 duplicate of each number\n\t\n\tfor i := 0; i < len(lst)-1; i++ {\n\t\t// If current element is greater than next, not sorted\n\t\tif lst[i] > lst[i+1] {\n\t\t\treturn false\n\t\t}\n\t\t\n\t\t// If current element equals next, check for more duplicates\n\t\tif lst[i] == lst[i+1] {\n\t\t\t// Check if there's another duplicate after this one\n\t\t\tif i+2 < len(lst) && lst[i+1] == lst[i+2] {\n\t\t\t\treturn false\n\t\t\t}\n\t\t}\n\t}\n\t\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

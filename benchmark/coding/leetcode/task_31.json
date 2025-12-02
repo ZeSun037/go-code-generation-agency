@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/30",
+  "prompt": "\n// Return only positive numbers in the list.\n// >>> GetPositive([-1, 2, -4, 5, 6])\n// [2, 5, 6]\n// >>> GetPositive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])\n// [5, 3, 2, 3, 9, 123, 1]\nfunc GetPositive(l []int) []int {\n",
+  "import": "",
+  "docstring": "// Return only positive numbers in the list.\n// >>> GetPositive([-1, 2, -4, 5, 6])\n// [2, 5, 6]\n// >>> GetPositive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])\n// [5, 3, 2, 3, 9, 123, 1]\n",
+  "declaration": "\nfunc GetPositive(l []int) []int {\n",
+  "canonical_solution": "    res := make([]int, 0)\n    for _, x := range l {\n        if x > 0 {\n            res = append(res, x)\n        }\n    }\n    return res\n}\n\n\n",
+  "test": "func TestGetPositive(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{4, 5, 6}, GetPositive([]int{-1, -2, 4,5, 6}))\n    assert.Equal([]int{5, 3, 2, 3, 3, 9, 123, 1}, GetPositive([]int{5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10}))\n    assert.Equal([]int{}, GetPositive([]int{-1, -2}))\n    assert.Equal([]int{}, GetPositive([]int{}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestGetPositive(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2, 5, 6}, GetPositive([]int{-1, 2, -4,5, 6}))\n    assert.Equal([]int{5, 3, 2,  3, 9, 123, 1}, GetPositive([]int{5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10}))\n}\n"
+}

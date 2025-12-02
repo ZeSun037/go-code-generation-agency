@@ -1,0 +1,13 @@
+{
+    "task": "task_159.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// Write a function that accepts a list of strings.\n// The list contains different words. Return the word with maximum number\n// of unique characters. If multiple strings have maximum number of unique\n// characters, return the one which comes first in lexicographical order.\n// \n// FindMax([\"name\", \"of\", \"string\"]) == \"string\"\n// FindMax([\"name\", \"enam\", \"game\"]) == \"enam\"\n// FindMax([\"aaaaaaa\", \"bb\" ,\"cc\"]) == \"\"aaaaaaa\"\nfunc FindMax(words []string) string {\n\tif len(words) == 0 {\n\t\treturn \"\"\n\t}\n\n\t// Count unique characters for each word\n\tuniqueCharCounts := make([]int, len(words))\n\tfor i, word := range words {\n\t\tcharSet := make(map[rune]bool)\n\t\tfor _, ch := range word {\n\t\t\tcharSet[ch] = true\n\t\t}\n\t\tuniqueCharCounts[i] = len(charSet)\n\t}\n\n\t// Find the maximum number of unique characters\n\tmaxUnique := 0\n\tfor _, count := range uniqueCharCounts {\n\t\tif count > maxUnique {\n\t\t\tmaxUnique = count\n\t\t}\n\t}\n\n\t// Among words with max unique characters, find the lexicographically smallest\n\tcandidates := []string{}\n\tfor i, count := range uniqueCharCounts {\n\t\tif count == maxUnique {\n\t\t\tcandidates = append(candidates, words[i])\n\t\t}\n\t}\n\n\tsort.Strings(candidates)\n\treturn candidates[0]\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

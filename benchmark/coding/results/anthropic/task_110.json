@@ -1,0 +1,23 @@
+{
+    "task": "task_110.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n\t\"sort\"\n)\n\nfunc MoveOneBall(arr []int) bool {\n\tif len(arr) == 0 {\n\t\treturn true\n\t}\n\n\t// Check all possible rotations\n\tfor shift := 0; shift < len(arr); shift++ {\n\t\tif isSorted(arr, shift) {\n\t\t\treturn true\n\t\t}\n\t}\n\n\treturn false\n}\n\nfunc isSorted(arr []int, shift int) bool {\n\t// Check if array is sorted when rotated by 'shift' positions\n\tn := len(arr)\n\tfor i := 0; i < n-1; i++ {\n\t\tcurrent := arr[(i+shift)%n]\n\t\tnext := arr[(i+1+shift)%n]\n\t\tif current > next {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:4:2: \"math\" imported and not used\n./main.go:5:2: \"sort\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc MoveOneBall(arr []int) bool {\n\tif len(arr) == 0 {\n\t\treturn true\n\t}\n\n\t// Check all possible rotations\n\tfor shift := 0; shift < len(arr); shift++ {\n\t\tif isSorted(arr, shift) {\n\t\t\treturn true\n\t\t}\n\t}\n\n\treturn false\n}\n\nfunc isSorted(arr []int, shift int) bool {\n\t// Check if array is sorted when rotated by 'shift' positions\n\tn := len(arr)\n\tfor i := 0; i < n-1; i++ {\n\t\tcurrent := arr[(i+shift)%n]\n\t\tnext := arr[(i+1+shift)%n]\n\t\tif current > next {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

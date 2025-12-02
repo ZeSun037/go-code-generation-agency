@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/22",
+  "prompt": "// Filter given list of any values only for integers\n// >>> FilterIntegers(['a', 3.14, 5])\n// [5]\n// >>> FilterIntegers([1, 2, 3, 'abc', {}, []])\n// [1, 2, 3]\nfunc FilterIntegers(values []interface{}) []int {\n",
+  "import": "",
+  "docstring": "// Filter given list of any values only for integers\n// >>> FilterIntegers(['a', 3.14, 5])\n// [5]\n// >>> FilterIntegers([1, 2, 3, 'abc', {}, []])\n// [1, 2, 3]\n",
+  "declaration": "\nfunc FilterIntegers(values []interface{}) []int {\n",
+  "canonical_solution": "    result := make([]int, 0)\n    for _, val := range values {\n        switch i := val.(type) {\n        case int:\n            result = append(result, i)\n        }\n    }\n    return result\n}\n\n",
+  "test": "func TestFilterIntegers(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{}, FilterIntegers([]interface{}{}))\n    assert.Equal([]int{4, 9}, FilterIntegers([]interface{}{4, nil, []interface{}{}, 23.2, 9, \"adasd\"}))\n    assert.Equal([]int{3, 3, 3}, FilterIntegers([]interface{}{3, 'c', 3, 3, 'a', 'b'}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFilterIntegers(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{5}, FilterIntegers([]interface{}{'a', 3.14, 5}))\n    assert.Equal([]int{1,2,3}, FilterIntegers([]interface{}{1,2,3,\"abc\", nil, []interface{}{}}))\n}\n"
+}

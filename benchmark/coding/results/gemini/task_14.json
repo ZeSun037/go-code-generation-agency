@@ -1,0 +1,13 @@
+{
+    "task": "task_14.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport \"math\"\n\n// GreatestCommonDivisor returns the greatest common divisor of two integers a and b.\n// It uses the Euclidean algorithm. The result is always non-negative,\n// consistent with the standard mathematical definition of GCD.\nfunc GreatestCommonDivisor(a int, b int) int {\n\t// Take absolute values of a and b to ensure the GCD is always non-negative,\n\t// as per the standard mathematical definition.\n\t// math.Abs operates on float64, so type conversions are necessary.\n\ta_abs := int(math.Abs(float64(a)))\n\tb_abs := int(math.Abs(float64(b)))\n\n\t// Euclidean algorithm (iterative)\n\tfor b_abs != 0 {\n\t\ta_abs, b_abs = b_abs, a_abs%b_abs\n\t}\n\treturn a_abs\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

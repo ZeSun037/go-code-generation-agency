@@ -1,0 +1,23 @@
+{
+    "task": "task_130.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport \"sort\"\n\nfunc Minpath(grid [][]int, k int) []int {\n\tn := len(grid)\n\tmoves := []struct{ x, y int }{\n\t\t{-1, 0}, {1, 0}, {0, -1}, {0, 1},\n\t}\n\n\tvar dfs func(x, y int, path []int)\n\tvar result []int\n\n\tdfs = func(x, y int, path []int) {\n\t\tif len(path) == k {\n\t\t\tif result == nil || less(path, result) {\n\t\t\t\tresult = make([]int, k)\n\t\t\t\tcopy(result, path)\n\t\t\t}\n\t\t\treturn\n\t\t}\n\t\tfor _, move := range moves {\n\t\t\tnewX, newY := x+move.x, y+move.y\n\t\t\tif newX >= 0 && newX < n && newY >= 0 && newY < n {\n\t\t\t\tdfs(newX, newY, append(path, grid[newX][newY]))\n\t\t\t}\n\t\t}\n\t}\n\n\tfor i := 0; i < n; i++ {\n\t\tfor j := 0; j < n; j++ {\n\t\t\tdfs(i, j, []int{grid[i][j]})\n\t\t}\n\t}\n\n\treturn result\n}\n\nfunc less(a, b []int) bool {\n\tfor i := 0; i < len(a); i++ {\n\t\tif a[i] < b[i] {\n\t\t\treturn true\n\t\t} else if a[i] > b[i] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn false\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:3:8: \"sort\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nfunc Minpath(grid [][]int, k int) []int {\n\tn := len(grid)\n\tmoves := []struct{ x, y int }{\n\t\t{-1, 0}, {1, 0}, {0, -1}, {0, 1},\n\t}\n\n\tvar dfs func(x, y int, path []int)\n\tvar result []int\n\n\tdfs = func(x, y int, path []int) {\n\t\tif len(path) == k {\n\t\t\tif result == nil || less(path, result) {\n\t\t\t\tresult = make([]int, k)\n\t\t\t\tcopy(result, path)\n\t\t\t}\n\t\t\treturn\n\t\t}\n\t\tfor _, move := range moves {\n\t\t\tnewX, newY := x+move.x, y+move.y\n\t\t\tif newX >= 0 && newX < n && newY >= 0 && newY < n {\n\t\t\t\tdfs(newX, newY, append(path, grid[newX][newY]))\n\t\t\t}\n\t\t}\n\t}\n\n\tfor i := 0; i < n; i++ {\n\t\tfor j := 0; j < n; j++ {\n\t\t\tdfs(i, j, []int{grid[i][j]})\n\t\t}\n\t}\n\n\treturn result\n}\n\nfunc less(a, b []int) bool {\n\tfor i := 0; i < len(a); i++ {\n\t\tif a[i] < b[i] {\n\t\t\treturn true\n\t\t} else if a[i] > b[i] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

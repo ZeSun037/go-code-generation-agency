@@ -1,0 +1,13 @@
+{
+    "task": "task_145.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n\t\"strings\"\n)\n\nfunc Simplify(x, n string) bool {\n\t// Parse fraction x\n\txParts := strings.Split(x, \"/\")\n\txNum, _ := strconv.Atoi(xParts[0])\n\txDen, _ := strconv.Atoi(xParts[1])\n\n\t// Parse fraction n\n\tnParts := strings.Split(n, \"/\")\n\tnNum, _ := strconv.Atoi(nParts[0])\n\tnDen, _ := strconv.Atoi(nParts[1])\n\n\t// Multiply fractions: (xNum/xDen) * (nNum/nDen) = (xNum * nNum) / (xDen * nDen)\n\tresultNum := xNum * nNum\n\tresultDen := xDen * nDen\n\n\t// Check if result is a whole number (denominator divides numerator evenly)\n\treturn resultNum%resultDen == 0\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

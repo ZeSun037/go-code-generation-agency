@@ -1,0 +1,13 @@
+{
+    "task": "task_160.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// You're a hungry rabbit, and you already have Eaten a certain number of carrots,\n// but now you need to Eat more carrots to Eat the day's meals.\n// you should return an array of [ total number of Eaten carrots after your meals,\n// the number of carrots left after your meals ]\n// if there are not enough remaining carrots, you will Eat all remaining carrots, but will still be hungry.\n//\n// Example:\n// * Eat(5, 6, 10) -> [11, 4]\n// * Eat(4, 8, 9) -> [12, 1]\n// * Eat(1, 10, 10) -> [11, 0]\n// * Eat(2, 11, 5) -> [7, 0]\n//\n// Variables:\n// @number : integer\n// the number of carrots that you have Eaten.\n// @need : integer\n// the number of carrots that you need to Eat.\n// @remaining : integer\n// the number of remaining carrots thet exist in stock\n//\n// Constrain:\n// * 0 <= number <= 1000\n// * 0 <= need <= 1000\n// * 0 <= remaining <= 1000\n//\n// Have fun :)\nfunc Eat(number, need, remaining int) []int {\n\tvar carrotsEatenNow int\n\tvar carrotsLeft int\n\n\t// Determine how many carrots the rabbit can eat now.\n\t// The rabbit will eat either the 'need' amount or all 'remaining' carrots,\n\t// whichever is smaller.\n\tif remaining >= need {\n\t\tcarrotsEatenNow = need\n\t\tcarrotsLeft = remaining - need\n\t} else {\n\t\t// Not enough carrots to satisfy the 'need'.\n\t\t// The rabbit eats all the 'remaining' carrots.\n\t\tcarrotsEatenNow = remaining\n\t\tcarrotsLeft = 0\n\t}\n\n\t// Calculate the total number of carrots eaten.\n\ttotalEaten := number + carrotsEatenNow\n\n\t// Return the result as an array (slice) of two integers.\n\treturn []int{totalEaten, carrotsLeft}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

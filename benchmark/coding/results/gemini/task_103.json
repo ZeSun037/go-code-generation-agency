@@ -1,0 +1,13 @@
+{
+    "task": "task_103.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// This function takes two positive numbers x and y and returns the\n// biggest even integer number that is in the range [x, y] inclusive. If\n// there's no such number, then the function should return -1.\n//\n// For example:\n// ChooseNum(12, 15) = 14\n// ChooseNum(13, 12) = -1\nfunc ChooseNum(x, y int) int {\n\t// If x is greater than y, the range [x, y] is empty or invalid.\n\t// In this case, no number can exist in the range, so we return -1.\n\tif x > y {\n\t\treturn -1\n\t}\n\n\t// We are looking for the biggest even number in the range [x, y].\n\t// The largest possible candidate is y.\n\t// We'll adjust y to be the largest even number less than or equal to y.\n\tcandidate := y\n\tif candidate%2 != 0 {\n\t\t// If y is odd, decrement it to get the largest even number that is <= y.\n\t\t// For example, if y=15, candidate becomes 14. If y=13, candidate becomes 12.\n\t\tcandidate--\n\t}\n\n\t// At this point, 'candidate' holds the largest even integer that is less than or equal to the original y.\n\t// Now, we must check if this 'candidate' is actually within the specified lower bound x.\n\t// We already know 'candidate <= y' because we derived it from y.\n\t// We only need to verify if 'candidate >= x'.\n\tif candidate >= x {\n\t\t// If candidate is greater than or equal to x, it means 'candidate'\n\t\t// is an even number that falls within the range [x, y].\n\t\t// Since we derived it as the largest even number <= y, it is the biggest\n\t\t// even number in the range.\n\t\treturn candidate\n\t}\n\n\t// If 'candidate < x', it means that even the largest possible even number\n\t// that is less than or equal to y (which is 'candidate') is smaller than the lower bound x.\n\t// Therefore, there are no even numbers in the range [x, y].\n\treturn -1\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/37",
+  "prompt": "import (\n\t\"sort\"\n)\n\n// This function takes a list l and returns a list l' such that\n// l' is identical to l in the odd indicies, while its values at the even indicies are equal\n// to the values of the even indicies of l, but sorted.\n// >>> SortEven([1, 2, 3])\n// [1, 2, 3]\n// >>> SortEven([5, 6, 3, 4])\n// [3, 6, 5, 4]\nfunc SortEven(l []int) []int {\n",
+  "import": "import (\n\t\"sort\"\n)",
+  "docstring": "// This function takes a list l and returns a list l' such that\n// l' is identical to l in the odd indicies, while its values at the even indicies are equal\n// to the values of the even indicies of l, but sorted.\n// >>> SortEven([1, 2, 3])\n// [1, 2, 3]\n// >>> SortEven([5, 6, 3, 4])\n// [3, 6, 5, 4]\n",
+  "declaration": "\nfunc SortEven(l []int) []int {\n",
+  "canonical_solution": "    evens := make([]int, 0)\n\tfor i := 0; i < len(l); i += 2 {\n\t\tevens = append(evens, l[i])\n\t}\n\tsort.Ints(evens)\n\tj := 0\n\tfor i := 0; i < len(l); i += 2 {\n\t\tl[i] = evens[j]\n\t\tj++\n\t}\n\treturn l\n}\n\n",
+  "test": "func TestSortEven(t *testing.T) {\n\tassert := assert.New(t)\n\tsame := func(src []int, target []int) bool {\n\t\tfor i := 0; i < len(src); i++ {\n\t\t\tif src[i] != target[i] {\n\t\t\t\treturn false\n\t\t\t}\n\t\t}\n\t\treturn true\n\t}\n\tassert.Equal(true, same([]int{1, 2, 3}, SortEven([]int{1, 2, 3})))\n\tassert.Equal(true, same([]int{-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123}, SortEven([]int{5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10})))\n\tassert.Equal(true, same([]int{-12, 8, 3, 4, 5, 2, 12, 11, 23, -10}, SortEven([]int{5, 8, -12, 4, 23, 2, 3, 11, 12, -10})))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestSortEven(t *testing.T) {\n\tassert := assert.New(t)\n\tsame := func(src []int, target []int) bool {\n\t\tfor i := 0; i < len(src); i++ {\n\t\t\tif src[i] != target[i] {\n\t\t\t\treturn false\n\t\t\t}\n\t\t}\n\t\treturn true\n\t}\n\tassert.Equal(true, same([]int{1, 2, 3}, SortEven([]int{1, 2, 3})))\n\tassert.Equal(true, same([]int{3,6,5,4}, SortEven([]int{5,6,3,4})))\n}\n"
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/44",
+  "prompt": "import (\n    \"strconv\"\n)\n\n// Change numerical base of input number x to base.\n// return string representation after the conversion.\n// base numbers are less than 10.\n// >>> ChangeBase(8, 3)\n// '22'\n// >>> ChangeBase(8, 2)\n// '1000'\n// >>> ChangeBase(7, 2)\n// '111'\nfunc ChangeBase(x int, base int) string {\n",
+  "import": "import (\n    \"strconv\"\n)\n",
+  "docstring": "// Change numerical base of input number x to base.\n// return string representation after the conversion.\n// base numbers are less than 10.\n// >>> ChangeBase(8, 3)\n// '22'\n// >>> ChangeBase(8, 2)\n// '1000'\n// >>> ChangeBase(7, 2)\n// '111'\n",
+  "declaration": "\nfunc ChangeBase(x int, base int) string {\n",
+  "canonical_solution": "    if x >= base {\n        return ChangeBase(x/base, base) + ChangeBase(x%base, base)\n    }\n    return strconv.Itoa(x)\n}\n\n",
+  "test": "func TestChangeBase(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"22\", ChangeBase(8, 3))\n    assert.Equal(\"100\", ChangeBase(9, 3))\n    assert.Equal(\"11101010\", ChangeBase(234, 2))\n    assert.Equal(\"10000\", ChangeBase(16, 2))\n    assert.Equal(\"1000\", ChangeBase(8, 2))\n    assert.Equal(\"111\", ChangeBase(7, 2))\n    for i := 2; i < 8; i++ {\n        assert.Equal(strconv.Itoa(i), ChangeBase(i, i+1))\n    }\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestChangeBase(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"22\", ChangeBase(8, 3))\n    assert.Equal(\"1000\", ChangeBase(8, 2))\n    assert.Equal(\"111\", ChangeBase(7, 2))\n}\n"
+}

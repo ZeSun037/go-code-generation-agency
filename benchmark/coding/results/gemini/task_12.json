@@ -1,0 +1,13 @@
+{
+    "task": "task_12.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// StringXor performs binary XOR on two input strings (a and b) consisting only of '0's and '1's.\n// It automatically pads the shorter string with leading zeros to match the length of the longer string\n// before performing the XOR operation. The result is returned as a string of '0's and '1's.\nfunc StringXor(a string, b string) string {\n\tlenA := len(a)\n\tlenB := len(b)\n\n\tmaxLength := lenA\n\tif lenB > maxLength {\n\t\tmaxLength = lenB\n\t}\n\n\t// Pad the shorter string(s) with leading zeros to ensure both strings\n\t// have the same length for a proper bitwise XOR operation.\n\tif lenA < maxLength {\n\t\ta = strings.Repeat(\"0\", maxLength-lenA) + a\n\t}\n\tif lenB < maxLength {\n\t\tb = strings.Repeat(\"0\", maxLength-lenB) + b\n\t}\n\n\t// Use a strings.Builder for efficient string concatenation.\n\tvar resultBuilder strings.Builder\n\tresultBuilder.Grow(maxLength) // Pre-allocate capacity for the result string\n\n\tfor i := 0; i < maxLength; i++ {\n\t\tbitA := a[i]\n\t\tbitB := b[i]\n\n\t\t// Perform XOR logic:\n\t\t// '0' XOR '0' = '0'\n\t\t// '0' XOR '1' = '1'\n\t\t// '1' XOR '0' = '1'\n\t\t// '1' XOR '1' = '0'\n\t\t// This is equivalent to checking if the bits are different.\n\t\tif bitA == bitB {\n\t\t\tresultBuilder.WriteByte('0')\n\t\t} else {\n\t\t\tresultBuilder.WriteByte('1')\n\t\t}\n\t}\n\n\treturn resultBuilder.String()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

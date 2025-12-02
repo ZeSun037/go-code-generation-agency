@@ -1,0 +1,13 @@
+{
+    "task": "task_124.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// GetOddCollatz returns a sorted list of unique odd numbers encountered in the Collatz sequence starting from n.\n//\n// The Collatz sequence is defined as follows:\n// - If the current term is even, the next term is half of the current term.\n// - If the current term is odd, the next term is 3 times the current term plus 1.\n// The sequence stops when it reaches 1.\n//\n// Notes:\n// 1. Collatz(1) is [1].\n// 2. The returned list is sorted in increasing order.\n// 3. Only unique odd numbers are included in the result.\nfunc GetOddCollatz(n int) []int {\n\t// oddNumbersSet is used to efficiently track unique odd numbers already added to the result.\n\toddNumbersSet := make(map[int]bool)\n\t// result will store the unique odd numbers in the order they are first encountered.\n\tvar result []int\n\n\tcurrent := n\n\tfor {\n\t\t// If the current number is odd, and it hasn't been added to our set yet,\n\t\t// add it to the set and to our result slice.\n\t\tif current%2 != 0 {\n\t\t\tif !oddNumbersSet[current] {\n\t\t\t\toddNumbersSet[current] = true\n\t\t\t\tresult = append(result, current)\n\t\t\t}\n\t\t}\n\n\t\t// The sequence stops when it reaches 1.\n\t\tif current == 1 {\n\t\t\tbreak\n\t\t}\n\n\t\t// Apply the Collatz rule to get the next term in the sequence.\n\t\tif current%2 == 0 {\n\t\t\tcurrent /= 2\n\t\t} else {\n\t\t\t// Note: For very large 'n', 3*current + 1 could potentially overflow\n\t\t\t// a standard 'int' type. Assuming 'int' is sufficient for problem constraints.\n\t\t\tcurrent = 3*current + 1\n\t\t}\n\t}\n\n\t// Sort the collected odd numbers in increasing order as required.\n\tsort.Ints(result)\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

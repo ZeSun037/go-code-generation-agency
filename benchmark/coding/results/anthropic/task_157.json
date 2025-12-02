@@ -1,0 +1,13 @@
+{
+    "task": "task_157.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// Given a positive integer, obtain its roman numeral equivalent as a string,\n// and return it in lowercase.\n// Restrictions: 1 <= num <= 1000\n// \n// Examples:\n// >>> IntToMiniRoman(19) == 'xix'\n// >>> IntToMiniRoman(152) == 'clii'\n// >>> IntToMiniRoman(426) == 'cdxxvi'\nfunc IntToMiniRoman(number int) string {\n\t// Define value-to-roman mappings in descending order\n\tvalues := []int{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1}\n\tnumerals := []string{\"m\", \"cm\", \"d\", \"cd\", \"c\", \"xc\", \"l\", \"xl\", \"x\", \"ix\", \"v\", \"iv\", \"i\"}\n\t\n\tvar result strings.Builder\n\t\n\tfor i := 0; i < len(values); i++ {\n\t\tfor number >= values[i] {\n\t\t\tresult.WriteString(numerals[i])\n\t\t\tnumber -= values[i]\n\t\t}\n\t}\n\t\n\treturn result.String()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

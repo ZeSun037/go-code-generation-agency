@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/131",
+  "prompt": "import (\n    \"strconv\"\n)\n\n// Given a positive integer n, return the product of the odd Digits.\n// Return 0 if all Digits are even.\n// For example:\n// Digits(1)  == 1\n// Digits(4)  == 0\n// Digits(235) == 15\nfunc Digits(n int) int {\n",
+  "import": "import (\n    \"strconv\"\n)\n",
+  "docstring": "// Given a positive integer n, return the product of the odd Digits.\n// Return 0 if all Digits are even.\n// For example:\n// Digits(1)  == 1\n// Digits(4)  == 0\n// Digits(235) == 15\n",
+  "declaration": "\nfunc Digits(n int) int {\n",
+  "canonical_solution": "    product := 1\n    odd_count := 0\n    for _, digit := range strconv.Itoa(n) {\n        int_digit := int(digit-'0')\n        if int_digit&1 == 1 {\n            product= product*int_digit\n            odd_count++\n        }\n    }\n    if odd_count==0 {\n        return 0\n    }\n    return product\n}\n\n",
+  "test": "func TestDigits(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(5, Digits(5))\n    assert.Equal(5, Digits(54))\n    assert.Equal(1, Digits(120))\n    assert.Equal(5, Digits(5014))\n    assert.Equal(315, Digits(98765))\n    assert.Equal(2625, Digits(5576543))\n    assert.Equal(0, Digits(2468))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestDigits(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, Digits(1))\n    assert.Equal(0, Digits(4))\n    assert.Equal(15, Digits(235))\n}\n"
+}

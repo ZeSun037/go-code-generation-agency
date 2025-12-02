@@ -1,0 +1,13 @@
+{
+    "task": "task_13.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Longest(strings []string) interface{} {\n\tif len(strings) == 0 {\n\t\treturn nil\n\t}\n\t\n\tlongest := strings[0]\n\tfor _, str := range strings {\n\t\tif len(str) > len(longest) {\n\t\t\tlongest = str\n\t\t}\n\t}\n\treturn longest\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

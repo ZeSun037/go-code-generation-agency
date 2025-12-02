@@ -1,0 +1,33 @@
+{
+    "task": "task_105.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n\t\"strconv\" // This import is not strictly necessary for the current implementation approach but is kept as per the prompt.\n)\n\n// hasEvenDigit checks if a positive integer contains any even digits.\n// It returns true if an even digit (0, 2, 4, 6, 8) is found, false otherwise.\nfunc hasEvenDigit(n int) bool {\n\t// The problem states \"positive integers\", so n will always be > 0.\n\t// If n could be 0, 0 itself is an even digit.\n\t\n\ttemp := n\n\tfor temp > 0 {\n\t\tdigit := temp % 10 // Get the last digit\n\t\tif digit%2 == 0 {\n\t\t\treturn true // Found an even digit\n\t\t}\n\t\ttemp /= 10 // Remove the last digit\n\t}\n\treturn false // No even digits found\n}\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n// \n// Note: Returned list should be sorted in increasing order.\n// \n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n\tvar result []int\n\n\tfor _, num := range x {\n\t\t// If the number DOES NOT have any even digits, add it to the result.\n\t\tif !hasEvenDigit(num) {\n\t\t\tresult = append(result, num)\n\t\t}\n\t}\n\n\t// Sort the result slice in increasing order as required.\n\tsort.Ints(result)\n\n\treturn result\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:5:2: \"strconv\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// hasEvenDigit checks if a positive integer contains any even digits.\n// It returns true if an even digit (0, 2, 4, 6, 8) is found, false otherwise.\nfunc hasEvenDigit(n int) bool {\n\t// The problem states \"positive integers\", so n will always be > 0.\n\t// If n could be 0, 0 itself is an even digit.\n\t\n\ttemp := n\n\tfor temp > 0 {\n\t\tdigit := temp % 10 // Get the last digit\n\t\tif digit%2 == 0 {\n\t\t\treturn true // Found an even digit\n\t\t}\n\t\ttemp /= 10 // Remove the last digit\n\t}\n\treturn false // No even digits found\n}\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n// \n// Note: Returned list should be sorted in increasing order.\n// \n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n\tvar result []int\n\n\tfor _, num := range x {\n\t\t// If the number DOES NOT have any even digits, add it to the result.\n\t\tif !hasEvenDigit(num) {\n\t\t\tresult = append(result, num)\n\t\t}\n\t}\n\n\t// Sort the result slice in increasing order as required.\n\tsort.Ints(result)\n\n\treturn result\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestUniqueDigits (0.00s)\n    main_test.go:11: \n        \tError Trace:\t/tmp/go_synthesis_u2zxl420/main_test.go:11\n        \tError:      \tNot equal: \n        \t            \texpected: []int{}\n        \t            \tactual  : []int(nil)\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,3 +1,2 @@\n        \t            \t-([]int) {\n        \t            \t-}\n        \t            \t+([]int) <nil>\n        \t            \t \n        \tTest:       \tTestUniqueDigits\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// hasEvenDigit checks if a positive integer contains any even digits.\n// It returns true if an even digit (0, 2, 4, 6, 8) is found, false otherwise.\nfunc hasEvenDigit(n int) bool {\n\t// The problem states \"positive integers\", so n will always be > 0.\n\t// If n could be 0, 0 itself is an even digit.\n\n\ttemp := n\n\tfor temp > 0 {\n\t\tdigit := temp % 10 // Get the last digit\n\t\tif digit%2 == 0 {\n\t\t\treturn true // Found an even digit\n\t\t}\n\t\ttemp /= 10 // Remove the last digit\n\t}\n\treturn false // No even digits found\n}\n\n// Given a list of positive integers x. return a sorted list of all\n// elements that hasn't any even digit.\n//\n// Note: Returned list should be sorted in increasing order.\n//\n// For example:\n// >>> UniqueDigits([15, 33, 1422, 1])\n// [1, 15, 33]\n// >>> UniqueDigits([152, 323, 1422, 10])\n// []\nfunc UniqueDigits(x []int) []int {\n\t// Initialize result as an empty slice, not a nil slice.\n\t// This ensures that if no elements are added, an empty slice `[]int{}`\n\t// is returned, satisfying assert.Equal([]int{}, ...) rather than []int(nil).\n\tresult := []int{}\n\n\tfor _, num := range x {\n\t\t// If the number DOES NOT have any even digits, add it to the result.\n\t\tif !hasEvenDigit(num) {\n\t\t\tresult = append(result, num)\n\t\t}\n\t}\n\n\t// Sort the result slice in increasing order as required.\n\tsort.Ints(result)\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

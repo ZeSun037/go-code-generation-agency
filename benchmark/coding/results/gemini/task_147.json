@@ -1,0 +1,13 @@
+{
+    "task": "task_147.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Write a function that takes an array of numbers as input and returns\n// the number of elements in the array that are greater than 10 and both\n// first and last digits of a number are odd (1, 3, 5, 7, 9).\n// For example:\n// Specialfilter([15, -73, 14, -15]) => 1\n// Specialfilter([33, -2, -3, 45, 21, 109]) => 2\nfunc Specialfilter(nums []int) int {\n\tcount := 0\n\n\tfor _, num := range nums {\n\t\t// Condition 1: The number must be greater than 10.\n\t\t// This also implicitly handles negative numbers and single-digit positive numbers,\n\t\t// as they will not satisfy this condition.\n\t\tif num <= 10 {\n\t\t\tcontinue\n\t\t}\n\n\t\t// Convert the number to its string representation to easily extract digits.\n\t\t// Since num > 10, s will always have at least two characters (e.g., \"11\").\n\t\ts := strconv.Itoa(num)\n\n\t\t// Extract the first digit.\n\t\t// s[0] gives the byte value of the character. Subtract '0' to get the integer value.\n\t\tfirstDigit := int(s[0] - '0')\n\n\t\t// Extract the last digit.\n\t\tlastDigit := int(s[len(s)-1] - '0')\n\n\t\t// Condition 2: The first digit must be odd.\n\t\tisFirstDigitOdd := (firstDigit%2 != 0)\n\n\t\t// Condition 3: The last digit must be odd.\n\t\tisLastDigitOdd := (lastDigit%2 != 0)\n\n\t\t// If all three conditions are met, increment the count.\n\t\tif isFirstDigitOdd && isLastDigitOdd {\n\t\t\tcount++\n\t\t}\n\t}\n\n\treturn count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

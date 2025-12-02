@@ -1,0 +1,23 @@
+{
+    "task": "task_129.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// You are given an array arr of integers and you need to return\n// sum of magnitudes of integers multiplied by product of all signs\n// of each number in the array, represented by 1, -1 or 0.\n// Note: return nil for empty arr.\n// \n// Example:\n// >>> ProdSigns([1, 2, 2, -4]) == -9\n// >>> ProdSigns([0, 1]) == 0\n// >>> ProdSigns([]) == nil\nfunc ProdSigns(arr []int) interface{} {\n\tif len(arr) == 0 {\n\t\treturn nil\n\t}\n\n\t// Initialize productOfSigns to 1, as it's the multiplicative identity.\n\t// If the array contains no zeros, productOfSigns will be either 1 or -1.\n\t// If it contains a zero, it will become 0.\n\tproductOfSigns := 1 \n\t\n\t// Initialize sumOfMagnitudes to 0.\n\tsumOfMagnitudes := 0\n\n\tfor _, num := range arr {\n\t\t// Calculate the magnitude (absolute value) of the current number.\n\t\tmagnitude := num\n\t\tif magnitude < 0 {\n\t\t\tmagnitude = -magnitude\n\t\t}\n\t\tsumOfMagnitudes += magnitude\n\n\t\t// Determine the sign of the current number and update productOfSigns.\n\t\tif num == 0 {\n\t\t\t// If any number in the array is 0, the product of all signs becomes 0.\n\t\t\t// Once productOfSigns is 0, it will remain 0 for the rest of the loop,\n\t\t\t// as multiplying 0 by 1 or -1 still results in 0.\n\t\t\tproductOfSigns = 0\n\t\t} else if num < 0 {\n\t\t\t// If the number is negative, multiply productOfSigns by -1.\n\t\t\t// This flips the sign of productOfSigns if it was non-zero.\n\t\t\t// If productOfSigns was already 0 (due to a previous 0 in the array), it remains 0.\n\t\t\tproductOfSigns *= -1\n\t\t}\n\t\t// If the number is positive (num > 0), its sign is 1.\n\t\t// Multiplying productOfSigns by 1 does not change its value,\n\t\t// so no explicit action is needed in this case.\n\t}\n\n\t// The final result is the sum of magnitudes multiplied by the product of all signs.\n\t// The return type is interface{}, so returning an int is valid.\n\treturn sumOfMagnitudes * productOfSigns\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:4:2: \"math\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\n// You are given an array arr of integers and you need to return\n// sum of magnitudes of integers multiplied by product of all signs\n// of each number in the array, represented by 1, -1 or 0.\n// Note: return nil for empty arr.\n//\n// Example:\n// >>> ProdSigns([1, 2, 2, -4]) == -9\n// >>> ProdSigns([0, 1]) == 0\n// >>> ProdSigns([]) == nil\nfunc ProdSigns(arr []int) interface{} {\n\tif len(arr) == 0 {\n\t\treturn nil\n\t}\n\n\t// Initialize productOfSigns to 1, as it's the multiplicative identity.\n\t// If the array contains no zeros, productOfSigns will be either 1 or -1.\n\t// If it contains a zero, it will become 0.\n\tproductOfSigns := 1\n\n\t// Initialize sumOfMagnitudes to 0.\n\tsumOfMagnitudes := 0\n\n\tfor _, num := range arr {\n\t\t// Calculate the magnitude (absolute value) of the current number.\n\t\tmagnitude := num\n\t\tif magnitude < 0 {\n\t\t\tmagnitude = -magnitude\n\t\t}\n\t\tsumOfMagnitudes += magnitude\n\n\t\t// Determine the sign of the current number and update productOfSigns.\n\t\tif num == 0 {\n\t\t\t// If any number in the array is 0, the product of all signs becomes 0.\n\t\t\t// Once productOfSigns is 0, it will remain 0 for the rest of the loop,\n\t\t\t// as multiplying 0 by 1 or -1 still results in 0.\n\t\t\tproductOfSigns = 0\n\t\t} else if num < 0 {\n\t\t\t// If the number is negative, multiply productOfSigns by -1.\n\t\t\t// This flips the sign of productOfSigns if it was non-zero.\n\t\t\t// If productOfSigns was already 0 (due to a previous 0 in the array), it remains 0.\n\t\t\tproductOfSigns *= -1\n\t\t}\n\t\t// If the number is positive (num > 0), its sign is 1.\n\t\t// Multiplying productOfSigns by 1 does not change its value,\n\t\t// so no explicit action is needed in this case.\n\t}\n\n\t// The final result is the sum of magnitudes multiplied by the product of all signs.\n\t// The return type is interface{}, so returning an int is valid.\n\treturn sumOfMagnitudes * productOfSigns\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

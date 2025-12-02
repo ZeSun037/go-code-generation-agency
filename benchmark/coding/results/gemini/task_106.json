@@ -1,0 +1,13 @@
+{
+    "task": "task_106.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\n// ByLength filters, sorts, reverses, and maps integers to their word representations.\n// It processes integers between 1 and 9 inclusive.\n// - Filters out numbers not in the range [1, 9].\n// - Sorts the remaining numbers in ascending order.\n// - Reverses the sorted array.\n// - Replaces each number with its corresponding English word (\"One\", \"Two\", etc.).\n//\n// For example:\n// arr = [2, 1, 1, 4, 5, 8, 2, 3]\n// -> filtered: [2, 1, 1, 4, 5, 8, 2, 3]\n// -> sorted:   [1, 1, 2, 2, 3, 4, 5, 8]\n// -> reversed: [8, 5, 4, 3, 2, 2, 1, 1]\n// -> result:   [\"Eight\", \"Five\", \"Four\", \"Three\", \"Two\", \"Two\", \"One\", \"One\"]\nfunc ByLength(arr []int) []string {\n\t// Define the mapping from digit to its English name.\n\t// Index 0 is unused, so digit `n` corresponds to `digitNames[n]`.\n\tdigitNames := []string{\"\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"}\n\n\t// 1. Filter: Keep only integers that are between 1 and 9 inclusive.\n\tfilteredNumbers := []int{}\n\tfor _, num := range arr {\n\t\tif num >= 1 && num <= 9 {\n\t\t\tfilteredNumbers = append(filteredNumbers, num)\n\t\t}\n\t}\n\n\t// If no numbers remain after filtering, return an empty string slice.\n\tif len(filteredNumbers) == 0 {\n\t\treturn []string{}\n\t}\n\n\t// 2. Sort the filtered integers in ascending order.\n\tsort.Ints(filteredNumbers)\n\n\t// 3. Reverse the resulting array.\n\t// We can do this in-place.\n\tfor i, j := 0, len(filteredNumbers)-1; i < j; i, j = i+1, j-1 {\n\t\tfilteredNumbers[i], filteredNumbers[j] = filteredNumbers[j], filteredNumbers[i]\n\t}\n\n\t// 4. Replace each digit by its corresponding name.\n\tresult := make([]string, len(filteredNumbers))\n\tfor i, num := range filteredNumbers {\n\t\t// Since `num` is guaranteed to be between 1 and 9 due to filtering,\n\t\t// `digitNames[num]` is a safe and valid access.\n\t\tresult[i] = digitNames[num]\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

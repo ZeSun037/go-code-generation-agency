@@ -1,0 +1,13 @@
+{
+    "task": "task_102.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\n// You will be given a string of words separated by commas or spaces. Your task is\n// to split the string into words and return an array of the words.\n// \n// For example:\n// WordsString(\"Hi, my name is John\") == [\"Hi\", \"my\", \"name\", \"is\", \"John\"]\n// WordsString(\"One, two, three, four, five, six\") == [\"One\", \"two\", \"three\", \"four\", \"five\", \"six\"]\nfunc WordsString(s string) []string {\n    // Replace commas with spaces and split the string by spaces\n    s = strings.ReplaceAll(s, \",\", \" \")\n    words := strings.Fields(s)\n    return words\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_131.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Tri(n int) []float64 {\n\tif n < 0 {\n\t\treturn []float64{}\n\t}\n\n\tresult := make([]float64, n+1)\n\n\tfor i := 0; i <= n; i++ {\n\t\tresult[i] = tri(i)\n\t}\n\n\treturn result\n}\n\nfunc tri(n int) float64 {\n\tif n == 1 {\n\t\treturn 3\n\t}\n\n\tif n%2 == 0 {\n\t\treturn 1 + float64(n)/2\n\t}\n\n\t// n is odd\n\treturn tri(n-1) + tri(n-2) + tri(n+1)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,38 @@
+{
+    "task": "task_146.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n    \"strconv\"\n)\n\nfunc digitSum(n int) int {\n    sum := 0\n    for _, c := range strconv.Itoa(abs(n)) {\n        digit, _ := strconv.Atoi(string(c))\n        sum += digit\n    }\n    return sum\n}\n\nfunc abs(n int) int {\n    if n < 0 {\n        return -n\n    }\n    return n\n}\n\ntype byDigitSum struct {\n    nums []int\n}\n\nfunc (b byDigitSum) Len() int {\n    return len(b.nums)\n}\n\nfunc (b byDigitSum) Less(i, j int) bool {\n    sumI := digitSum(b.nums[i])\n    sumJ := digitSum(b.nums[j])\n    if sumI == sumJ {\n        return i < j // Maintain original index order for ties\n    }\n    return sumI < sumJ\n}\n\nfunc (b byDigitSum) Swap(i, j int) {\n    b.nums[i], b.nums[j] = b.nums[j], b.nums[i]\n}\n\nfunc OrderByPoints(nums []int) []int {\n    sort.Sort(byDigitSum{nums})\n    return nums\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestOrderByPoints (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_fmeh758o/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: []int{-1, -11, 1, -12, 11}\n        \t            \tactual  : []int{1, -1, 11, -11, -12}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,7 +1,7 @@\n        \t            \t ([]int) (len=5) {\n        \t            \t+ (int) 1,\n        \t            \t  (int) -1,\n        \t            \t+ (int) 11,\n        \t            \t  (int) -11,\n        \t            \t- (int) 1,\n        \t            \t- (int) -12,\n        \t            \t- (int) 11\n        \t            \t+ (int) -12\n        \t            \t }\n        \tTest:       \tTestOrderByPoints\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n    \"strconv\"\n)\n\nfunc digitSum(n int) int {\n    sum := 0\n    for _, c := range strconv.Itoa(abs(n)) {\n        digit, _ := strconv.Atoi(string(c))\n        sum += digit\n    }\n    return sum\n}\n\nfunc abs(n int) int {\n    if n < 0 {\n        return -n\n    }\n    return n\n}\n\ntype byDigitSum struct {\n    nums []int\n}\n\nfunc (b byDigitSum) Len() int {\n    return len(b.nums)\n}\n\nfunc (b byDigitSum) Less(i, j int) bool {\n    sumI := digitSum(b.nums[i])\n    sumJ := digitSum(b.nums[j])\n    if sumI == sumJ {\n        return i < j // Maintain original index order for ties\n    }\n    return sumI < sumJ\n}\n\nfunc (b byDigitSum) Swap(i, j int) {\n    b.nums[i], b.nums[j] = b.nums[j], b.nums[i]\n}\n\nfunc OrderByPoints(nums []int) []int {\n    sort.Sort(byDigitSum{nums})\n    return nums // Return the sorted slice\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestOrderByPoints (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_fmeh758o/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: []int{-1, -11, 1, -12, 11}\n        \t            \tactual  : []int{1, -1, 11, -11, -12}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,7 +1,7 @@\n        \t            \t ([]int) (len=5) {\n        \t            \t+ (int) 1,\n        \t            \t  (int) -1,\n        \t            \t+ (int) 11,\n        \t            \t  (int) -11,\n        \t            \t- (int) 1,\n        \t            \t- (int) -12,\n        \t            \t- (int) 11\n        \t            \t+ (int) -12\n        \t            \t }\n        \tTest:       \tTestOrderByPoints\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n    \"strconv\"\n)\n\nfunc digitSum(n int) int {\n    sum := 0\n    for _, c := range strconv.Itoa(abs(n)) {\n        digit, _ := strconv.Atoi(string(c))\n        sum += digit\n    }\n    return sum\n}\n\nfunc abs(n int) int {\n    if n < 0 {\n        return -n\n    }\n    return n\n}\n\ntype byDigitSum struct {\n    nums []int\n}\n\nfunc (b byDigitSum) Len() int {\n    return len(b.nums)\n}\n\nfunc (b byDigitSum) Less(i, j int) bool {\n    sumI := digitSum(b.nums[i])\n    sumJ := digitSum(b.nums[j])\n    if sumI == sumJ {\n        return i < j // Maintain original index order for ties\n    }\n    return sumI < sumJ\n}\n\nfunc (b byDigitSum) Swap(i, j int) {\n    b.nums[i], b.nums[j] = b.nums[j], b.nums[i]\n}\n\nfunc OrderByPoints(nums []int) []int {\n    sortedNums := make([]int, len(nums))\n    copy(sortedNums, nums) // Create a copy to sort\n    sort.Sort(byDigitSum{sortedNums})\n    return sortedNums // Return the sorted slice\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestOrderByPoints (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_fmeh758o/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: []int{-1, -11, 1, -12, 11}\n        \t            \tactual  : []int{1, -1, 11, -11, -12}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,7 +1,7 @@\n        \t            \t ([]int) (len=5) {\n        \t            \t+ (int) 1,\n        \t            \t  (int) -1,\n        \t            \t+ (int) 11,\n        \t            \t  (int) -11,\n        \t            \t- (int) 1,\n        \t            \t- (int) -12,\n        \t            \t- (int) 11\n        \t            \t+ (int) -12\n        \t            \t }\n        \tTest:       \tTestOrderByPoints\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

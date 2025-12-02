@@ -1,0 +1,13 @@
+{
+    "task": "task_149.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Bf(planet1, planet2 string) []string {\n    planets := []string{\"Mercury\", \"Venus\", \"Earth\", \"Mars\", \"Jupiter\", \"Saturn\", \"Uranus\", \"Neptune\"}\n    \n    // Find indices of the provided planets\n    index1, index2 := -1, -1\n    for i, planet := range planets {\n        if planet == planet1 {\n            index1 = i\n        }\n        if planet == planet2 {\n            index2 = i\n        }\n    }\n    \n    // Check for invalid planet names\n    if index1 == -1 || index2 == -1 {\n        return []string{}\n    }\n    \n    // Ensure index1 is less than index2\n    if index1 > index2 {\n        index1, index2 = index2, index1\n    }\n    \n    // Collect planets between the two indices\n    result := []string{}\n    for i := index1 + 1; i < index2; i++ {\n        result = append(result, planets[i])\n    }\n    \n    return result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

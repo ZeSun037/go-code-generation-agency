@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/50",
+  "prompt": "// returns encoded string by shifting every character by 5 in the alphabet.\nfunc EncodeShift(s string) string {\n    runes := []rune(s)\n    newRunes := make([]rune, 0)\n    for _, ch := range runes {\n        newRunes = append(newRunes, (ch+5-'a')%26+'a')\n    }\n    return string(runes)\n}\n\n// takes as input string encoded with EncodeShift function. Returns decoded string.\nfunc DecodeShift(s string) string {\n",
+  "import": "",
+  "docstring": "// returns encoded string by shifting every character by 5 in the alphabet.\n// takes as input string encoded with encode_shift function. Returns decoded string.\n",
+  "declaration": "\nfunc DecodeShift(s string) string {\n",
+  "canonical_solution": "    runes := []rune(s)\n    newRunes := make([]rune, 0)\n    for _, ch := range runes {\n        newRunes = append(newRunes, (ch-5-'a')%26+'a')\n    }\n    return string(runes)\n}\n\n",
+  "test": "func TestDecodeShift(t *testing.T) {\n    assert := assert.New(t)\n    randInt := func(min, max int) int {\n        rng := rand.New(rand.NewSource(time.Now().UnixNano()))\n        if min >= max || min == 0 || max == 0 {\n            return max\n        }\n        return rng.Intn(max-min) + min\n    }\n    for i := 0; i <100 ; i++ {\n        runes := make([]rune, 0)\n        for j := 0; j < randInt(10,20); j++ {\n            runes = append(runes, int32(randInt('a','z')))\n        }\n        encoded_str := EncodeShift(string(runes))\n        assert.Equal(DecodeShift(encoded_str), string(runes))\n    }\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"math/rand\"\n    \"time\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": ""
+}

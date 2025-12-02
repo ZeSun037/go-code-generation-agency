@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/36",
+  "prompt": "import (\n\t\"strconv\"\n\t\"strings\"\n)\n\n// Return the number of times the digit 7 appears in integers less than n which are divisible by 11 or 13.\n// >>> FizzBuzz(50)\n// 0\n// >>> FizzBuzz(78)\n// 2\n// >>> FizzBuzz(79)\n// 3\nfunc FizzBuzz(n int) int {\n",
+  "import": "import (\n\t\"strconv\"\n\t\"strings\"\n)",
+  "docstring": "// Return the number of times the digit 7 appears in integers less than n which are divisible by 11 or 13.\n// >>> FizzBuzz(50)\n// 0\n// >>> FizzBuzz(78)\n// 2\n// >>> FizzBuzz(79)\n// 3\n",
+  "declaration": "\nfunc FizzBuzz(n int) int {\n",
+  "canonical_solution": "    ns := make([]int, 0)\n\tfor i := 0; i < n; i++ {\n\t\tif i%11 == 0 || i%13 == 0 {\n\t\t\tns = append(ns, i)\n\t\t}\n\t}\n\ttemp := make([]string, 0)\n\tfor _, i := range ns {\n\t\ttemp = append(temp, strconv.Itoa(i))\n\t}\n\tjoin := strings.Join(temp, \"\")\n\tans := 0\n\tfor _, c := range join {\n\t\tif c == '7' {\n\t\t\tans++\n\t\t}\n\t}\n\treturn ans\n}\n\n",
+  "test": "func TestFizzBuzz(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, FizzBuzz(50))\n    assert.Equal(2, FizzBuzz(78))\n    assert.Equal(3, FizzBuzz(79))\n    assert.Equal(3, FizzBuzz(100))\n    assert.Equal(6, FizzBuzz(200))\n    assert.Equal(192, FizzBuzz(4000))\n    assert.Equal(639, FizzBuzz(10000))\n    assert.Equal(8026, FizzBuzz(100000))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFizzBuzz(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, FizzBuzz(50))\n    assert.Equal(2, FizzBuzz(78))\n    assert.Equal(3, FizzBuzz(79))\n}\n"
+}

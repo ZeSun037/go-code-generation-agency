@@ -1,0 +1,13 @@
+{
+    "task": "task_127.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc IsSorted(lst []int) bool {\n\t// An empty list or a single-element list is considered sorted\n\t// and by definition cannot have more than 1 duplicate of the same number.\n\tif len(lst) <= 1 {\n\t\treturn true\n\t}\n\n\t// Use a map to store the frequency of each number.\n\t// This helps in checking the \"more than 1 duplicate\" rule (i.e., max 2 occurrences).\n\tcounts := make(map[int]int)\n\n\t// Iterate through the list to check both conditions:\n\t// 1. Ascending order\n\t// 2. Duplicate constraint (max 2 occurrences of any number)\n\tfor i, num := range lst {\n\t\t// Increment count for the current number.\n\t\tcounts[num]++\n\n\t\t// Check duplicate constraint: if a number appears more than twice, return false.\n\t\tif counts[num] > 2 {\n\t\t\treturn false\n\t\t}\n\n\t\t// Check ascending order: For elements beyond the first, ensure current >= previous.\n\t\tif i > 0 {\n\t\t\tif num < lst[i-1] {\n\t\t\t\treturn false // Not sorted in ascending order.\n\t\t\t}\n\t\t}\n\t}\n\n\t// If all checks pass for the entire list, it is sorted according to the rules.\n\treturn true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

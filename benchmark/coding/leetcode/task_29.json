@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/28",
+  "prompt": "\n// Concatenate list of strings into a single string\n// >>> Concatenate([])\n// ''\n// >>> Concatenate(['a', 'b', 'c'])\n// 'abc'\nfunc Concatenate(strings []string) string {\n",
+  "import": "",
+  "docstring": "// Concatenate list of strings into a single string\n// >>> Concatenate([])\n// ''\n// >>> Concatenate(['a', 'b', 'c'])\n// 'abc'\n",
+  "declaration": "\nfunc Concatenate(strings []string) string {\n",
+  "canonical_solution": "    if len(strings) == 0 {\n\t\treturn \"\"\n\t}\n\treturn strings[0] + Concatenate(strings[1:])\n}\n\n",
+  "test": "func TestConcatenate(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"\", Concatenate([]string{}))\n    assert.Equal(\"xyz\", Concatenate([]string{\"x\", \"y\", \"z\"}))\n    assert.Equal(\"xyzwk\", Concatenate([]string{\"x\", \"y\",\"z\", \"w\", \"k\"}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestConcatenate(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"\", Concatenate([]string{}))\n    assert.Equal(\"abc\", Concatenate([]string{\"a\", \"b\", \"c\"}))\n}\n"
+}

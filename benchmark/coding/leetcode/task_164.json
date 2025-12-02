@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/163",
+  "prompt": "\n// Given two positive integers a and b, return the even digits between a\n// and b, in ascending order.\n// \n// For example:\n// GenerateIntegers(2, 8) => [2, 4, 6, 8]\n// GenerateIntegers(8, 2) => [2, 4, 6, 8]\n// GenerateIntegers(10, 14) => []\nfunc GenerateIntegers(a, b int) []int {\n",
+  "import": "",
+  "docstring": "// Given two positive integers a and b, return the even digits between a\n// and b, in ascending order.\n// \n// For example:\n// GenerateIntegers(2, 8) => [2, 4, 6, 8]\n// GenerateIntegers(8, 2) => [2, 4, 6, 8]\n// GenerateIntegers(10, 14) => []\n",
+  "declaration": "\nfunc GenerateIntegers(a, b int) []int {\n",
+  "canonical_solution": "    min := func (a, b int) int {\n        if a > b {\n            return b\n        }\n        return a\n    }\n    max := func (a, b int) int {\n        if a > b {\n            return a\n        }\n        return b\n    }\n    lower := max(2, min(a, b))\n    upper := min(8, max(a, b))\n    ans := make([]int, 0)\n    for i := lower;i <= upper;i++ {\n        if i&1==0 {\n            ans = append(ans, i)\n        }\n    }\n    return ans\n}\n\n",
+  "test": "func TestGenerateIntegers(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2, 4, 6, 8}, GenerateIntegers(2, 10))\n    assert.Equal([]int{2, 4, 6, 8}, GenerateIntegers(10, 2))\n    assert.Equal([]int{2, 4, 6, 8}, GenerateIntegers(132, 2))\n    assert.Equal([]int{}, GenerateIntegers(17, 89))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestGenerateIntegers(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2, 4, 6, 8}, GenerateIntegers(2, 8))\n    assert.Equal([]int{2, 4, 6, 8}, GenerateIntegers(8, 2))\n    assert.Equal([]int{}, GenerateIntegers(10, 14))\n}\n"
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_121.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"sort\"\n)\n\n// Given an array arr of integers and a positive integer k, return a sorted list\n// of length k with the Maximum k numbers in arr.\n// \n// Example 1:\n// \n// Input: arr = [-3, -4, 5], k = 3\n// Output: [-4, -3, 5]\n// \n// Example 2:\n// \n// Input: arr = [4, -4, 4], k = 2\n// Output: [4, 4]\n// \n// Example 3:\n// \n// Input: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1\n// Output: [2]\n// \n// Note:\n// 1. The length of the array will be in the range of [1, 1000].\n// 2. The elements in the array will be in the range of [-1000, 1000].\n// 3. 0 <= k <= len(arr)\nfunc Maximum(arr []int, k int) []int {\n    if k == 0 {\n        return []int{}\n    }\n    \n    // Sort the array in non-decreasing order\n    sort.Ints(arr)\n    \n    // Get the last k elements, which are the largest\n    maxSlice := arr[len(arr)-k:]\n    \n    // Sort the result slice to return it in increasing order\n    sort.Ints(maxSlice)\n    \n    return maxSlice\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/138",
+  "prompt": "\n// Evaluate whether the given number n can be written as the sum of exactly 4 positive even numbers\n// Example\n// IsEqualToSumEven(4) == false\n// IsEqualToSumEven(6) == false\n// IsEqualToSumEven(8) == true\nfunc IsEqualToSumEven(n int) bool {\n",
+  "import": "",
+  "docstring": "// Evaluate whether the given number n can be written as the sum of exactly 4 positive even numbers\n// Example\n// IsEqualToSumEven(4) == false\n// IsEqualToSumEven(6) == false\n// IsEqualToSumEven(8) == true\n",
+  "declaration": "\nfunc IsEqualToSumEven(n int) bool {\n",
+  "canonical_solution": "    return n&1 == 0 && n >= 8\n}\n\n",
+  "test": "func TestIsEqualToSumEven(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, IsEqualToSumEven(4))\n    assert.Equal(false, IsEqualToSumEven(6))\n    assert.Equal(true, IsEqualToSumEven(8))\n    assert.Equal(true, IsEqualToSumEven(10))\n    assert.Equal(false, IsEqualToSumEven(11))\n    assert.Equal(true, IsEqualToSumEven(12))\n    assert.Equal(false, IsEqualToSumEven(13))\n    assert.Equal(true, IsEqualToSumEven(16))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIsEqualToSumEven(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, IsEqualToSumEven(4))\n    assert.Equal(false, IsEqualToSumEven(6))\n    assert.Equal(true, IsEqualToSumEven(8))\n}\n"
+}

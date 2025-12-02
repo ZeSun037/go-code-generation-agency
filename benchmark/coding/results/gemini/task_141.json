@@ -1,0 +1,13 @@
+{
+    "task": "task_141.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"regexp\"\n\t\"strings\"\n)\n\n// FixSpaces takes a string `text` and applies the following transformations:\n// 1. If a string has 3 or more consecutive spaces, they are all replaced by a single hyphen (`-`).\n// 2. All remaining single spaces (which includes sequences of one or two spaces that were not\n//    replaced by rule 1) are replaced with underscores (`_`).\n//\n// Examples:\n// FixSpaces(\"Example\") == \"Example\"\n// FixSpaces(\"Example 1\") == \"Example_1\"\n// FixSpaces(\" Example 2\") == \"_Example_2\"\n// FixSpaces(\" Example   3\") == \"_Example-3\"\nfunc FixSpaces(text string) string {\n\t// Rule 1 (more than 2 consecutive spaces become '-'):\n\t// This rule must be applied first to ensure that sequences like \"   \"\n\t// are replaced by \"-\" and not \"___\".\n\t// The regex ` {3,}` matches sequences of 3 or more spaces.\n\tre := regexp.MustCompile(` {3,}`)\n\tresult := re.ReplaceAllString(text, \"-\")\n\n\t// Rule 2 (all remaining spaces become '_'):\n\t// After applying the first rule, any remaining spaces will be\n\t// single spaces or sequences of two spaces (e.g., \"  \").\n\t// These are then replaced by underscores. \" \" becomes \"_\", \"  \" becomes \"__\".\n\tresult = strings.ReplaceAll(result, \" \", \"_\")\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

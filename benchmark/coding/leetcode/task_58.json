@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/57",
+  "prompt": "\n// Return true is list elements are Monotonically increasing or decreasing.\n// >>> Monotonic([1, 2, 4, 20])\n// true\n// >>> Monotonic([1, 20, 4, 10])\n// false\n// >>> Monotonic([4, 1, 0, -10])\n// true\nfunc Monotonic(l []int) bool {\n",
+  "import": "",
+  "docstring": "// Return true is list elements are Monotonically increasing or decreasing.\n// >>> Monotonic([1, 2, 4, 20])\n// true\n// >>> Monotonic([1, 20, 4, 10])\n// false\n// >>> Monotonic([4, 1, 0, -10])\n// true\n",
+  "declaration": "\nfunc Monotonic(l []int) bool {\n",
+  "canonical_solution": "    flag := true\n\tif len(l) > 1 {\n\t\tfor i := 0; i < len(l)-1; i++ {\n\t\t\tif l[i] != l[i+1] {\n\t\t\t\tflag = l[i] > l[i+1]\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t} else {\n\t\treturn false\n\t}\n\tfor i := 0; i < len(l)-1; i++ {\n\t\tif flag != (l[i] >= l[i+1]) {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n",
+  "test": "func TestMonotonic(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, Monotonic([]int{1, 2, 4, 10}))\n    assert.Equal(true, Monotonic([]int{1, 2, 4, 20}))\n    assert.Equal(false, Monotonic([]int{1, 20, 4, 10}))\n    assert.Equal(true, Monotonic([]int{4, 1, 0, -10}))\n    assert.Equal(true, Monotonic([]int{4, 1, 1, 0}))\n    assert.Equal(false, Monotonic([]int{1, 2, 3, 2, 5, 60}))\n    assert.Equal(true, Monotonic([]int{1, 2, 3, 4, 5, 60}))\n    assert.Equal(true, Monotonic([]int{9, 9, 9, 9}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestMonotonic(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, Monotonic([]int{1, 2, 4, 10}))\n    assert.Equal(false, Monotonic([]int{1, 20, 4, 10}))\n    assert.Equal(true, Monotonic([]int{4, 1, 0, -10}))\n}\n"
+}

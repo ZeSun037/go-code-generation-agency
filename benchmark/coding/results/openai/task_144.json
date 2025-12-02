@@ -1,0 +1,13 @@
+{
+    "task": "task_144.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\n// function to check if a number is prime\nfunc isPrime(n int) bool {\n    if n <= 1 {\n        return false\n    }\n    for i := 2; i*i <= n; i++ {\n        if n%i == 0 {\n            return false\n        }\n    }\n    return true\n}\n\n// WordsInSentence returns words from the original sentence whose lengths are prime numbers\nfunc WordsInSentence(sentence string) string {\n    words := strings.Fields(sentence)\n    var result []string\n\n    for _, word := range words {\n        if isPrime(len(word)) {\n            result = append(result, word)\n        }\n    }\n\n    return strings.Join(result, \" \")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

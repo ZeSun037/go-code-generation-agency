@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/155",
+  "prompt": "import (\n    \"strconv\"\n)\n\n// Given an integer. return a tuple that has the number of even and odd digits respectively.\n// \n// Example:\n// EvenOddCount(-12) ==> (1, 1)\n// EvenOddCount(123) ==> (1, 2)\nfunc EvenOddCount(num int) [2]int {\n",
+  "import": "import (\n    \"strconv\"\n)\n",
+  "docstring": "// Given an integer. return a tuple that has the number of even and odd digits respectively.\n// \n// Example:\n// EvenOddCount(-12) ==> (1, 1)\n// EvenOddCount(123) ==> (1, 2)\n",
+  "declaration": "\nfunc EvenOddCount(num int) [2]int {\n",
+  "canonical_solution": "    even_count := 0\n    odd_count := 0\n    if num < 0 {\n        num = -num\n    }\n    for _, r := range strconv.Itoa(num) {\n        if r&1==0 {\n            even_count++\n        } else {\n            odd_count++\n        }\n    }\n    return [2]int{even_count, odd_count}\n}\n\n",
+  "test": "func TestEvenOddCount(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([2]int{0, 1}, EvenOddCount(7))\n    assert.Equal([2]int{1, 1}, EvenOddCount(-78))\n    assert.Equal([2]int{2, 2}, EvenOddCount(3452))\n    assert.Equal([2]int{3, 3}, EvenOddCount(346211))\n    assert.Equal([2]int{3, 3}, EvenOddCount(-345821))\n    assert.Equal([2]int{1, 0}, EvenOddCount(-2))\n    assert.Equal([2]int{2, 3}, EvenOddCount(-45347))\n    assert.Equal([2]int{1, 0}, EvenOddCount(0))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestEvenOddCount(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([2]int{1, 1}, EvenOddCount(-12))\n    assert.Equal([2]int{1, 2}, EvenOddCount(123))\n}\n"
+}

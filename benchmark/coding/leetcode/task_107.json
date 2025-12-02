@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/106",
+  "prompt": " \n// Implement the Function F that takes n as a parameter,\n// and returns a list of size n, such that the value of the element at index i is the factorial of i if i is even\n// or the sum of numbers from 1 to i otherwise.\n// i starts from 1.\n// the factorial of i is the multiplication of the numbers from 1 to i (1 * 2 * ... * i).\n// Example:\n// F(5) == [1, 2, 6, 24, 15]\nfunc F(n int) []int {\n",
+  "import": "",
+  "docstring": "\n// Implement the Function F that takes n as a parameter,\n// and returns a list oF size n, such that the value oF the element at index i is the Factorial oF i iF i is even\n// or the sum oF numbers From 1 to i otherwise.\n// i starts From 1.\n// the Factorial oF i is the multiplication oF the numbers From 1 to i (1 * 2 * ... * i).\n// Example:\n// F(5) == [1, 2, 6, 24, 15]\n",
+  "declaration": "\nfunc F(n int) []int {\n",
+  "canonical_solution": "    ret := make([]int, 0, 5)\n    for i:=1;i<n+1;i++{\n        if i%2 == 0 {\n            x := 1\n            for j:=1;j<i+1;j++{\n                x*=j\n            }\n            ret = append(ret, x)\n        }else {\n            x := 0\n            for j:=1;j<i+1;j++{\n                x+=j\n            }\n            ret = append(ret, x)\n        }\n    }\n    return ret\n}\n\n",
+  "test": "func TestF(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 2, 6, 24, 15}, F(5))\n    assert.Equal([]int{1, 2, 6, 24, 15, 720, 28}, F(7))\n    assert.Equal([]int{1}, F(1))\n    assert.Equal([]int{1,2,6}, F(3))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestF(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{1, 2, 6, 24, 15}, F(5))\n}\n"
+}

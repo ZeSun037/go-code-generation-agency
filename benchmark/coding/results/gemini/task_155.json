@@ -1,0 +1,13 @@
+{
+    "task": "task_155.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// CycpatternCheck determines if the second word (b) or any of its rotations\n// is a substring in the first word (a).\n//\n// Examples:\n// CycpatternCheck(\"abcd\",\"abd\") => false\n// CycpatternCheck(\"hello\",\"ell\") => true\n// CycpatternCheck(\"whassup\",\"psus\") => false\n// CycpatternCheck(\"abab\",\"baa\") => true\n// CycpatternCheck(\"efef\",\"eeff\") => false\n// CycpatternCheck(\"himenss\",\"simen\") => true\nfunc CycpatternCheck(a, b string) bool {\n\tlenA := len(a)\n\tlenB := len(b)\n\n\t// Edge case 1: If 'b' is empty, it's considered a substring of any string 'a' (including an empty 'a').\n\tif lenB == 0 {\n\t\treturn true\n\t}\n\n\t// Edge case 2: If 'a' is empty but 'b' is not, 'b' cannot be a substring of 'a'.\n\tif lenA == 0 { // This implies lenB > 0 due to the previous check\n\t\treturn false\n\t}\n\n\t// Edge case 3: If 'b' is longer than 'a', 'b' (or any of its rotations) cannot be a substring of 'a'.\n\tif lenB > lenA {\n\t\treturn false\n\t}\n\n\t// To efficiently check all rotations of 'b':\n\t// Concatenate 'b' with itself (e.g., if b = \"abc\", bDoubled = \"abcabc\").\n\t// Any rotation of 'b' will appear as a substring of 'bDoubled' with length `lenB`.\n\t// For example, for \"abcabc\":\n\t// \"abc\" is bDoubled[0:3]\n\t// \"bca\" is bDoubled[1:4]\n\t// \"cab\" is bDoubled[2:5]\n\t// We then iterate through these rotations and check if any of them is a substring of 'a'.\n\tbDoubled := b + b\n\n\t// Iterate through all possible starting points for a rotation within bDoubled.\n\t// There are `lenB` unique rotations to check (from index 0 up to lenB-1).\n\tfor i := 0; i < lenB; i++ {\n\t\t// Extract a rotation of 'b'.\n\t\t// A rotation starts at index 'i' in bDoubled and has length `lenB`.\n\t\trotation := bDoubled[i : i+lenB]\n\n\t\t// Check if this specific rotation is a substring of 'a'.\n\t\tif strings.Contains(a, rotation) {\n\t\t\treturn true // Found a rotation that is a substring, so we can return true immediately.\n\t\t}\n\t}\n\n\t// If the loop completes, it means no rotation of 'b' was found as a substring in 'a'.\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

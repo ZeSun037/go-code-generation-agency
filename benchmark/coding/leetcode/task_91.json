@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/90",
+  "prompt": "import (\n    \"math\"\n    \"sort\"\n)\n\n// You are given a list of integers.\n// Write a function NextSmallest() that returns the 2nd smallest element of the list.\n// Return nil if there is no such element.\n// \n// NextSmallest([1, 2, 3, 4, 5]) == 2\n// NextSmallest([5, 1, 4, 3, 2]) == 2\n// NextSmallest([]) == nil\n// NextSmallest([1, 1]) == nil\nfunc NextSmallest(lst []int) interface{} {\n",
+  "import": "import (\n    \"math\"\n    \"sort\"\n)\n",
+  "docstring": "// You are given a list of integers.\n// Write a function NextSmallest() that returns the 2nd smallest element of the list.\n// Return nil if there is no such element.\n// \n// NextSmallest([1, 2, 3, 4, 5]) == 2\n// NextSmallest([5, 1, 4, 3, 2]) == 2\n// NextSmallest([]) == nil\n// NextSmallest([1, 1]) == nil\n",
+  "declaration": "\nfunc NextSmallest(lst []int) interface{} {\n",
+  "canonical_solution": "    set := make(map[int]struct{})\n    for _, i := range lst {\n        set[i] = struct{}{}\n    }\n    vals := make([]int, 0, len(set))\n    for k := range set {\n        vals = append(vals, k)\n    }\n    sort.Slice(vals, func(i, j int) bool {\n        return vals[i] < vals[j]\n    })\n    if len(vals) < 2 {\n        return nil\n    }\n    return vals[1]\n}\n\n",
+  "test": "func TestNextSmallest(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, NextSmallest([]int{1, 2, 3, 4, 5}))\n    assert.Equal(2, NextSmallest([]int{5, 1, 4, 3, 2}))\n    assert.Equal(nil, NextSmallest([]int{}))\n    assert.Equal(nil, NextSmallest([]int{1, 1}))\n    assert.Equal(1, NextSmallest([]int{1,1,1,1,0}))\n    assert.Equal(nil, NextSmallest([]int{1, int(math.Pow(0, 0))}))\n    assert.Equal(-35, NextSmallest([]int{-35, 34, 12, -45}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"math\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestNextSmallest(t *testing.T) {\n  assert := assert.New(t)\n   assert.Equal(2+0*int(math.Pow(0, 0)), NextSmallest([]int{1, 2, 3, 4, 5}))\n    assert.Equal(2, NextSmallest([]int{5, 1, 4, 3, 2}))\n    assert.Equal(nil, NextSmallest([]int{}))\n    assert.Equal(nil, NextSmallest([]int{1, 1}))\n}\n"
+}

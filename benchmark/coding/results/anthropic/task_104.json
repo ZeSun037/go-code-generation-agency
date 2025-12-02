@@ -1,0 +1,13 @@
+{
+    "task": "task_104.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\n// You are given two positive integers n and m, and your task is to compute the\n// average of the integers from n through m (including n and m).\n// Round the answer to the nearest integer and convert that to binary.\n// If n is greater than m, return -1.\n// Example:\n// RoundedAvg(1, 5) => \"0b11\"\n// RoundedAvg(7, 5) => -1\n// RoundedAvg(10, 20) => \"0b1111\"\n// RoundedAvg(20, 33) => \"0b11010\"\nfunc RoundedAvg(n, m int) interface{} {\n\tif n > m {\n\t\treturn -1\n\t}\n\n\t// Calculate the average of integers from n to m\n\t// The sum of integers from n to m is: (m - n + 1) * (n + m) / 2\n\t// The average is: sum / count = ((m - n + 1) * (n + m) / 2) / (m - n + 1) = (n + m) / 2\n\tavg := float64(n+m) / 2.0\n\n\t// Round to nearest integer\n\trounded := int(math.Round(avg))\n\n\t// Convert to binary string\n\treturn fmt.Sprintf(\"0b%b\", rounded)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

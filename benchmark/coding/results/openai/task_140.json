@@ -1,0 +1,13 @@
+{
+    "task": "task_140.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc factorial(n int) int {\n\tif n == 0 {\n\t\treturn 1\n\t}\n\tresult := 1\n\tfor i := 1; i <= n; i++ {\n\t\tresult *= i\n\t}\n\treturn result\n}\n\nfunc SpecialFactorial(n int) int {\n\tif n <= 0 {\n\t\treturn 0\n\t}\n\tresult := 1\n\tfor i := 1; i <= n; i++ {\n\t\tresult *= factorial(i)\n\t}\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

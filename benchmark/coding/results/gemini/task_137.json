@@ -1,0 +1,13 @@
+{
+    "task": "task_137.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Create a function that returns a tuple (a, b), where 'a' is\n// the largest of negative integers, and 'b' is the smallest\n// of positive integers in a list.\n// If there is no negative or positive integers, return them as nil.\n//\n// Examples:\n// LargestSmallestIntegers([2, 4, 1, 3, 5, 7]) == (nil, 1)\n// LargestSmallestIntegers([]) == (nil, nil)\n// LargestSmallestIntegers([0]) == (nil, nil)\nfunc LargestSmallestIntegers(lst []int) [2]interface{} {\n\tvar largestNegative interface{} = nil\n\tvar smallestPositive interface{} = nil\n\n\tfor _, num := range lst {\n\t\tif num < 0 {\n\t\t\t// Current number is negative\n\t\t\tif largestNegative == nil {\n\t\t\t\t// This is the first negative number found\n\t\t\t\tlargestNegative = num\n\t\t\t} else {\n\t\t\t\t// Compare with the largest negative found so far\n\t\t\t\t// Type assertion is safe here as largestNegative would be an int if not nil\n\t\t\t\tif num > largestNegative.(int) {\n\t\t\t\t\tlargestNegative = num\n\t\t\t\t}\n\t\t\t}\n\t\t} else if num > 0 {\n\t\t\t// Current number is positive\n\t\t\tif smallestPositive == nil {\n\t\t\t\t// This is the first positive number found\n\t\t\t\tsmallestPositive = num\n\t\t\t} else {\n\t\t\t\t// Compare with the smallest positive found so far\n\t\t\t\t// Type assertion is safe here as smallestPositive would be an int if not nil\n\t\t\t\tif num < smallestPositive.(int) {\n\t\t\t\t\tsmallestPositive = num\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\treturn [2]interface{}{largestNegative, smallestPositive}\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

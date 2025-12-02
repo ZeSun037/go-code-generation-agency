@@ -1,0 +1,13 @@
+{
+    "task": "task_120.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc MatchParens(lst []string) string {\n    // Count parentheses from both strings\n    leftCount := 0\n    rightCount := 0\n\n    for _, s := range lst {\n        for _, ch := range s {\n            if ch == '(' {\n                leftCount++\n            } else if ch == ')' {\n                rightCount++\n            }\n        }\n    }\n\n    // Check if it's possible to balance the parentheses\n    // We can balance them if the total left parentheses\n    // are more than or equal to the right parentheses.\n    if leftCount >= rightCount {\n        return \"Yes\"\n    }\n    \n    // If we can't balance it in any order, return \"No\"\n    return \"No\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

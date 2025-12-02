@@ -1,0 +1,13 @@
+{
+    "task": "task_119.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"bytes\"\n)\n\nfunc GetClosestVowel(word string) string {\n    vowels := \"AEIOUaeiou\"\n    n := len(word)\n\n    // Iterate from the end to find the closest vowel between consonants\n    for i := n - 1; i > 0; i-- {\n        if bytes.IndexByte([]byte(vowels), word[i]) != -1 {\n            // Check if there's a consonant before and after the vowel\n            if i > 0 && i < n-1 && \n            bytes.IndexByte([]byte(\"BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz\"), word[i-1]) != -1 &&\n            bytes.IndexByte([]byte(\"BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz\"), word[i+1]) != -1 {\n                return string(word[i])\n            }\n        }\n    }\n    \n    return \"\"\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

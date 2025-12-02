@@ -1,0 +1,13 @@
+{
+    "task": "task_136.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// CanArrange returns the largest index of an element which is not greater than\n// or equal to the element immediately preceding it. If no such element exists,\n// it returns -1. The given array will not contain duplicate values.\n//\n// The condition \"not greater than or equal to the element immediately preceding it\"\n// translates to arr[i] < arr[i-1].\n//\n// Examples:\n// CanArrange([1,2,4,3,5]) = 3 (because arr[3]=3 is less than arr[2]=4)\n// CanArrange([1,2,3]) = -1 (all elements are greater than or equal to their predecessors)\nfunc CanArrange(arr []int) int {\n\t// Initialize result to -1. This will be returned if no such index is found.\n\tresult := -1\n\n\t// We need to compare arr[i] with arr[i-1], so the loop starts from the second element (index 1).\n\t// An array of length 0 or 1 will not enter this loop, correctly returning -1.\n\tfor i := 1; i < len(arr); i++ {\n\t\t// Check the condition: arr[i] is not greater than or equal to arr[i-1].\n\t\t// This is equivalent to arr[i] < arr[i-1].\n\t\tif arr[i] < arr[i-1] {\n\t\t\t// If the condition is met, update the result with the current index i.\n\t\t\t// Since we iterate from left to right, the last index i for which\n\t\t\t// this condition is true will be the largest such index.\n\t\t\tresult = i\n\t\t}\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

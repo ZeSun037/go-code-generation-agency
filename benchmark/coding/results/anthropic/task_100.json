@@ -1,0 +1,13 @@
+{
+    "task": "task_100.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n\t\"strconv\"\n\t\"strings\"\n)\n\n// Create a function that takes a value (string) representing a number\n// and returns the closest integer to it. If the number is equidistant\n// from two integers, round it away from zero.\n//\n// Examples\n// >>> ClosestInteger(\"10\")\n// 10\n// >>> ClosestInteger(\"15.3\")\n// 15\n//\n// Note:\n// Rounding away from zero means that if the given number is equidistant\n// from two integers, the one you should return is the one that is the\n// farthest from zero. For example ClosestInteger(\"14.5\") should\n// return 15 and ClosestInteger(\"-14.5\") should return -15.\nfunc ClosestInteger(value string) int {\n\t// Parse the string to a float64\n\tnum, err := strconv.ParseFloat(strings.TrimSpace(value), 64)\n\tif err != nil {\n\t\treturn 0\n\t}\n\n\t// Get the fractional part\n\tfractional := num - math.Floor(num)\n\n\t// If the number is positive\n\tif num >= 0 {\n\t\t// If fractional part is < 0.5, round down\n\t\tif fractional < 0.5 {\n\t\t\treturn int(math.Floor(num))\n\t\t}\n\t\t// If fractional part is >= 0.5, round up (away from zero)\n\t\treturn int(math.Ceil(num))\n\t}\n\n\t// If the number is negative\n\t// If fractional part is <= 0.5, round up (towards zero)\n\tif fractional <= 0.5 {\n\t\treturn int(math.Ceil(num))\n\t}\n\t// If fractional part is > 0.5, round down (away from zero)\n\treturn int(math.Floor(num))\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

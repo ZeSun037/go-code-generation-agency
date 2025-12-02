@@ -1,0 +1,13 @@
+{
+    "task": "task_10.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Helper function to find the maximum of two integers.\n// This is used instead of math.Max because math.Max operates on float64,\n// and we are dealing with integers.\nfunc maxInt(a, b int) int {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// From a given list of integers, generate a list of rolling maximum element found until given moment\n// in the sequence.\n//\n// The rolling maximum at any point is the maximum element encountered from the start of the sequence\n// up to that point.\n//\n// For example:\n// >>> RollingMax([1, 2, 3, 2, 3, 4, 2])\n// [1, 2, 3, 3, 3, 4, 4]\nfunc RollingMax(numbers []int) []int {\n\tn := len(numbers)\n\tif n == 0 {\n\t\t// If the input slice is empty, return an empty slice as there are no rolling maximums to compute.\n\t\treturn []int{}\n\t}\n\n\t// Initialize a slice to store the results. Its length will be the same as the input slice.\n\trollingMaxResult := make([]int, n)\n\n\t// The first element is always the rolling maximum for the first position.\n\tcurrentMax := numbers[0]\n\trollingMaxResult[0] = currentMax\n\n\t// Iterate through the rest of the numbers starting from the second element.\n\tfor i := 1; i < n; i++ {\n\t\t// Update currentMax: it's the maximum of the current element and the maximum found so far.\n\t\tcurrentMax = maxInt(currentMax, numbers[i])\n\t\t// Store this new currentMax in the result slice at the corresponding position.\n\t\trollingMaxResult[i] = currentMax\n\t}\n\n\treturn rollingMaxResult\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

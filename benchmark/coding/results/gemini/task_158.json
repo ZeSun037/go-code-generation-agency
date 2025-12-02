@@ -1,0 +1,13 @@
+{
+    "task": "task_158.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Given the lengths of the three sides of a triangle. Return true if the three\n// sides form a right-angled triangle, false otherwise.\n// A right-angled triangle is a triangle in which one angle is right angle or\n// 90 degree.\n// Example:\n// RightAngleTriangle(3, 4, 5) == true\n// RightAngleTriangle(1, 2, 3) == false\nfunc RightAngleTriangle(a, b, c int) bool {\n\t// For a triangle to be right-angled, it must satisfy the Pythagorean theorem:\n\t// a^2 + b^2 = c^2, where c is the hypotenuse (the longest side).\n\t// Since the input sides (a, b, c) are not necessarily ordered, we must check\n\t// all three possible permutations where each side could be the hypotenuse.\n\n\t// To prevent potential integer overflow when squaring large 'int' values,\n\t// especially if 'int' on the target system is 32-bit, we cast to 'int64'\n\t// before performing the multiplication.\n\tsqA := int64(a) * int64(a)\n\tsqB := int64(b) * int64(b)\n\tsqC := int64(c) * int64(c)\n\n\t// Check if a^2 + b^2 = c^2 (c is hypotenuse)\n\tif sqA+sqB == sqC {\n\t\treturn true\n\t}\n\t// Check if a^2 + c^2 = b^2 (b is hypotenuse)\n\tif sqA+sqC == sqB {\n\t\treturn true\n\t}\n\t// Check if b^2 + c^2 = a^2 (a is hypotenuse)\n\tif sqB+sqC == sqA {\n\t\treturn true\n\t}\n\n\t// If none of the conditions are met, it's not a right-angled triangle.\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

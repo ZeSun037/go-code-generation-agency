@@ -1,0 +1,13 @@
+{
+    "task": "task_157.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\nfunc IntToMiniRoman(number int) string {\n    if number < 1 || number > 1000 {\n        return \"\"\n    }\n\n    var romanUnits = []struct {\n        value int\n        numeral string\n    }{\n        {1000, \"m\"},\n        {900, \"cm\"},\n        {500, \"d\"},\n        {400, \"cd\"},\n        {100, \"c\"},\n        {90, \"xc\"},\n        {50, \"l\"},\n        {40, \"xl\"},\n        {10, \"x\"},\n        {9, \"ix\"},\n        {5, \"v\"},\n        {4, \"iv\"},\n        {1, \"i\"},\n    }\n\n    var result strings.Builder\n\n    for _, unit := range romanUnits {\n        for number >= unit.value {\n            result.WriteString(unit.numeral)\n            number -= unit.value\n        }\n    }\n\n    return result.String()\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

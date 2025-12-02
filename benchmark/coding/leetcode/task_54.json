@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/53",
+  "prompt": "\n// Add two numbers x and y\n// >>> Add(2, 3)\n// 5\n// >>> Add(5, 7)\n// 12\nfunc Add(x int, y int) int {\n",
+  "import": "",
+  "docstring": "// Add two numbers x and y\n// >>> Add(2, 3)\n// 5\n// >>> Add(5, 7)\n// 12\n",
+  "declaration": "\nfunc Add(x int, y int) int {\n",
+  "canonical_solution": "    return x + y\n}\n\n",
+  "test": "func TestAdd(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, Add(0, 1))\n    assert.Equal(1, Add(1, 0))\n    assert.Equal(5, Add(2, 3))\n    assert.Equal(12, Add(5, 7))\n    assert.Equal(12, Add(7, 5))\n    for i := 0; i < 100; i++ {\n        x := rand.Int31n(1000)\n        y := rand.Int31n(1000)\n        assert.Equal(int(x+y), Add(int(x), int(y)))\n    }\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"math/rand\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestAdd(t *testing.T) {\n   assert := assert.New(t)\n   assert.Equal(5, Add(2, 3+rand.Intn(1000)*0))\n    assert.Equal(12, Add(5, 7))\n}\n"
+}

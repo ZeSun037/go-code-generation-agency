@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/63",
+  "prompt": "\n// The FibFib number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n// Fibfib(0) == 0\n// Fibfib(1) == 0\n// Fibfib(2) == 1\n// Fibfib(n) == Fibfib(n-1) + Fibfib(n-2) + Fibfib(n-3).\n// Please write a function to efficiently compute the n-th element of the Fibfib number sequence.\n// >>> Fibfib(1)\n// 0\n// >>> Fibfib(5)\n// 4\n// >>> Fibfib(8)\n// 24\nfunc Fibfib(n int) int {\n",
+  "import": "",
+  "docstring": "// The FibFib number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n// Fibfib(0) == 0\n// Fibfib(1) == 0\n// Fibfib(2) == 1\n// Fibfib(n) == Fibfib(n-1) + Fibfib(n-2) + Fibfib(n-3).\n// Please write a function to efficiently compute the n-th element of the Fibfib number sequence.\n// >>> Fibfib(1)\n// 0\n// >>> Fibfib(5)\n// 4\n// >>> Fibfib(8)\n// 24\n",
+  "declaration": "\nfunc Fibfib(n int) int {\n",
+  "canonical_solution": "    if n <= 0 {\n\t\treturn 0\n\t}\n    switch n {\n\tcase 0:\n\t\treturn 0\n\tcase 1:\n\t\treturn 0\n\tcase 2:\n\t\treturn 1\n\tdefault:\n\t\treturn Fibfib(n-1) + Fibfib(n-2) + Fibfib(n-3)\n\t}\n}\n\n",
+  "test": "func TestFibfib(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(1, Fibfib(2))\n    assert.Equal(0, Fibfib(1))\n    assert.Equal(4, Fibfib(5))\n    assert.Equal(24, Fibfib(8))\n    assert.Equal(81, Fibfib(10))\n    assert.Equal(274, Fibfib(12))\n    assert.Equal(927, Fibfib(14))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFibfib(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(0, Fibfib(1))\n    assert.Equal(4, Fibfib(5))\n    assert.Equal(24, Fibfib(8))\n}\n"
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_15.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc AllPrefixes(str string) []string {\n\tvar result []string\n\tfor i := 1; i <= len(str); i++ {\n\t\tresult = append(result, str[:i])\n\t}\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

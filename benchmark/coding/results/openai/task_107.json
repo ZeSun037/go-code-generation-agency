@@ -1,0 +1,13 @@
+{
+    "task": "task_107.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc F(n int) []int {\n\tresult := make([]int, n)\n\tfor i := 1; i <= n; i++ {\n\t\tif i%2 == 0 {\n\t\t\tresult[i-1] = factorial(i)\n\t\t} else {\n\t\t\tresult[i-1] = sumUpTo(i)\n\t\t}\n\t}\n\treturn result\n}\n\nfunc factorial(num int) int {\n\tif num == 0 {\n\t\treturn 1\n\t}\n\tfact := 1\n\tfor i := 1; i <= num; i++ {\n\t\tfact *= i\n\t}\n\treturn fact\n}\n\nfunc sumUpTo(num int) int {\n\treturn num * (num + 1) / 2\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

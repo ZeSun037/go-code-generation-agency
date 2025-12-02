@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/135",
+  "prompt": "\n// Create a function which returns the largest index of an element which\n// is not greater than or equal to the element immediately preceding it. If\n// no such element exists then return -1. The given array will not contain\n// duplicate values.\n// \n// Examples:\n// CanArrange([1,2,4,3,5]) = 3\n// CanArrange([1,2,3]) = -1\nfunc CanArrange(arr []int) int {\n",
+  "import": "",
+  "docstring": "// Create a function which returns the largest index of an element which\n// is not greater than or equal to the element immediately preceding it. If\n// no such element exists then return -1. The given array will not contain\n// duplicate values.\n// \n// Examples:\n// CanArrange([1,2,4,3,5]) = 3\n// CanArrange([1,2,3]) = -1\n",
+  "declaration": "\nfunc CanArrange(arr []int) int {\n",
+  "canonical_solution": "    ind:=-1\n    i:=1\n    for i<len(arr) {\n      if arr[i]<arr[i-1] {\n        ind=i\n      }\n      i++\n    }\n    return ind\n}\n\n",
+  "test": "func TestCanArrange(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, CanArrange([]int{1,2,4,3,5}))\n    assert.Equal(-1, CanArrange([]int{1,2,4,5}))\n    assert.Equal(2, CanArrange([]int{1,4,2,5,6,7,8,9,10}))\n    assert.Equal(4, CanArrange([]int{4,8,5,7,3}))\n    assert.Equal(-1, CanArrange([]int{}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestCanArrange(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, CanArrange([]int{1,2,4,3,5}))\n    assert.Equal(-1, CanArrange([]int{1,2,3}))\n}\n"
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/48",
+  "prompt": "\n// Checks if given string is a palindrome\n// >>> IsPalindrome('')\n// true\n// >>> IsPalindrome('aba')\n// true\n// >>> IsPalindrome('aaaaa')\n// true\n// >>> IsPalindrome('zbcd')\n// false\nfunc IsPalindrome(text string) bool {\n",
+  "import": "",
+  "docstring": "// Checks if given string is a palindrome\n// >>> IsPalindrome('')\n// true\n// >>> IsPalindrome('aba')\n// true\n// >>> IsPalindrome('aaaaa')\n// true\n// >>> IsPalindrome('zbcd')\n// false\n",
+  "declaration": "\nfunc IsPalindrome(text string) bool {\n",
+  "canonical_solution": "    runes := []rune(text)\n    result := make([]rune, 0)\n    for i := len(runes) - 1; i >= 0; i-- {\n        result = append(result, runes[i])\n    }\n    return text == string(result)\n}\n\n",
+  "test": "func TestIsPalindrome(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, IsPalindrome(\"\"))\n    assert.Equal(true, IsPalindrome(\"aba\"))\n    assert.Equal(true, IsPalindrome(\"aaaaa\"))\n    assert.Equal(false, IsPalindrome(\"zbcd\"))\n    assert.Equal(true, IsPalindrome(\"xywyx\"))\n    assert.Equal(false, IsPalindrome(\"xywyz\"))\n    assert.Equal(false, IsPalindrome(\"xywzx\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIsPalindrome(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(true, IsPalindrome(\"\"))\n    assert.Equal(true, IsPalindrome(\"aba\"))\n    assert.Equal(true, IsPalindrome(\"aaaaa\"))\n    assert.Equal(false, IsPalindrome(\"zbcd\"))\n}\n"
+}

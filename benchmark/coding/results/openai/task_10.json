@@ -1,0 +1,13 @@
+{
+    "task": "task_10.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\n// From a given list of integers, generate a list of rolling maximum element found until given moment\n// in the sequence.\n// >>> RollingMax([1, 2, 3, 2, 3, 4, 2])\n// [1, 2, 3, 3, 3, 4, 4]\nfunc RollingMax(numbers []int) []int {\n    if len(numbers) == 0 {\n        return []int{}\n    }\n\n    rollingMax := make([]int, len(numbers))\n    rollingMax[0] = numbers[0]\n\n    for i := 1; i < len(numbers); i++ {\n        rollingMax[i] = int(math.Max(float64(rollingMax[i-1]), float64(numbers[i])))\n    }\n\n    return rollingMax\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

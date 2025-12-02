@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/34",
+  "prompt": "import (\n    \"sort\"\n)\n\n// Return sorted Unique elements in a list\n// >>> Unique([5, 3, 5, 2, 3, 3, 9, 0, 123])\n// [0, 2, 3, 5, 9, 123]\nfunc Unique(l []int) []int {\n",
+  "import": "import (\n    \"sort\"\n)",
+  "docstring": "// Return sorted Unique elements in a list\n// >>> Unique([5, 3, 5, 2, 3, 3, 9, 0, 123])\n// [0, 2, 3, 5, 9, 123]\n",
+  "declaration": "\nfunc Unique(l []int) []int {\n",
+  "canonical_solution": "    set := make(map[int]interface{})\n\tfor _, i := range l {\n\t\tset[i]=nil\n\t}\n\tl = make([]int,0)\n\tfor i, _ := range set {\n\t\tl = append(l, i)\n\t}\n\tsort.Ints(l)\n\treturn l\n}\n\n",
+  "test": "func TestUnique(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{0, 2, 3, 5, 9, 123}, Unique([]int{5, 3,5, 2, 3, 3, 9, 0, 123}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestUnique(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{0, 2, 3, 5, 9, 123}, Unique([]int{5, 3,5, 2, 3, 3, 9, 0, 123}))\n}\n"
+}

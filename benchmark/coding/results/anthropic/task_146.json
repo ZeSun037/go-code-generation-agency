@@ -1,0 +1,38 @@
+{
+    "task": "task_146.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n\t\"strconv\"\n)\n\nfunc sumOfDigits(n int) int {\n\tif n < 0 {\n\t\tn = -n\n\t}\n\tsum := 0\n\tfor n > 0 {\n\t\tsum += n % 10\n\t\tn /= 10\n\t}\n\treturn sum\n}\n\nfunc OrderByPoints(nums []int) []int {\n\tif len(nums) == 0 {\n\t\treturn []int{}\n\t}\n\t\n\t// Create a copy to avoid modifying the original\n\tresult := make([]int, len(nums))\n\tcopy(result, nums)\n\t\n\t// Stable sort by digit sum\n\tsort.SliceStable(result, func(i, j int) bool {\n\t\treturn sumOfDigits(result[i]) < sumOfDigits(result[j])\n\t})\n\t\n\treturn result\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:5:2: \"strconv\" imported and not used"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\nfunc sumOfDigits(n int) int {\n\tif n < 0 {\n\t\tn = -n\n\t}\n\tsum := 0\n\tfor n > 0 {\n\t\tsum += n % 10\n\t\tn /= 10\n\t}\n\treturn sum\n}\n\nfunc OrderByPoints(nums []int) []int {\n\tif len(nums) == 0 {\n\t\treturn []int{}\n\t}\n\t\n\t// Create a copy to avoid modifying the original\n\tresult := make([]int, len(nums))\n\tcopy(result, nums)\n\t\n\t// Stable sort by digit sum\n\tsort.SliceStable(result, func(i, j int) bool {\n\t\treturn sumOfDigits(result[i]) < sumOfDigits(result[j])\n\t})\n\t\n\treturn result\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestOrderByPoints (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_dqbwcofp/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: []int{-1, -11, 1, -12, 11}\n        \t            \tactual  : []int{1, -1, 11, -11, -12}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,7 +1,7 @@\n        \t            \t ([]int) (len=5) {\n        \t            \t+ (int) 1,\n        \t            \t  (int) -1,\n        \t            \t+ (int) 11,\n        \t            \t  (int) -11,\n        \t            \t- (int) 1,\n        \t            \t- (int) -12,\n        \t            \t- (int) 11\n        \t            \t+ (int) -12\n        \t            \t }\n        \tTest:       \tTestOrderByPoints\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"sort\"\n)\n\nfunc sumOfDigits(n int) int {\n\tif n < 0 {\n\t\tn = -n\n\t}\n\tsum := 0\n\tfor n > 0 {\n\t\tsum += n % 10\n\t\tn /= 10\n\t}\n\treturn sum\n}\n\nfunc OrderByPoints(nums []int) []int {\n\tif len(nums) == 0 {\n\t\treturn []int{}\n\t}\n\t\n\t// Create a copy to avoid modifying the original\n\tresult := make([]int, len(nums))\n\tcopy(result, nums)\n\t\n\t// Create indices to track original positions\n\tindices := make([]int, len(nums))\n\tfor i := range indices {\n\t\tindices[i] = i\n\t}\n\t\n\t// Stable sort by digit sum, preserving original order for ties\n\tsort.SliceStable(indices, func(i, j int) bool {\n\t\tsumI := sumOfDigits(result[indices[i]])\n\t\tsumJ := sumOfDigits(result[indices[j]])\n\t\treturn sumI < sumJ\n\t})\n\t\n\t// Reorder result based on sorted indices\n\tsorted := make([]int, len(nums))\n\tfor i, idx := range indices {\n\t\tsorted[i] = result[idx]\n\t}\n\t\n\treturn sorted\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestOrderByPoints (0.00s)\n    main_test.go:10: \n        \tError Trace:\t/tmp/go_synthesis_dqbwcofp/main_test.go:10\n        \tError:      \tNot equal: \n        \t            \texpected: []int{-1, -11, 1, -12, 11}\n        \t            \tactual  : []int{1, -1, 11, -11, -12}\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1,7 +1,7 @@\n        \t            \t ([]int) (len=5) {\n        \t            \t+ (int) 1,\n        \t            \t  (int) -1,\n        \t            \t+ (int) 11,\n        \t            \t  (int) -11,\n        \t            \t- (int) 1,\n        \t            \t- (int) -12,\n        \t            \t- (int) 11\n        \t            \t+ (int) -12\n        \t            \t }\n        \tTest:       \tTestOrderByPoints\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        }
+    ],
+    "passed": false
+}

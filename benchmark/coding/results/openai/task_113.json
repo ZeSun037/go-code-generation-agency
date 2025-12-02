@@ -1,0 +1,13 @@
+{
+    "task": "task_113.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"strings\"\n)\n\n// ReverseDelete removes characters from s that are in c, \n// then checks if the resulting string is a palindrome.\nfunc ReverseDelete(s, c string) [2]interface{} {\n    // Create a map for characters to remove for faster lookups\n    charMap := make(map[rune]struct{})\n    for _, char := range c {\n        charMap[char] = struct{}{}\n    }\n\n    // Build a new string without the characters in charMap\n    var result strings.Builder\n    for _, char := range s {\n        if _, found := charMap[char]; !found {\n            result.WriteRune(char)\n        }\n    }\n\n    // Check if the resulting string is a palindrome\n    resultStr := result.String()\n    isPalindrome := isPalindromic(resultStr)\n\n    return [2]interface{}{resultStr, isPalindrome}\n}\n\n// isPalindromic checks if a string is a palindrome\nfunc isPalindromic(s string) bool {\n    left, right := 0, len(s)-1\n    for left < right {\n        if s[left] != s[right] {\n            return false\n        }\n        left++\n        right--\n    }\n    return true\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_154.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"math\"\n)\n\nfunc StrongestExtension(class_name string, extensions []string) string {\n    var strongestExtension string\n    maxStrength := math.MinInt32\n\n    for _, ext := range extensions {\n        capCount := 0\n        smCount := 0\n        \n        for _, ch := range ext {\n            if ch >= 'A' && ch <= 'Z' {\n                capCount++\n            } else if ch >= 'a' && ch <= 'z' {\n                smCount++\n            }\n        }\n\n        strength := capCount - smCount\n        if strength > maxStrength {\n            maxStrength = strength\n            strongestExtension = ext\n        }\n    }\n\n    return class_name + \".\" + strongestExtension\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_118.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\nfunc SelectWords(s string, n int) []string {\n\tif s == \"\" {\n\t\treturn []string{}\n\t}\n\n\twords := strings.Fields(s)\n\tresult := []string{}\n\n\tfor _, word := range words {\n\t\tif countConsonants(word) == n {\n\t\t\tresult = append(result, word)\n\t\t}\n\t}\n\n\treturn result\n}\n\nfunc countConsonants(word string) int {\n\tconsonants := \"bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ\"\n\tcount := 0\n\n\tfor _, char := range word {\n\t\tif strings.ContainsRune(consonants, char) {\n\t\t\tcount++\n\t\t}\n\t}\n\n\treturn count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

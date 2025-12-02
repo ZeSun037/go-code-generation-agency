@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/161",
+  "prompt": "\n// You are given a string s.\n// if s[i] is a letter, reverse its case from lower to upper or vise versa,\n// otherwise keep it as it is.\n// If the string contains no letters, reverse the string.\n// The function should return the resulted string.\n// Examples\n// Solve(\"1234\") = \"4321\"\n// Solve(\"ab\") = \"AB\"\n// Solve(\"#a@C\") = \"#A@c\"\nfunc Solve(s string) string {\n",
+  "import": "",
+  "docstring": "// You are given a string s.\n// if s[i] is a letter, reverse its case from lower to upper or vise versa,\n// otherwise keep it as it is.\n// If the string contains no letters, reverse the string.\n// The function should return the resulted string.\n// Examples\n// Solve(\"1234\") = \"4321\"\n// Solve(\"ab\") = \"AB\"\n// Solve(\"#a@C\") = \"#A@c\"\n",
+  "declaration": "\nfunc Solve(s string) string {\n",
+  "canonical_solution": "    flg := 0\n    new_str := []rune(s)\n    for i, r := range new_str {\n        if ('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z') {\n            if 'a' <= r && r <= 'z' {\n                new_str[i] = r - 'a' + 'A'\n            } else {\n                new_str[i] = r - 'A' + 'a'\n            }\n            flg = 1\n        }\n    }\n    if flg == 0 {\n        for i := 0;i < len(new_str)>>1;i++ {\n            new_str[i], new_str[len(new_str)-i-1] = new_str[len(new_str)-i-1], new_str[i]\n        }\n    }\n    return string(new_str)\n}\n\n",
+  "test": "func TestSolve(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"aSdF\", Solve(\"AsDf\"))\n    assert.Equal(\"4321\", Solve(\"1234\"))\n    assert.Equal(\"AB\", Solve(\"ab\"))\n    assert.Equal(\"#A@c\", Solve(\"#a@C\"))\n    assert.Equal(\"#aSDFw^45\", Solve(\"#AsdfW^45\"))\n    assert.Equal(\"2@6#\", Solve(\"#6@2\"))\n    assert.Equal(\"#$A^d\", Solve(\"#$a^D\"))\n    assert.Equal(\"#CCC\", Solve(\"#ccc\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestSolve(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(\"4321\", Solve(\"1234\"))\n    assert.Equal(\"AB\", Solve(\"ab\"))\n    assert.Equal(\"#A@c\", Solve(\"#a@C\"))\n}\n"
+}

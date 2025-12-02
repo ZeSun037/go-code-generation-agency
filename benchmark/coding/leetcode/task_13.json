@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/12",
+  "prompt": "// Out of list of strings, return the Longest one. Return the first one in case of multiple\n// strings of the same length. Return nil in case the input list is empty.\n// >>> Longest([])\n// nil\n// >>> Longest(['a', 'b', 'c'])\n// 'a'\n// >>> Longest(['a', 'bb', 'ccc'])\n// 'ccc'\nfunc Longest(strings []string) interface{}{\n",
+  "import": "",
+  "docstring": "// Out of list of strings, return the Longest one. Return the first one in case of multiple\n// strings of the same length. Return nil in case the input list is empty.\n// >>> Longest([])\n// nil\n// >>> Longest(['a', 'b', 'c'])\n// 'a'\n// >>> Longest(['a', 'bb', 'ccc'])\n// 'ccc'\n",
+  "declaration": "\nfunc Longest(strings []string) interface{}{\n",
+  "canonical_solution": "    if strings == nil || len(strings) == 0 {\n        return nil\n    }\n    maxlen := 0\n    maxi := 0\n    for i, s := range strings {\n        if maxlen < len(s) {\n            maxlen = len(s)\n            maxi = i\n        }\n    }\n    return strings[maxi]\n}\n\n",
+  "test": "func TestLongest(t *testing.T) {\n\tassert := assert.New(t)\n\tassert.Equal(nil, Longest([]string{}))\n\tassert.Equal(\"x\", Longest([]string{\"x\", \"y\", \"z\"}))\n\tassert.Equal(\"zzzz\", Longest([]string{\"x\", \"yyy\", \"zzzz\", \"www\", \"kkkk\", \"abc\"}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestLongest(t *testing.T) {\n\tassert := assert.New(t)\n\tassert.Equal(nil, Longest([]string{}))\n\tassert.Equal(\"a\", Longest([]string{\"a\", \"b\", \"c\"}))\n\tassert.Equal(\"ccc\", Longest([]string{\"a\", \"bb\", \"ccc\"}))\n}\n"
+}

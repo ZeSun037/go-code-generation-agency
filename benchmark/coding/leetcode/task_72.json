@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/71",
+  "prompt": "import (\n    \"math\"\n)\n\n// Given the lengths of the three sides of a triangle. Return the area of\n// the triangle rounded to 2 decimal points if the three sides form a valid triangle.\n// Otherwise return -1\n// Three sides make a valid triangle when the sum of any two sides is greater\n// than the third side.\n// Example:\n// TriangleArea(3, 4, 5) == 6.00\n// TriangleArea(1, 2, 10) == -1\nfunc TriangleArea(a float64, b float64, c float64) interface{} {\n",
+  "import": "import (\n    \"math\"\n)",
+  "docstring": "// Given the lengths of the three sides of a triangle. Return the area of\n// the triangle rounded to 2 decimal points if the three sides form a valid triangle.\n// Otherwise return -1\n// Three sides make a valid triangle when the sum of any two sides is greater\n// than the third side.\n// Example:\n// TriangleArea(3, 4, 5) == 6.00\n// TriangleArea(1, 2, 10) == -1\n",
+  "declaration": "\nfunc TriangleArea(a float64, b float64, c float64) interface{} {\n",
+  "canonical_solution": "    if a+b <= c || a+c <= b || b+c <= a {\n\t\treturn -1\n\t}\n\ts := (a + b + c) / 2\n\tarea := math.Pow(s * (s - a) * (s - b) * (s - c), 0.5)\n\tarea = math.Round(area*100)/100\n\treturn area\n}\n\n",
+  "test": "func TestTriangleArea(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(6.00, TriangleArea(3, 4, 5))\n    assert.Equal(-1, TriangleArea(1, 2, 10))\n    assert.Equal(8.18, TriangleArea(4, 8, 5))\n    assert.Equal(1.73, TriangleArea(2, 2, 2))\n    assert.Equal(-1, TriangleArea(1, 2, 3))\n    assert.Equal(16.25, TriangleArea(10, 5, 7))\n    assert.Equal(-1, TriangleArea(2, 6, 3))\n    assert.Equal(0.43, TriangleArea(1, 1, 1))\n    assert.Equal(-1, TriangleArea(2, 2, 10))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestTriangleArea(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(6.00, TriangleArea(3, 4, 5))\n    assert.Equal(-1, TriangleArea(1, 2, 10))\n}\n"
+}

@@ -1,0 +1,23 @@
+{
+    "task": "task_158.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport \"math\"\n\nfunc RightAngleTriangle(a, b, c int) bool {\n\tsides := []int{a, b, c}\n\t// Sort the sides to find the largest side (hypotenuse)\n\tsort.Ints(sides)\n\t// Apply Pythagorean theorem: a^2 + b^2 = c^2\n\treturn math.Pow(float64(sides[0]), 2)+math.Pow(float64(sides[1]), 2) == math.Pow(float64(sides[2]), 2)\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [build failed]\nFAIL\n# synthesis [synthesis.test]\n./main.go:8:2: undefined: sort"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n\t\"sort\"\n)\n\nfunc RightAngleTriangle(a, b, c int) bool {\n\tsides := []int{a, b, c}\n\t// Sort the sides to find the largest side (hypotenuse)\n\tsort.Ints(sides)\n\t// Apply Pythagorean theorem: a^2 + b^2 = c^2\n\treturn math.Pow(float64(sides[0]), 2)+math.Pow(float64(sides[1]), 2) == math.Pow(float64(sides[2]), 2)\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

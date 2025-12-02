@@ -1,0 +1,13 @@
+{
+    "task": "task_157.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// romanMapping associates an integer value with its Roman numeral symbol.\ntype romanMapping struct {\n\tvalue  int\n\tsymbol string\n}\n\n// romanNumerals is an ordered list of Roman numeral mappings, from largest to smallest.\n// This order is crucial for the greedy conversion algorithm to work correctly,\n// especially for handling subtractive notations like CM, CD, XC, XL, IX, and IV.\nvar romanNumerals = []romanMapping{\n\t{1000, \"M\"},\n\t{900, \"CM\"},\n\t{500, \"D\"},\n\t{400, \"CD\"},\n\t{100, \"C\"},\n\t{90, \"XC\"},\n\t{50, \"L\"},\n\t{40, \"XL\"},\n\t{10, \"X\"},\n\t{9, \"IX\"},\n\t{5, \"V\"},\n\t{4, \"IV\"},\n\t{1, \"I\"},\n}\n\n// IntToMiniRoman converts a positive integer (1-1000) to its Roman numeral\n// equivalent, returned as a lowercase string.\nfunc IntToMiniRoman(number int) string {\n\t// A strings.Builder is used for efficient string concatenation.\n\tvar result strings.Builder\n\n\t// Iterate through the predefined Roman numeral mappings.\n\tfor _, mapping := range romanNumerals {\n\t\t// For each mapping, append its symbol as many times as its value\n\t\t// can be subtracted from the remaining number.\n\t\tfor number >= mapping.value {\n\t\t\tresult.WriteString(mapping.symbol)\n\t\t\tnumber -= mapping.value\n\t\t}\n\t}\n\n\t// Convert the final Roman numeral string to lowercase as required.\n\treturn strings.ToLower(result.String())\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/31",
+  "prompt": "\n// Return true if a given number is prime, and false otherwise.\n// >>> IsPrime(6)\n// false\n// >>> IsPrime(101)\n// true\n// >>> IsPrime(11)\n// true\n// >>> IsPrime(13441)\n// true\n// >>> IsPrime(61)\n// true\n// >>> IsPrime(4)\n// false\n// >>> IsPrime(1)\n// false\nfunc IsPrime(n int) bool {\n",
+  "import": "",
+  "docstring": "// Return true if a given number is prime, and false otherwise.\n// >>> IsPrime(6)\n// false\n// >>> IsPrime(101)\n// true\n// >>> IsPrime(11)\n// true\n// >>> IsPrime(13441)\n// true\n// >>> IsPrime(61)\n// true\n// >>> IsPrime(4)\n// false\n// >>> IsPrime(1)\n// false\n",
+  "declaration": "\nfunc IsPrime(n int) bool {\n",
+  "canonical_solution": "    if n <= 1 {\n\t\treturn false\n\t}\n\tif n == 2 {\n\t\treturn true\n\t}\n\tif n%2 == 0 {\n\t\treturn false\n\t}\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n\n",
+  "test": "func TestIsPrime(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, IsPrime(6))\n    assert.Equal(true, IsPrime(101))\n    assert.Equal(true, IsPrime(11))\n    assert.Equal(true, IsPrime(13441))\n    assert.Equal(true, IsPrime(61))\n    assert.Equal(false, IsPrime(4))\n    assert.Equal(false, IsPrime(1))\n    assert.Equal(true, IsPrime(5))\n    assert.Equal(true, IsPrime(11))\n    assert.Equal(true, IsPrime(17))\n    assert.Equal(false, IsPrime(5 * 17))\n    assert.Equal(false, IsPrime(11 * 7))\n    assert.Equal(false, IsPrime(13441 * 19))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIsPrime(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(false, IsPrime(6))\n    assert.Equal(true, IsPrime(101))\n    assert.Equal(true, IsPrime(11))\n    assert.Equal(true, IsPrime(13441))\n    assert.Equal(true, IsPrime(61))\n    assert.Equal(false, IsPrime(4))\n    assert.Equal(false, IsPrime(1))\n}\n"
+}

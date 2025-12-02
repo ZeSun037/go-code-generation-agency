@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/35",
+  "prompt": "\n// Return maximum element in the list.\n// >>> MaxElement([1, 2, 3])\n// 3\n// >>> MaxElement([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])\n// 123\nfunc MaxElement(l []int) int {\n",
+  "import": "",
+  "docstring": "// Return maximum element in the list.\n// >>> MaxElement([1, 2, 3])\n// 3\n// >>> MaxElement([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])\n// 123\n",
+  "declaration": "\nfunc MaxElement(l []int) int {\n",
+  "canonical_solution": "    max := l[0]\n\tfor _, x := range l {\n\t\tif x > max {\n\t\t\tmax = x\n\t\t}\n\t}\n\treturn max\n}\n\n",
+  "test": "func TestMaxElement(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, MaxElement([]int{1, 2, 3}))\n    assert.Equal(124, MaxElement([]int{5, 3, -5, 2, -3, 3, 9,0, 124, 1, -10}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestMaxElement(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(3, MaxElement([]int{1, 2, 3}))\n    assert.Equal(123, MaxElement([]int{5, 3, -5, 2, -3, 3, 9,0, 123, 1, -10}))\n}\n"
+}

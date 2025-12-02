@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/45",
+  "prompt": "\n// Given length of a side and high return area for a triangle.\n// >>> TriangleArea(5, 3)\n// 7.5\nfunc TriangleArea(a float64, h float64) float64 {\n",
+  "import": "",
+  "docstring": "// Given length of a side and high return area for a triangle.\n// >>> TriangleArea(5, 3)\n// 7.5\n",
+  "declaration": "\nfunc TriangleArea(a float64, h float64) float64 {\n",
+  "canonical_solution": "    return a * h / 2\n}\n\n",
+  "test": "func TestTriangleArea(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(7.5, TriangleArea(5, 3))\n    assert.Equal(2.0, TriangleArea(2, 2))\n    assert.Equal(40.0, TriangleArea(10, 8))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestTriangleArea(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(7.5, TriangleArea(5, 3))\n}\n"
+}

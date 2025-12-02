@@ -1,0 +1,23 @@
+{
+    "task": "task_126.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "import (\n\t\"strings\"\n\t\"unicode\"\n)\n\n// Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you\n// should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the\n// alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25\n// Examples\n// SplitWords(\"Hello world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"Hello,world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"abcdef\") == 3\nfunc SplitWords(txt string) interface{} {\n\t// 1. Check for whitespace\n\t// Iterate through the string to see if any character is a Unicode whitespace.\n\thasWhitespace := false\n\tfor _, r := range txt {\n\t\tif unicode.IsSpace(r) {\n\t\t\thasWhitespace = true\n\t\t\tbreak\n\t\t}\n\t}\n\n\tif hasWhitespace {\n\t\t// If whitespace exists, split the string by whitespace.\n\t\t// strings.Fields splits a string around one or more consecutive white space characters\n\t\t// and returns a slice of substrings.\n\t\treturn strings.Fields(txt)\n\t}\n\n\t// 2. Check for commas (only if no whitespace was found)\n\tif strings.ContainsRune(txt, ',') {\n\t\t// If no whitespace but commas exist, split the string by commas.\n\t\t// strings.Split returns a slice of all substrings separated by the comma.\n\t\treturn strings.Split(txt, \",\")\n\t}\n\n\t// 3. Count lower-case letters with odd order (if no whitespace and no commas)\n\tcount := 0\n\tfor _, r := range txt {\n\t\t// Check if the character is a lowercase ASCII letter.\n\t\tif r >= 'a' && r <= 'z' {\n\t\t\t// Calculate the order (0-indexed) of the letter in the alphabet.\n\t\t\t// 'a' is 0, 'b' is 1, ..., 'z' is 25.\n\t\t\torder := int(r - 'a')\n\t\t\t// Check if the order is odd.\n\t\t\tif order%2 != 0 {\n\t\t\t\tcount++\n\t\t\t}\n\t\t}\n\t}\n\treturn count\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "FAIL\tsynthesis [setup failed]\nFAIL\n# synthesis\nmain.go:1:1: expected 'package', found 'import'"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n\t\"unicode\"\n)\n\n// Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you\n// should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the\n// alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25\n// Examples\n// SplitWords(\"Hello world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"Hello,world!\") \u279e [\"Hello\", \"world!\"]\n// SplitWords(\"abcdef\") == 3\nfunc SplitWords(txt string) interface{} {\n\t// 1. Check for whitespace\n\t// Iterate through the string to see if any character is a Unicode whitespace.\n\thasWhitespace := false\n\tfor _, r := range txt {\n\t\tif unicode.IsSpace(r) {\n\t\t\thasWhitespace = true\n\t\t\tbreak\n\t\t}\n\t}\n\n\tif hasWhitespace {\n\t\t// If whitespace exists, split the string by whitespace.\n\t\t// strings.Fields splits a string around one or more consecutive white space characters\n\t\t// and returns a slice of substrings.\n\t\treturn strings.Fields(txt)\n\t}\n\n\t// 2. Check for commas (only if no whitespace was found)\n\tif strings.ContainsRune(txt, ',') {\n\t\t// If no whitespace but commas exist, split the string by commas.\n\t\t// strings.Split returns a slice of all substrings separated by the comma.\n\t\treturn strings.Split(txt, \",\")\n\t}\n\n\t// 3. Count lower-case letters with odd order (if no whitespace and no commas)\n\tcount := 0\n\tfor _, r := range txt {\n\t\t// Check if the character is a lowercase ASCII letter.\n\t\tif r >= 'a' && r <= 'z' {\n\t\t\t// Calculate the order (0-indexed) of the letter in the alphabet.\n\t\t\t// 'a' is 0, 'b' is 1, ..., 'z' is 25.\n\t\t\torder := int(r - 'a')\n\t\t\t// Check if the order is odd.\n\t\t\tif order%2 != 0 {\n\t\t\t\tcount++\n\t\t\t}\n\t\t}\n\t}\n\treturn count\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

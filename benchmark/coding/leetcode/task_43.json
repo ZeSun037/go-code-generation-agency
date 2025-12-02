@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/42",
+  "prompt": "\n// Return list with elements incremented by 1.\n// >>> IncrList([1, 2, 3])\n// [2, 3, 4]\n// >>> IncrList([5, 3, 5, 2, 3, 3, 9, 0, 123])\n// [6, 4, 6, 3, 4, 4, 10, 1, 124]\nfunc IncrList(l []int) []int {\n",
+  "import": "",
+  "docstring": "// Return list with elements incremented by 1.\n// >>> IncrList([1, 2, 3])\n// [2, 3, 4]\n// >>> IncrList([5, 3, 5, 2, 3, 3, 9, 0, 123])\n// [6, 4, 6, 3, 4, 4, 10, 1, 124]\n",
+  "declaration": "\nfunc IncrList(l []int) []int {\n",
+  "canonical_solution": "    n := len(l)\n\tfor i := 0; i < n; i++ {\n\t\tl[i]++\n\t}\n\treturn l\n}\n\n",
+  "test": "func TestIncrList(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{}, IncrList([]int{}))\n    assert.Equal([]int{4, 3, 2}, IncrList([]int{3, 2, 1}))\n    assert.Equal([]int{6, 3, 6, 3, 4, 4, 10, 1, 124}, IncrList([]int{5, 2, 5, 2, 3, 3, 9, 0, 123}))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestIncrList(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]int{2, 3, 4}, IncrList([]int{1, 2, 3}))\n    assert.Equal([]int{6, 3, 6, 3, 4, 4, 10, 1, 124}, IncrList([]int{5, 2, 5, 2, 3, 3, 9, 0, 123}))\n}\n"
+}

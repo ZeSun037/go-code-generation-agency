@@ -1,0 +1,13 @@
+{
+    "task": "task_129.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// You are given an array arr of integers and you need to return\n// sum of magnitudes of integers multiplied by product of all signs\n// of each number in the array, represented by 1, -1 or 0.\n// Note: return nil for empty arr.\n//\n// Example:\n// >>> ProdSigns([1, 2, 2, -4]) == -9\n// >>> ProdSigns([0, 1]) == 0\n// >>> ProdSigns([]) == nil\nfunc ProdSigns(arr []int) interface{} {\n\tif len(arr) == 0 {\n\t\treturn nil\n\t}\n\n\tsumOfMagnitudes := 0\n\tproductOfSigns := 1\n\n\tfor _, num := range arr {\n\t\t// Add the magnitude (absolute value)\n\t\tsumOfMagnitudes += int(math.Abs(float64(num)))\n\n\t\t// Multiply the signs\n\t\tif num < 0 {\n\t\t\tproductOfSigns *= -1\n\t\t} else if num == 0 {\n\t\t\tproductOfSigns = 0\n\t\t}\n\t}\n\n\treturn sumOfMagnitudes * productOfSigns\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

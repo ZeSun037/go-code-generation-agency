@@ -1,0 +1,23 @@
+{
+    "task": "task_104.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\n// roundHalfToEven rounds a float64 to the nearest integer.\n// For values exactly halfway between two integers (e.g., X.5),\n// it applies \"round half to even\" or banker's rounding.\nfunc roundHalfToEven(f float64) int {\n\t// Separate the integer and fractional parts.\n\tfloorVal := math.Floor(f)\n\tceilVal := math.Ceil(f)\n\n\t// Check if the fractional part is exactly 0.5.\n\t// For calculations like (n+m)/2.0, if n+m is odd, the result will be\n\t// an exact X.5, making a direct comparison safe.\n\tif f-floorVal == 0.5 {\n\t\t// If the integer part (floorVal) is even, round down (to floorVal).\n\t\tif int(floorVal)%2 == 0 {\n\t\t\treturn int(floorVal)\n\t\t} else {\n\t\t\t// If the integer part (floorVal) is odd, round up (to ceilVal).\n\t\t\treturn int(ceilVal)\n\t\t}\n\t}\n\t// For other cases (fractional part not 0.5), use standard math.Round\n\t// which rounds half away from zero.\n\treturn int(math.Round(f))\n}\n\n// You are given two positive integers n and m, and your task is to compute the\n// average of the integers from n through m (including n and m).\n// Round the answer to the nearest integer and convert that to binary.\n// If n is greater than m, return -1.\n// Example:\n// RoundedAvg(1, 5) => \"0b11\"\n// RoundedAvg(7, 5) => -1\n// RoundedAvg(10, 20) => \"0b1111\"\n// RoundedAvg(20, 33) => \"0b11010\"\nfunc RoundedAvg(n, m int) interface{} {\n\t// Handle the edge case where n is greater than m.\n\tif n > m {\n\t\treturn -1\n\t}\n\n\t// Calculate the average of integers from n through m.\n\t// For an arithmetic sequence, the average is simply (first_term + last_term) / 2.\n\t// We use 2.0 to ensure floating-point division.\n\tavg := float64(n+m) / 2.0\n\n\t// Round the average to the nearest integer.\n\t// The example `RoundedAvg(20, 33)` where avg is 26.5 rounding to 26 (0b11010)\n\t// indicates that \"round half to even\" (banker's rounding) is required for .5 cases.\n\troundedAvg := roundHalfToEven(avg)\n\n\t// Convert the rounded average to its binary representation\n\t// and prefix it with \"0b\".\n\tbinaryString := fmt.Sprintf(\"0b%b\", roundedAvg)\n\n\treturn binaryString\n}",
+            "passed": false,
+            "errors": [
+                {
+                    "verifier": "go test",
+                    "error": "--- FAIL: TestRoundedAvg (0.00s)\n    main_test.go:13: \n        \tError Trace:\t/tmp/go_synthesis__7gps_45/main_test.go:13\n        \tError:      \tNot equal: \n        \t            \texpected: \"0b11011\"\n        \t            \tactual  : \"0b11010\"\n        \t            \t\n        \t            \tDiff:\n        \t            \t--- Expected\n        \t            \t+++ Actual\n        \t            \t@@ -1 +1 @@\n        \t            \t-0b11011\n        \t            \t+0b11010\n        \tTest:       \tTestRoundedAvg\nFAIL\nFAIL\tsynthesis\t0.002s\nFAIL"
+                }
+            ]
+        },
+        {
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\n// You are given two positive integers n and m, and your task is to compute the\n// average of the integers from n through m (including n and m).\n// Round the answer to the nearest integer and convert that to binary.\n// If n is greater than m, return -1.\n// Example:\n// RoundedAvg(1, 5) => \"0b11\"\n// RoundedAvg(7, 5) => -1\n// RoundedAvg(10, 20) => \"0b1111\"\n// RoundedAvg(20, 33) => \"0b11010\"\nfunc RoundedAvg(n, m int) interface{} {\n\t// Handle the edge case where n is greater than m.\n\tif n > m {\n\t\treturn -1\n\t}\n\n\t// Calculate the average of integers from n through m.\n\t// For an arithmetic sequence, the average is simply (first_term + last_term) / 2.\n\t// We use 2.0 to ensure floating-point division.\n\tavg := float64(n+m) / 2.0\n\n\t// Round the average to the nearest integer.\n\t// The test case `RoundedAvg(20, 33)` where avg is 26.5 expects 27 (\"0b11011\").\n\t// This indicates that standard rounding (half away from zero) is expected,\n\t// which is the behavior of math.Round.\n\troundedAvg := int(math.Round(avg))\n\n\t// Convert the rounded average to its binary representation\n\t// and prefix it with \"0b\".\n\tbinaryString := fmt.Sprintf(\"0b%b\", roundedAvg)\n\n\treturn binaryString\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

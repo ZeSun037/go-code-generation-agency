@@ -1,0 +1,13 @@
+{
+    "task": "task_131.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// Tri calculates the first n+1 numbers of the Tribonacci sequence as defined by the problem.\n// The sequence rules are:\n// Tri(1) = 3\n// Tri(n) = 1 + n / 2, if n is even.\n// Tri(n) =  Tri(n - 1) + Tri(n - 2) + Tri(n + 1), if n is odd.\n//\n// The problem examples imply:\n// Tri(0) = 1\n// Tri(3) = [1, 3, 2, 8]\n//\n// For odd n, the rule Tri(n) = Tri(n - 1) + Tri(n - 2) + Tri(n + 1) involves a future term Tri(n+1).\n// Let's derive an equivalent recurrence for odd n that allows for forward computation:\n// If n is odd:\n// Tri(n - 1) is even, so Tri(n - 1) = 1 + (n - 1) / 2\n// Tri(n + 1) is even, so Tri(n + 1) = 1 + (n + 1) / 2\n// Substitute these into the odd recurrence:\n// Tri(n) = (1 + (n - 1) / 2) + Tri(n - 2) + (1 + (n + 1) / 2)\n// Tri(n) = 1 + n/2 - 1/2 + Tri(n - 2) + 1 + n/2 + 1/2\n// Tri(n) = (1 + 1) + (n/2 + n/2) + (-1/2 + 1/2) + Tri(n - 2)\n// Tri(n) = 2 + n + Tri(n - 2)\n//\n// This derived rule (Tri(n) = 2 + n + Tri(n - 2) for odd n >= 3)\n// allows for a straightforward dynamic programming approach.\nfunc Tri(n int) []float64 {\n\t// The problem states n is a non-negative integer, so n >= 0.\n\t// We need to return Tri(0) to Tri(n), which is n + 1 elements.\n\tresults := make([]float64, n+1)\n\n\t// Base case: Tri(0) is inferred from example output.\n\tresults[0] = 1.0\n\n\t// Base case: Tri(1) is explicitly given in the rules.\n\t// Ensure n is at least 1 before accessing results[1].\n\tif n >= 1 {\n\t\tresults[1] = 3.0\n\t}\n\n\t// Calculate subsequent terms using the derived recurrences.\n\t// Start from i = 2, as Tri(0) and Tri(1) are already handled.\n\tfor i := 2; i <= n; i++ {\n\t\tif i%2 == 0 {\n\t\t\t// For even i: Tri(i) = 1 + i / 2\n\t\t\t// Use float64(i)/2.0 to ensure floating-point arithmetic.\n\t\t\t// Since i is even, i/2 is an exact integer, so `float64(1 + i/2)` would also work.\n\t\t\tresults[i] = 1.0 + float64(i)/2.0\n\t\t} else {\n\t\t\t// For odd i (and i >= 3, which is true for i >= 2 and i%2 != 0):\n\t\t\t// Use the derived recurrence: Tri(i) = 2 + i + Tri(i - 2)\n\t\t\tresults[i] = 2.0 + float64(i) + results[i-2]\n\t\t}\n\t}\n\n\treturn results\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

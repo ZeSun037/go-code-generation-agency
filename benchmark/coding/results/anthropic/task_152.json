@@ -1,0 +1,13 @@
+{
+    "task": "task_152.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"math\"\n)\n\n// Given a list of numbers, return the sum of squares of the numbers\n// in the list that are odd. Ignore numbers that are negative or not integers.\n// \n// DoubleTheDifference([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10\n// DoubleTheDifference([-1, -2, 0]) == 0\n// DoubleTheDifference([9, -2]) == 81\n// DoubleTheDifference([0]) == 0\n// \n// If the input list is empty, return 0.\nfunc DoubleTheDifference(lst []float64) int {\n\tsum := 0\n\t\n\tfor _, num := range lst {\n\t\t// Ignore negative numbers\n\t\tif num < 0 {\n\t\t\tcontinue\n\t\t}\n\t\t\n\t\t// Ignore non-integers\n\t\tif num != math.Floor(num) {\n\t\t\tcontinue\n\t\t}\n\t\t\n\t\t// Convert to int\n\t\tintNum := int(num)\n\t\t\n\t\t// Check if odd\n\t\tif intNum%2 == 1 {\n\t\t\tsum += intNum * intNum\n\t\t}\n\t}\n\t\n\treturn sum\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

@@ -1,0 +1,13 @@
+{
+    "task": "task_120.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc MatchParens(lst []string) string {\n\t// Total counts\n\ts1 := lst[0]\n\ts2 := lst[1]\n\t\n\topen1 := countChar(s1, '(')\n\tclose1 := countChar(s1, ')')\n\topen2 := countChar(s2, '(')\n\tclose2 := countChar(s2, ')')\n\t\n\ttotalOpen := open1 + open2\n\ttotalClose := close1 + close2\n\t\n\t// If total opens and closes don't match, impossible\n\tif totalOpen != totalClose {\n\t\treturn \"No\"\n\t}\n\t\n\t// Try both orderings\n\tif isBalanced(s1 + s2) {\n\t\treturn \"Yes\"\n\t}\n\tif isBalanced(s2 + s1) {\n\t\treturn \"Yes\"\n\t}\n\t\n\treturn \"No\"\n}\n\nfunc countChar(s string, ch byte) int {\n\tcount := 0\n\tfor i := 0; i < len(s); i++ {\n\t\tif s[i] == ch {\n\t\t\tcount++\n\t\t}\n\t}\n\treturn count\n}\n\nfunc isBalanced(s string) bool {\n\tbalance := 0\n\tfor i := 0; i < len(s); i++ {\n\t\tif s[i] == '(' {\n\t\t\tbalance++\n\t\t} else if s[i] == ')' {\n\t\t\tbalance--\n\t\t}\n\t\t// At any point, we shouldn't have more closing than opening\n\t\tif balance < 0 {\n\t\t\treturn false\n\t\t}\n\t}\n\t// At the end, all should be balanced\n\treturn balance == 0\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

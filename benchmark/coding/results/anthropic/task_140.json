@@ -1,0 +1,13 @@
+{
+    "task": "task_140.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc SpecialFactorial(n int) int {\n\tresult := 1\n\t\n\t// Calculate n! * (n-1)! * (n-2)! * ... * 1!\n\tfor i := n; i >= 1; i-- {\n\t\t// Calculate i! and multiply it to result\n\t\tfactorial := 1\n\t\tfor j := i; j >= 1; j-- {\n\t\t\tfactorial *= j\n\t\t}\n\t\tresult *= factorial\n\t}\n\t\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

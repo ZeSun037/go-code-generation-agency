@@ -1,0 +1,13 @@
+{
+    "task": "task_104.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n    \"math\"\n)\n\nfunc RoundedAvg(n, m int) interface{} {\n    if n > m {\n        return -1\n    }\n\n    sum := 0\n    count := m - n + 1\n\n    for i := n; i <= m; i++ {\n        sum += i\n    }\n\n    avg := float64(sum) / float64(count)\n    roundedAvg := int(math.Round(avg))\n\n    return fmt.Sprintf(\"0b%s\", fmt.Sprintf(\"%b\", roundedAvg))\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

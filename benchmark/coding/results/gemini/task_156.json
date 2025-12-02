@@ -1,0 +1,13 @@
+{
+    "task": "task_156.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strconv\"\n)\n\n// Given an integer. return a tuple that has the number of even and odd digits respectively.\n// \n// Example:\n// EvenOddCount(-12) ==> (1, 1)\n// EvenOddCount(123) ==> (1, 2)\nfunc EvenOddCount(num int) [2]int {\n\tcounts := [2]int{0, 0} // counts[0] for even, counts[1] for odd\n\n\t// Handle negative numbers by taking the absolute value.\n\t// This ensures we process digits regardless of the sign.\n\tif num < 0 {\n\t\tnum = -num\n\t}\n\n\t// Convert the (absolute) number to its string representation.\n\t// This allows easy iteration over its digits.\n\tnumStr := strconv.Itoa(num)\n\n\t// Iterate over each character (digit) in the string.\n\tfor _, char := range numStr {\n\t\t// Convert the character digit to an integer.\n\t\t// This works because digits '0' through '9' are consecutive in ASCII.\n\t\tdigit := int(char - '0')\n\n\t\t// Check if the digit is even or odd and increment the respective counter.\n\t\tif digit%2 == 0 {\n\t\t\tcounts[0]++ // Even digit count\n\t\t} else {\n\t\t\tcounts[1]++ // Odd digit count\n\t\t}\n\t}\n\n\treturn counts\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

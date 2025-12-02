@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/102",
+  "prompt": "\n// This function takes two positive numbers x and y and returns the\n// biggest even integer number that is in the range [x, y] inclusive. If\n// there's no such number, then the function should return -1.\n// \n// For example:\n// ChooseNum(12, 15) = 14\n// ChooseNum(13, 12) = -1\nfunc ChooseNum(x, y int) int {\n",
+  "import": "",
+  "docstring": "// This function takes two positive numbers x and y and returns the\n// biggest even integer number that is in the range [x, y] inclusive. If\n// there's no such number, then the function should return -1.\n// \n// For example:\n// ChooseNum(12, 15) = 14\n// ChooseNum(13, 12) = -1\n",
+  "declaration": "\nfunc ChooseNum(x, y int) int {\n",
+  "canonical_solution": "    if x > y {\n        return -1\n    }\n    if y % 2 == 0 {\n        return y\n    }\n    if x == y {\n        return -1\n    }\n    return y - 1\n}\n\n",
+  "test": "func TestChooseNum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(14, ChooseNum(12,15))\n    assert.Equal(-1, ChooseNum(13,12))\n    assert.Equal(12354, ChooseNum(33,12354))\n    assert.Equal(-1, ChooseNum(5234,5233))\n    assert.Equal(28, ChooseNum(6,29))\n    assert.Equal(-1, ChooseNum(27,10))\n    assert.Equal(-1, ChooseNum(7,7))\n    assert.Equal(546, ChooseNum(546,546))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestChooseNum(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(14, ChooseNum(12,15))\n    assert.Equal(-1, ChooseNum(13,12))\n}\n"
+}

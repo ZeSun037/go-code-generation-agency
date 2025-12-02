@@ -1,0 +1,13 @@
+{
+    "task": "task_144.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n\t\"strings\"\n)\n\n// isPrime checks if a given integer n is a prime number.\n// A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.\nfunc isPrime(n int) bool {\n\tif n <= 1 {\n\t\treturn false // Numbers less than or equal to 1 are not prime\n\t}\n\tif n == 2 {\n\t\treturn true // 2 is the only even prime number\n\t}\n\tif n%2 == 0 {\n\t\treturn false // All other even numbers are not prime\n\t}\n\t// Check for odd divisors from 3 up to the square root of n\n\t// We increment by 2 because we only need to check odd divisors\n\tfor i := 3; i*i <= n; i += 2 {\n\t\tif n%i == 0 {\n\t\t\treturn false // If n is divisible by i, it's not prime\n\t\t}\n\t}\n\treturn true // If no divisors were found, n is prime\n}\n\n// WordsInSentence processes a sentence and returns a new string\n// containing only the words whose lengths are prime numbers,\n// preserving their original order.\nfunc WordsInSentence(sentence string) string {\n\t// Split the sentence into individual words using space as a delimiter.\n\t// strings.Fields handles multiple spaces and leading/trailing spaces correctly.\n\twords := strings.Fields(sentence)\n\n\tvar primeLengthWords []string // Slice to store words with prime lengths\n\n\t// Iterate over each word in the sentence\n\tfor _, word := range words {\n\t\t// Check if the length of the current word is a prime number\n\t\tif isPrime(len(word)) {\n\t\t\t// If the length is prime, add the word to our result slice\n\t\t\tprimeLengthWords = append(primeLengthWords, word)\n\t\t}\n\t}\n\n\t// Join the selected words back into a single string,\n\t// separated by a single space.\n\treturn strings.Join(primeLengthWords, \" \")\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

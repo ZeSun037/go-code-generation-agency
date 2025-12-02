@@ -1,0 +1,13 @@
+{
+    "task": "task_114.json",
+    "provider": "openai",
+    "model": "openai/gpt-4o-mini",
+    "rounds": [
+        {
+            "code": "package main\n\nimport (\n    \"fmt\"\n)\n\nfunc OddCount(lst []string) []string {\n    result := make([]string, len(lst))\n    for i, s := range lst {\n        oddCount := 0\n        for _, char := range s {\n            if (char-'0')%2 != 0 {\n                oddCount++\n            }\n        }\n        result[i] = fmt.Sprintf(\"the number of odd elements %dn the str%dng %d of the %dnput.\", oddCount, oddCount, oddCount, oddCount)\n    }\n    return result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

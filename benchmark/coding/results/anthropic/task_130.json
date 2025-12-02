@@ -1,0 +1,13 @@
+{
+    "task": "task_130.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc Minpath(grid [][]int, k int) []int {\n\tn := len(grid)\n\t\n\t// Find position of value 1\n\tvar startRow, startCol int\n\tfor i := 0; i < n; i++ {\n\t\tfor j := 0; j < n; j++ {\n\t\t\tif grid[i][j] == 1 {\n\t\t\t\tstartRow, startCol = i, j\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t}\n\t\n\tresult := make([]int, 0)\n\tfound := false\n\t\n\tvar dfs func(row, col int, path []int)\n\tdfs = func(row, col int, path []int) {\n\t\tif found {\n\t\t\treturn\n\t\t}\n\t\t\n\t\tif len(path) == k {\n\t\t\tresult = append([]int{}, path...)\n\t\t\tfound = true\n\t\t\treturn\n\t\t}\n\t\t\n\t\t// Get neighbors and sort by their values\n\t\tneighbors := []struct {\n\t\t\tr, c, val int\n\t\t}{}\n\t\t\n\t\tdirections := [][]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}\n\t\tfor _, dir := range directions {\n\t\t\tnr, nc := row+dir[0], col+dir[1]\n\t\t\tif nr >= 0 && nr < n && nc >= 0 && nc < n {\n\t\t\t\tneighbors = append(neighbors, struct {\n\t\t\t\t\tr, c, val int\n\t\t\t\t}{nr, nc, grid[nr][nc]})\n\t\t\t}\n\t\t}\n\t\t\n\t\t// Sort neighbors by value to explore smallest first\n\t\tfor i := 0; i < len(neighbors); i++ {\n\t\t\tfor j := i + 1; j < len(neighbors); j++ {\n\t\t\t\tif neighbors[j].val < neighbors[i].val {\n\t\t\t\t\tneighbors[i], neighbors[j] = neighbors[j], neighbors[i]\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\t\n\t\t// Try each neighbor\n\t\tfor _, nb := range neighbors {\n\t\t\tif found {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tpath = append(path, grid[nb.r][nb.c])\n\t\t\tdfs(nb.r, nb.c, path)\n\t\t\tpath = path[:len(path)-1]\n\t\t}\n\t}\n\t\n\tdfs(startRow, startCol, []int{grid[startRow][startCol]})\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

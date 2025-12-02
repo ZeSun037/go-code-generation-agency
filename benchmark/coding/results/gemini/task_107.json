@@ -1,0 +1,13 @@
+{
+    "task": "task_107.json",
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "rounds": [
+        {
+            "code": "package main\n\n// F takes an integer n as a parameter.\n// It returns a slice of size n, where the element at index j (0-indexed)\n// corresponds to the calculation for number i = j + 1 (1-indexed).\n// The value of the element is:\n// - The factorial of i, if i is even.\n// - The sum of numbers from 1 to i, if i is odd.\n//\n// Example:\n// F(5) == [1, 2, 6, 24, 15]\nfunc F(n int) []int {\n\t// Create a slice of integers with length n.\n\t// If n is 0, an empty slice is created and the loop will not execute,\n\t// correctly returning an empty slice. If n is negative, make([]int, n) will panic,\n\t// as is standard for invalid slice lengths.\n\tresult := make([]int, n)\n\n\t// currentFactorial keeps track of i! for the current iteration i.\n\t// It's initialized to 1, which serves as 0! or the base for 1!.\n\tcurrentFactorial := 1\n\n\t// Loop from j=0 to n-1 (for slice indices).\n\t// 'i' represents the 1-indexed number for calculations (i.e., j+1).\n\tfor j := 0; j < n; j++ {\n\t\ti := j + 1 // The 1-indexed number for the current calculation\n\n\t\t// Update currentFactorial for the current 'i'.\n\t\t// After this line, currentFactorial holds the factorial of 'i'.\n\t\t// For i=1, currentFactorial becomes 1 * 1 = 1 (1!)\n\t\t// For i=2, currentFactorial becomes 1 * 2 = 2 (2!)\n\t\t// For i=3, currentFactorial becomes 2 * 3 = 6 (3!)\n\t\t// And so on for subsequent 'i' values.\n\t\tcurrentFactorial *= i\n\n\t\tif i%2 == 0 {\n\t\t\t// If 'i' is even, the value is its factorial.\n\t\t\tresult[j] = currentFactorial\n\t\t} else {\n\t\t\t// If 'i' is odd, the value is the sum of numbers from 1 to 'i'.\n\t\t\t// The sum of an arithmetic series from 1 to i can be calculated\n\t\t\t// using the formula: i * (i + 1) / 2.\n\t\t\tresult[j] = i * (i + 1) / 2\n\t\t}\n\t}\n\n\treturn result\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

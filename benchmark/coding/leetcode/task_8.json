@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/7",
+  "prompt": "import (\n    \"strings\"\n)\n\n// Filter an input list of strings only for ones that contain given substring\n// >>> FilterBySubstring([], 'a')\n// []\n// >>> FilterBySubstring(['abc', 'bacd', 'cde', 'array'], 'a')\n// ['abc', 'bacd', 'array']\nfunc FilterBySubstring(stringList []string, substring string) []string {\n",
+  "import": "import (\n    \"strings\"\n)\n",
+  "docstring": "// Filter an input list of strings only for ones that contain given substring\n// >>> FilterBySubstring([], 'a')\n// []\n// >>> FilterBySubstring(['abc', 'bacd', 'cde', 'array'], 'a')\n// ['abc', 'bacd', 'array']\n",
+  "declaration": "\nfunc FilterBySubstring(stringList []string, substring string) []string {\n",
+  "canonical_solution": "    result := make([]string, 0)\n    for _, x := range stringList {\n        if strings.Index(x, substring) != -1 {\n            result = append(result, x)\n        }\n    }\n    return result\n}\n\n",
+  "test": "func TestFilterBySubstring(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{}, FilterBySubstring([]string{}, \"john\"))\n    assert.Equal([]string{\"xxx\", \"xxxAAA\", \"xxx\"}, FilterBySubstring([]string{\"xxx\", \"asd\", \"xxy\", \"john doe\", \"xxxAAA\", \"xxx\"}, \"xxx\"))\n    assert.Equal([]string{\"xxx\", \"aaaxxy\", \"xxxAAA\", \"xxx\"}, FilterBySubstring([]string{\"xxx\", \"asd\", \"aaaxxy\", \"john doe\", \"xxxAAA\", \"xxx\"}, \"xx\"))\n    assert.Equal([]string{\"grunt\", \"prune\"}, FilterBySubstring([]string{\"grunt\", \"trumpet\", \"prune\", \"gruesome\"}, \"run\"))\n}\n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestFilterBySubstring(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal([]string{}, FilterBySubstring([]string{}, \"a\"))\n    assert.Equal([]string{\"abc\", \"bacd\", \"array\"}, FilterBySubstring([]string{\"abc\", \"bacd\", \"cde\", \"array\"}, \"a\"))\n}\n"
+}

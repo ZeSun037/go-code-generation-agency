@@ -1,0 +1,13 @@
+{
+    "task": "task_133.json",
+    "provider": "anthropic",
+    "model": "claude-haiku-4-5",
+    "rounds": [
+        {
+            "code": "package main\n\nfunc IsNested(s string) bool {\n\tdepth := 0\n\t\n\tfor _, char := range s {\n\t\tif char == '[' {\n\t\t\tdepth++\n\t\t} else if char == ']' {\n\t\t\t// If we're closing a bracket and depth is > 1,\n\t\t\t// it means there's a bracket nested inside another\n\t\t\tif depth > 1 {\n\t\t\t\treturn true\n\t\t\t}\n\t\t\tdepth--\n\t\t}\n\t}\n\t\n\treturn false\n}",
+            "passed": true,
+            "errors": []
+        }
+    ],
+    "passed": true
+}

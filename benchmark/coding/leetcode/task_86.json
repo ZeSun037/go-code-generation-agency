@@ -1,0 +1,11 @@
+{
+  "task_id": "Go/85",
+  "prompt": "\n// Given a non-empty list of integers lst. Add the even elements that are at odd indices..\n// \n// Examples:\n// Add([4, 2, 6, 7]) ==> 2\nfunc Add(lst []int) int {\n",
+  "import": "",
+  "docstring": "// Given a non-empty list of integers lst. Add the even elements that are at odd indices..\n// \n// Examples:\n// Add([4, 2, 6, 7]) ==> 2\n",
+  "declaration": "\nfunc Add(lst []int) int {\n",
+  "canonical_solution": "    sum := 0\n    for i := 1; i < len(lst); i += 2 {\n        if lst[i]%2 == 0 {\n            sum += lst[i]\n        }\n    }\n    return sum\n}\n\n",
+  "test": "func TestAdd(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(88, Add([]int{4, 88}))\n    assert.Equal(122, Add([]int{4, 5, 6, 7, 2, 122}))\n    assert.Equal(0, Add([]int{4, 0, 6, 7}))\n    assert.Equal(12, Add([]int{4, 4, 6, 8}))\n}\n    \n",
+  "test_setup": "package main\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n)\n",
+  "example_test": "func TestAdd(t *testing.T) {\n    assert := assert.New(t)\n    assert.Equal(2, Add([]int{4, 2, 6, 7}))\n}\n"
+}
